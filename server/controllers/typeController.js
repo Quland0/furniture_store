@@ -1,4 +1,4 @@
-const {Type} = require('../models/models');
+const {Type, Manufacturer} = require('../models/models');
 const ApiError = require('../error/ApiError');
 
 class TypeController {
@@ -13,10 +13,15 @@ class TypeController {
         return res.json(types)
     }
 
-    async delete(req, res){
-        //const { id } = req.params;
-        //const type = await Type.destroy({ where: { id } });
-        //return res.status(204).send();
+    async delete(req, res) {
+        const { id } = req.params;
+        const deleted = await Type.destroy({ where: { id } });
+
+        if (deleted) {
+            return res.status(204).send();
+        } else {
+            return res.status(404).json({ message: "Тип не найден" });
+        }
     }
 }
 

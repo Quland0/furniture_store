@@ -80,7 +80,7 @@ Furniture.belongsTo(BasketFurniture)
 FavoritesFurniture.hasMany(Furniture)
 Furniture.belongsTo(FavoritesFurniture)
 
-Furniture.hasMany(FurnitureInfo)
+Furniture.hasMany(FurnitureInfo, {as: 'info'})
 FurnitureInfo.belongsTo(Furniture)
 
 Type.belongsToMany(Manufacturer, {through: TypeManufacturer })
