@@ -50,10 +50,12 @@ const FurnitureInfo = sequelize.define("furniture_info", {
     description: {type: DataTypes.STRING, allowNull: false},
 })
 
-const Rating = sequelize.define("rating", {
-    id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
-    rate: {type: DataTypes.INTEGER, allowNull: false},
-})
+const Rating = sequelize.define('rating', {
+    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    rate: { type: DataTypes.INTEGER, allowNull: false },
+    review: { type: DataTypes.TEXT, allowNull: true },
+    name: { type: DataTypes.STRING, allowNull: false },
+});
 
 const TypeManufacturer = sequelize.define("type_manufacturer", {
     id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},

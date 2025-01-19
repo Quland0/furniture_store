@@ -1,44 +1,64 @@
 const { Rating, Furniture } = require('../models/models')
+const { validationResult } = require('express-validator');
 
 class RatingController {
     async addRating(req, res) {
         try {
-            const { userId } = req.user
-            const { furnitureId, rate } = req.body
-
-            if (rate < 1 || rate > 5) {
-                return res.status(400).json({ message: 'Рейтинг должен быть от 1 до 5' })
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return res.status(400).json({ message: 'Ошибка валидации', errors: errors.array() })
             }
 
-            const existingRating = await Rating.findOne({
-                where: { userId, furnitureId }
+            const { productId, rate, review, name } = req.body;
+
+            const rating = await Rating.create({
+                productId,
+                rate,
+                review,
+                name,
+                approved: false
+            });
+
+            return res.json({
+                id: rating.id,
+                rate: rating.rate,
+                review: rating.review,
+                name: rating.name,
+            });
+        } catch (e) {
+            console.error('Add Rating Error:', e)
+            res.status(500).json({ message: 'Ошибка добавления рейтинга' })
+        }
+    }
+    async getRatings(req, res) {
+        try {
+            const { productId } = req.params;
+
+            const ratings = await Rating.findAll({
+                where: { productId },
+                attributes: ['id', 'rate', 'review', 'name'],
             })
 
-            if (existingRating) {
-                return res.status(400).json({ message: 'Вы уже оставили отзыв на этот товар' })
-            }
-
-            const rating = await Rating.create({ userId, furnitureId, rate })
-            return res.json(rating)
+            return res.json(ratings);
         } catch (e) {
-            console.error(e)
-            return res.status(400).json({ message: 'Ошибка добавления отзыва' })
+            console.error('Get Ratings Error:', e);
+            res.status(500).json({ message: 'Ошибка получения рейтингов' })
         }
     }
 
-    async getRatings(req, res) {
+
+    async getAverageRating(req, res) {
         try {
-            const { furnitureId } = req.query
+            const { productId } = req.params;
 
-            const ratings = await Rating.findAll({
-                where: { furnitureId },
-                include: [{ model: Furniture }]
-            })
+            const ratings = await Rating.findAll({ where: { productId } });
+            const average =
+                ratings.reduce((sum, r) => sum + r.rate, 0) / ratings.length || 0;
 
-            return res.json(ratings)
+            return res.json({ average: average.toFixed(1), count: ratings.length })
         } catch (e) {
-            console.error(e)
-            return res.status(400).json({ message: 'Ошибка получения отзывов' })
+            console.error('Get Average Rating Error:', e);
+            res.status(500).json({ message: 'Ошибка расчёта среднего рейтинга' })
         }
     }
 

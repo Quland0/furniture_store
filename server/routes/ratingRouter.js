@@ -1,12 +1,17 @@
-const Router = require('express')
-const ratingController = require('../controllers/ratingController')
-const authMiddleware = require('../middleware/authMiddleware')
-const router = new Router()
+const Router = require('express');
+const ratingController = require('../controllers/ratingController');
+const authMiddleware = require('../middleware/authMiddleware');
+const { validateRating } = require('../middleware/ratingValidators');
+const router = new Router();
 
-router.get('/', ratingController.getRatings)
-router.post('/add', authMiddleware, ratingController.addRating)
+router.get('/', ratingController.getRatings);
 
-//admin
-router.post('/moderate', authMiddleware, ratingController.moderateRating)
+router.get('/product/:productId', ratingController.getRatings);
 
-module.exports = router
+router.post('/add', authMiddleware, validateRating, ratingController.addRating);
+
+router.get('/average/:productId', ratingController.getAverageRating);
+
+router.post('/moderate', authMiddleware, ratingController.moderateRating);
+
+module.exports = router;
