@@ -1,11 +1,17 @@
 import Admin from './pages/Admin';
 import {
     ADMIN_ROUTE,
-    BASKET_ROUTE, CATEGORY_ROUTE, DELIVERYANDASSEMBLY_ROUTE,
+    BASKET_ROUTE,
+    CATEGORY_ROUTE,
+    DELIVERYANDASSEMBLY_ROUTE,
     FAVORITES_ROUTE,
     FURNITURE_ROUTE,
+    LOGIN_ROUTE,
     REGISTRATION_ROUTE,
-    SHOP_ROUTE, WARRANTY_ROUTE
+    SHOP_ROUTE,
+    WARRANTY_ROUTE,
+    PAYMENT_ROUTE,
+    CREDIT_ROUTE
 } from "./utils/consts";
 import Basket from './pages/Basket';
 import Favorites from './pages/Favorites';
@@ -16,6 +22,7 @@ import Credit from './pages/Credit';
 import Payment from './pages/Payment';
 import Warranty from './pages/Warranty';
 import DeliveryAndAssembly from './pages/DeliveryAndAssembly';
+import favorites from "./pages/Favorites";
 
 
 
@@ -26,11 +33,11 @@ export const authRouthes = [
     },
     {
         path: BASKET_ROUTE,
-        Component: Admin
+        Component: Basket
     },
     {
         path: FAVORITES_ROUTE,
-        Component: Admin
+        Component: Favorites
     },
 ]
 export const publicRoutes = [
