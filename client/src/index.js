@@ -4,6 +4,7 @@ import App from './App';
 import UserStore from './store/UserStore';
 import FurnitureStore from "./store/FurnitureStore"; // Не забудьте импортировать UserStore
 
+
 export const Context = createContext(null);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
