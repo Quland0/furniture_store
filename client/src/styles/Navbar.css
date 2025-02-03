@@ -1,0 +1,139 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    font-family: "PT Sans", sans-serif;
+}
+/* Общие стили для Navbar */
+
+.navbar {
+    background-color: #fff;       /* Белый фон */
+    height: 78px;                 /* Высота Navbar */
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid #ddd; /* Лёгкая граница снизу */
+}
+
+.navbar-container {
+    width: 1615px;                /* Центрирование контента в пределах 1615px */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0;
+}
+
+/* Логотип */
+.navbar-logo {
+    height: 55px;                 /* Размер логотипа */
+}
+
+/* Кнопка "Каталог" */
+.catalog-button {
+    display: flex;
+    align-items: center;
+    font-family: "PT Sans", sans-serif;
+    font-size: 18px;
+    background-color: #c0956c;    /* Цвет кнопки */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    /* Убираем отступ слева, чтобы кнопка была вплотную к поисковой строке */
+    margin: 0 !important;
+    height: 43px;
+}
+
+.catalog-button:hover {
+    background-color: #b0835a;    /* Цвет при наведении */
+}
+
+.catalog-icon {
+    margin-right: 8px;
+    font-size: 20px;
+}
+
+/* Поле поиска */
+.search-bar {
+    display: flex;
+    align-items: center;
+    width: 685px;
+    margin-left: -85px; /* Добавлено это свойство */
+}
+
+.search-bar input {
+    flex: 1;
+    height: 43px;
+    border: 1px solid #ccc;
+    border-right: none; /* Убираем правую границу */
+    border-radius: 4px 0 0 4px;
+    padding: 0 10px;
+    font-size: 12px;
+}
+
+.search-button {
+    height: 43px;
+    width: 40px;
+    border: 1px solid #ccc;
+    border-left: none;
+    background-color: #fff;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.search-button img {
+    height: 22px;
+}
+
+/* Иконки справа */
+.navbar-icons {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-left: 20px;
+    cursor: pointer;
+}
+
+.navbar-icon img {
+    height: 32px; /* Базовый размер для иконок */
+}
+
+.icon-text {
+    font-family: "PT Sans", sans-serif;
+    font-size: 18px;   /* Размер шрифта для текста под иконкой */
+    margin-top: 4px;
+    color: #555;
+}
+
+/* Индивидуальные стили для корзины (basket) */
+.basket-icon img {
+    height: 32px; /* Настраиваем размер корзины, можно увеличить, если нужно */
+}
+.basket-icon span {
+    padding-top: -2px;
+}
+
+.favorite-icon img {
+    height: 40px;
+    margin-top: -6px;
+}
+
+.favorite-icon span {
+    margin-top: 0;
+}
+
+.navbar-icon:hover {
+    opacity: 0.8;
+}
