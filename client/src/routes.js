@@ -11,7 +11,9 @@ import {
     SHOP_ROUTE,
     WARRANTY_ROUTE,
     PAYMENT_ROUTE,
-    CREDIT_ROUTE
+    CREDIT_ROUTE,
+    MEASURER_ROUTE,
+    CONTACTS_ROUTE
 } from "./utils/consts";
 import Basket from './pages/Basket';
 import Favorites from './pages/Favorites';
@@ -22,11 +24,10 @@ import Credit from './pages/Credit';
 import Payment from './pages/Payment';
 import Warranty from './pages/Warranty';
 import DeliveryAndAssembly from './pages/DeliveryAndAssembly';
-import favorites from "./pages/Favorites";
+import Measurer from "./pages/Measurer";
+import Contacts from "./pages/Contacts";
 
-
-
-export const authRouthes = [
+export const authRoutes = [
     {
         path: ADMIN_ROUTE,
         Component: Admin
@@ -39,7 +40,8 @@ export const authRouthes = [
         path: FAVORITES_ROUTE,
         Component: Favorites
     },
-]
+];
+
 export const publicRoutes = [
     {
         path: SHOP_ROUTE,
@@ -72,5 +74,13 @@ export const publicRoutes = [
     {
         path: CREDIT_ROUTE,
         Component: Credit
+    },
+    {
+        path: MEASURER_ROUTE,
+        Component: Measurer
+    },
+    {
+        path: CONTACTS_ROUTE,
+        Component: Contacts
     }
-]
+];

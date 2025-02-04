@@ -1,3 +1,4 @@
+/* Сброс стилей */
 * {
     margin: 0;
     padding: 0;
@@ -6,50 +7,126 @@
 body {
     font-family: "PT Sans", sans-serif;
 }
-/* Общие стили для Navbar */
+
+a {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+.top-bar {
+    background-color: white;
+    padding: 10px 20px;
+    font-size: 18px;
+    color: #555;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    height: 50px;
+}
+
+.top-bar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1684px;
+    margin: 0 auto;
+}
+
+.top-bar-address {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.top-bar-address img {
+    align-self: center;
+    height: 40px;
+}
+
+.top-bar-address span {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-left: -5px;
+}
+
+.top-bar-info {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    max-width: 685px;
+    margin-left: 220px;
+    gap: 50px;
+}
+
+.top-bar-info a {
+    text-decoration: none;
+    color: #555;
+    margin: 0 13px;
+    white-space: nowrap;
+}
+
+.top-bar-phones {
+    flex: 1;
+    text-align: right;
+}
+
+.top-bar-phones a {
+    text-decoration: none;
+    color: #555;
+    margin-left: 15px;
+}
+
+.top-bar-info a:hover,
+.top-bar-phones a:hover {
+    color: #c0956c;
+}
 
 .navbar {
-    background-color: #fff;       /* Белый фон */
-    height: 78px;                 /* Высота Navbar */
+    background-color: #fff;
+    height: 78px;
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    border-bottom: 1px solid #ddd; /* Лёгкая граница снизу */
+    border-bottom: 1px solid #ddd;
+    position: fixed;
+    top: 65px;
+    z-index: 999;
 }
 
 .navbar-container {
-    width: 1615px;                /* Центрирование контента в пределах 1615px */
+    width: 1615px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 0;
 }
 
-/* Логотип */
 .navbar-logo {
-    height: 55px;                 /* Размер логотипа */
+    height: 55px;
 }
 
-/* Кнопка "Каталог" */
 .catalog-button {
     display: flex;
     align-items: center;
-    font-family: "PT Sans", sans-serif;
     font-size: 18px;
-    background-color: #c0956c;    /* Цвет кнопки */
+    background-color: #c0956c;
     color: white;
     padding: 10px 20px;
     border: none;
     border-radius: 6px;
     cursor: pointer;
-    /* Убираем отступ слева, чтобы кнопка была вплотную к поисковой строке */
-    margin: 0 !important;
     height: 43px;
 }
 
 .catalog-button:hover {
-    background-color: #b0835a;    /* Цвет при наведении */
+    background-color: #b0835a;
 }
 
 .catalog-icon {
@@ -57,22 +134,22 @@ body {
     font-size: 20px;
 }
 
-/* Поле поиска */
 .search-bar {
     display: flex;
     align-items: center;
     width: 685px;
-    margin-left: -85px; /* Добавлено это свойство */
+    margin-left: -85px;
 }
 
 .search-bar input {
     flex: 1;
     height: 43px;
     border: 1px solid #ccc;
-    border-right: none; /* Убираем правую границу */
+    border-right: none;
     border-radius: 4px 0 0 4px;
     padding: 0 10px;
     font-size: 12px;
+    outline: none;
 }
 
 .search-button {
@@ -92,7 +169,6 @@ body {
     height: 22px;
 }
 
-/* Иконки справа */
 .navbar-icons {
     display: flex;
     align-items: center;
@@ -107,31 +183,17 @@ body {
 }
 
 .navbar-icon img {
-    height: 32px; /* Базовый размер для иконок */
+    height: 32px;
+}
+
+.location-logo{
+    height: 32px;
 }
 
 .icon-text {
-    font-family: "PT Sans", sans-serif;
-    font-size: 18px;   /* Размер шрифта для текста под иконкой */
+    font-size: 18px;
     margin-top: 4px;
     color: #555;
-}
-
-/* Индивидуальные стили для корзины (basket) */
-.basket-icon img {
-    height: 32px; /* Настраиваем размер корзины, можно увеличить, если нужно */
-}
-.basket-icon span {
-    padding-top: -2px;
-}
-
-.favorite-icon img {
-    height: 40px;
-    margin-top: -6px;
-}
-
-.favorite-icon span {
-    margin-top: 0;
 }
 
 .navbar-icon:hover {
