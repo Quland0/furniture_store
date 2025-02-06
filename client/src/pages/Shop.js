@@ -1,11 +1,12 @@
 import React from 'react';
+import ImageSlider from "../components/Slider";
+import Catalog from "../components/Catalog";
 
 const Shop = () => {
-    console.log("Shop component rendered!");
     return (
-
-        <div>
-            MAIN
+        <div className="page-container">
+            <ImageSlider />
+            <Catalog />
         </div>
     );
 };
