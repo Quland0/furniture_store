@@ -26,6 +26,7 @@ import Warranty from './pages/Warranty';
 import DeliveryAndAssembly from './pages/DeliveryAndAssembly';
 import Measurer from "./pages/Measurer";
 import Contacts from "./pages/Contacts";
+import CategoryPage from "./pages/CategoryPage";
 
 export const authRoutes = [
     {
@@ -82,5 +83,9 @@ export const publicRoutes = [
     {
         path: CONTACTS_ROUTE,
         Component: Contacts
+    },
+    {
+        path: CATEGORY_ROUTE + '/:categoryName',
+        Component: CategoryPage
     }
 ];

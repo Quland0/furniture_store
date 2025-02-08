@@ -1,0 +1,202 @@
+.product-section {
+    max-width: 1610px;
+    margin: auto;
+    padding: 20px 40px;
+    background-color: white;
+}
+
+.section-title {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 24px;
+    text-align: left;
+    color: #333;
+}
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 32px;
+}
+
+.product-card {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.product-image {
+    width: 100%;
+    height: 180px; /* Установлена стандартная высота */
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 16px;
+}
+
+.product-price {
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.product-name {
+    font-size: 16px;
+    font-weight: 500;
+    color: #555;
+    margin-bottom: 12px;
+    text-align: center;
+}
+
+.product-rating {
+    font-size: 14px;
+    color: #777;
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.rating-details {
+    margin-left: 6px;
+    color: #aaa;
+    font-size: 14px;
+}
+
+.add-to-cart-button {
+    width: 100%;
+    padding: 12px;
+    background-color: #a67c52;
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: auto;
+}
+
+.add-to-cart-button:hover {
+    background-color: #8c6843;
+}
+
+.favorite-button {
+    background: none;
+    border: none;
+    color: #a67c52;
+    font-size: 20px;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: color 0.3s;
+}
+
+.favorite-button:hover {
+    color: #8c6843;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+    padding: 0 16px;
+}
+
+.view-all-link {
+    color: #a67c52;
+    font-size: 14px;
+    text-decoration: none;
+    transition: opacity 0.3s;
+}
+
+.view-all-link:hover {
+    opacity: 0.8;
+}
+
+.product-image-container {
+    position: relative;
+    margin-bottom: 16px;
+}
+
+.favorite-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s;
+}
+
+.favorite-button:hover {
+    background: #fff;
+    transform: scale(1.1);
+}
+
+.product-info {
+    padding: 0 8px;
+}
+
+.rating-container {
+    display: flex;
+    align-items: center;
+    margin: 12px 0;
+}
+
+.stars {
+    color: #ddd;
+}
+
+.star.filled {
+    color: #ffc107;
+}
+
+.reviews-count {
+    color: #888;
+    font-size: 12px;
+    margin-left: 8px;
+}
+
+.product-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 40px;
+    width: 100%;
+}
+
+.browse-button {
+    background-color: #a67c52;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 4px;
+    text-decoration: none;
+    margin-top: 16px;
+    display: inline-block;
+    transition: background-color 0.3s;
+}
+
+.browse-button:hover {
+    background-color: #8c6843;
+}

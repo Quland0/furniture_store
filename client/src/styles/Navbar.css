@@ -20,7 +20,7 @@ a:hover {
     padding: 10px 20px;
     font-size: 13px;
     color: #555;
-    position: fixed;
+    position: static;
     top: 0;
     left: 0;
     width: 100%;
@@ -100,18 +100,26 @@ a:hover {
     display: flex;
     align-items: center;
     justify-content: center;
-    position: fixed;
-    top: 55px;
+    position: static;
     z-index: 999;
+    border-bottom: 1px solid #ddd;
 }
 
 .navbar-container {
-    width: 1615px;
+    width: 100%;
+    max-width: 1615px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.navbar-content {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 0;
+    width: 100%;
+    gap: 20px;
 }
+
 
 .navbar-logo {
     height: 55px;

@@ -29,6 +29,7 @@ const Furniture = sequelize.define("furniture", {
     name: { type: DataTypes.STRING, allowNull: false },
     price: { type: DataTypes.INTEGER, allowNull: false },
     rating: { type: DataTypes.INTEGER, defaultValue: 0 },
+    new: { type: DataTypes.BOOLEAN, allowNull: true },
     img: { type: DataTypes.STRING, allowNull: false },
 });
 
