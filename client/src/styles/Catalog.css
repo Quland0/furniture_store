@@ -1,29 +1,32 @@
 .catalog {
-    max-width: 1615px;
+    width: 1613px;
     margin: 50px auto;
-    text-align: left;
+    padding: 0 16px;
+    box-sizing: border-box;
 }
 
 .catalog h2 {
     font-size: 28px;
     font-weight: bold;
-    margin-bottom: 20px;
+    margin: 0 0 28px 14px;
 }
 
 .catalog-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(352px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(4, 352px);
+    gap: 30px 65px;
     justify-content: center;
 }
 
 .catalog-item {
-    position: relative;
     width: 352px;
     height: 325px;
     background: #f8f8f8;
     border-radius: 12px;
     padding: 20px;
+    margin: 0 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    position: relative;
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -51,8 +54,6 @@
     justify-content: center;
 }
 
-
 .catalog-item:hover img {
     transform: scale(1.1);
 }
-

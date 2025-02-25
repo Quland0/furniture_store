@@ -1,0 +1,113 @@
+.catalog-sidebar {
+    position: absolute;
+    top: 110px;
+    left: 0;
+    width: 800px;
+    margin-left: 520px;
+    border-radius: 10px;
+    background-color: #fff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    opacity: 0;
+    visibility: hidden;
+    z-index: 2000;
+    min-height: 300px;
+}
+
+.catalog-sidebar.open {
+    opacity: 1;
+    visibility: visible;
+}
+
+.catalog-sidebar-container {
+    display: flex;
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 20px;
+    box-sizing: border-box;
+    position: relative;
+}
+
+/* Кнопка закрытия */
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+/* Левая колонка */
+.catalog-sidebar-left {
+    width: 240px;
+    border-right: 1px solid #ddd;
+    padding-right: 20px;
+}
+
+.category-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.category-list li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 0;
+    cursor: pointer;
+    color: #333;
+    transition: color 0.2s;
+    font-size: 16px;
+}
+
+.category-list li:hover {
+    color: #c0956c;
+}
+
+.category-list li.active {
+    font-weight: bold;
+    color: #c0956c;
+}
+
+.category-icon {
+    width: 20px;
+    height: 20px;
+}
+
+/* Правая колонка */
+.catalog-sidebar-right {
+    flex: 1;
+    padding-left: 20px;
+}
+
+.catalog-sidebar-right h3 {
+    margin-top: 0;
+    font-size: 18px;
+    margin-bottom: 12px;
+}
+
+.subcategory-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.subcategory-list li {
+    margin: 6px 0;
+    color: #555;
+    cursor: pointer;
+    font-size: 14px;
+    transition: color 0.2s;
+}
+
+.subcategory-list li:hover {
+    color: #c0956c;
+}
+
+.subcategory-list li a {
+    color: inherit;
+    text-decoration: none;
+}

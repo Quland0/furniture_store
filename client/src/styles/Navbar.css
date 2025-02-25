@@ -16,18 +16,17 @@ a:hover {
 }
 
 .top-bar {
+    position: fixed;
+    top: 0;
+    width: 100%;
     background-color: white;
     padding: 10px 20px;
     font-size: 13px;
     color: #555;
-    position: static;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 1000;
     height: 50px;
+    z-index: 1000;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
 .top-bar-container {
     display: flex;
     justify-content: space-between;
@@ -94,16 +93,16 @@ a:hover {
 }
 
 .navbar {
-    background-color: #fff;
-    height: 78px;
+    position: fixed;
+    top: 50px;
     width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: static;
+    height: 78px;
+    background: white;
     z-index: 999;
     border-bottom: 1px solid #ddd;
+    transition: top 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
 
 .navbar-container {
     width: 100%;

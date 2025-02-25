@@ -1,11 +1,12 @@
+import React, {useEffect, useState} from "react";
 import { Link } from "react-router-dom";
 import "../styles/Navbar.css";
 import logo from "../assets/images/logos/logo.png";
-import userIcon from "../assets/images/icons/user.svg";
-import searchIcon from "../assets/images/icons/search.svg";
-import basketIcon from "../assets/images/icons/basket.svg";
-import favoriteIcon from "../assets/images/icons/favorite.svg";
-import locationIcon from "../assets/images/icons/location.svg";
+import userIcon from "../assets/icons/user.svg";
+import searchIcon from "../assets/icons/search.svg";
+import basketIcon from "../assets/icons/basket.svg";
+import favoriteIcon from "../assets/icons/favorite.svg";
+import locationIcon from "../assets/icons/location.svg";
 
 import {
     SHOP_ROUTE,
@@ -14,10 +15,48 @@ import {
     BASKET_ROUTE,
     DELIVERYANDASSEMBLY_ROUTE,
     MEASURER_ROUTE,
-    CONTACTS_ROUTE, CREDIT_ROUTE,
+    CONTACTS_ROUTE,
+    CREDIT_ROUTE,
 } from "../utils/consts";
+import CatalogSidebar from "./CatalogSidebar";
 
 const Navbar = () => {
+    useEffect(() => {
+        let ticking = false;
+
+        const handleScroll = () => {
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    const currentScroll = window.scrollY;
+                    const topBar = document.querySelector('.top-bar');
+                    const navbar = document.querySelector('.navbar');
+
+                    if (currentScroll > 50) {
+                        topBar.style.transform = `translateY(${Math.max(-50, -currentScroll/2)}px)`;
+                        navbar.style.top = `${Math.max(0, 50 - currentScroll/2)}px`;
+                    } else {
+                        topBar.style.transform = 'translateY(0)';
+                        navbar.style.top = '50px';
+                    }
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+    const [sidebarOpen, setSidebarOpen] = useState(false);
+
+    const handleToggleSidebar = () => {
+        setSidebarOpen((prev) => !prev);
+    };
+
+    const handleCloseSidebar = () => {
+        setSidebarOpen(false);
+    };
+
     return (
         <header>
             <div className="top-bar">
@@ -44,11 +83,9 @@ const Navbar = () => {
                         <Link to={SHOP_ROUTE}>
                             <img src={logo} alt="МебельРум161" className="navbar-logo"/>
                         </Link>
-                        <Link to={SHOP_ROUTE}>
-                            <button className="catalog-button">
-                                <span className="catalog-icon">&#9776;</span> Каталог
-                            </button>
-                        </Link>
+                        <button className="catalog-button" onClick={handleToggleSidebar}>
+                            <span className="catalog-icon">&#9776;</span> Каталог
+                        </button>
                         <div className="search-bar">
                             <input type="text" placeholder="Поиск по сайту..."/>
                             <button className="search-button">
@@ -72,6 +109,7 @@ const Navbar = () => {
                     </div>
                 </div>
             </nav>
+            <CatalogSidebar isOpen={sidebarOpen} onClose={handleCloseSidebar} />
         </header>
     );
 };

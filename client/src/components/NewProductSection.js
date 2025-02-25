@@ -3,10 +3,31 @@ import { observer } from 'mobx-react-lite';
 import { Context } from '../index';
 import { Link } from 'react-router-dom';
 import '../styles/NewProductSection.css';
+import favoriteIcon from "../assets/icons/favorite.svg";
 
 const NewProductSection = observer(() => {
     const { furniture } = useContext(Context);
     const newProducts = furniture.Furnitures.filter(product => product.new);
+
+    const renderStars = (rating) => {
+        const stars = [];
+        for (let i = 1; i <= 5; i++) {
+            if (rating >= i) {
+                stars.push(
+                    <span key={i} className="star filled">★</span>
+                );
+            } else if (rating >= i - 0.5) {
+                stars.push(
+                    <span key={i} className="star half-filled">★</span>
+                );
+            } else {
+                stars.push(
+                    <span key={i} className="star">★</span>
+                );
+            }
+        }
+        return stars;
+    };
 
     return (
         <section className="product-section">
@@ -28,22 +49,17 @@ const NewProductSection = observer(() => {
                                     className="product-image"
                                     loading="lazy"
                                 />
-                                <button className="favorite-button">
-                                    {product.isFavorite ? '❤️' : '♡'}
-                                </button>
                             </div>
 
                             <div className="product-info">
                                 <h3 className="product-name">{product.name}</h3>
-                                <div className="rating-container">
+                                <div className="product-rating">
                                     <div className="stars">
-                                        {[...Array(5)].map((_, i) => (
-                                            <span key={i} className={`star ${i < product.rating ? 'filled' : ''}`}>
-                                                ★
-                                            </span>
-                                        ))}
+                                        {renderStars(product.rating)}
                                     </div>
-                                    <span className="reviews-count">({product.reviewsCount} отзывов)</span>
+                                    <span className="reviews-count">
+                                        ({product.reviewsCount} отзывов)
+                                    </span>
                                 </div>
                                 <div className="product-footer">
                                     <span className="product-price">
@@ -55,6 +71,9 @@ const NewProductSection = observer(() => {
                                             disabled={product.inCart}
                                         >
                                             {product.inCart ? 'В корзине' : 'В корзину'}
+                                        </button>
+                                        <button className="favorite-button">
+                                            <img src={favoriteIcon} alt="Избранное" />
                                         </button>
                                     </div>
                                 </div>

@@ -16,11 +16,11 @@ export default class FurnitureStore {
             { id: 2, name: "Milana group" },
         ];
         this._furnitures = [
-            { id: 1, name: "Спальня виктория", price: 130000, rating: 1, new: true, img: img1 },
-            { id: 2, name: "Кухня Джоконда", price: 120000, rating: 4, new: true, img: img2 },
-            { id: 3, name: "Кровать Версаль", price: 10000, rating: 3.5, new: true, img: img3 },
-            { id: 4, name: "Стол стулович", price: 30000, rating: 3, new: false, img: img4 },
-            { id: 5, name: "Диван креслович", price: 100000, rating: 5, new: true, img: img5 },
+            { id: 1, name: "Спальня виктория", price: 130000, rating: 1, reviewsCount: 12, new: true, img: img1 },
+            { id: 2, name: "Кухня Джоконда", price: 120000, rating: 4, reviewsCount: 12, new: true, img: img2 },
+            { id: 3, name: "Кровать Версаль", price: 10000, rating: 3.5, reviewsCount: 12, new: true, img: img3 },
+            { id: 4, name: "Стол стулович", price: 30000, rating: 3, reviewsCount: 12, new: false, img: img4 },
+            { id: 5, name: "Диван креслович", price: 100000, rating: 5, reviewsCount: 12, new: true, img: img5 },
         ];
         makeAutoObservable(this);
     }
