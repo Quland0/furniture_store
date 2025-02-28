@@ -1,0 +1,58 @@
+.credit-page {
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    background-color: #fff;
+}
+
+.credit-container {
+    line-height: 1.6;
+    color: #333;
+}
+
+.credit-title {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.credit-intro {
+    font-size: 84px;
+    font-weight: bold;
+    line-height: 1.4;
+}
+
+.credit-container h2 {
+    font-size: 20px;
+    margin-top: 24px;
+    margin-bottom: 12px;
+    font-weight: bold;
+}
+
+.credit-container p {
+    margin-bottom: 16px;
+    font-size: 16px;
+}
+
+.credit-container ul {
+    list-style: disc inside;
+    margin-left: 20px;
+    margin-bottom: 16px;
+}
+
+.credit-container li {
+    margin-bottom: 8px;
+    font-size: 16px;
+}
+
+.credit-logo-block {
+    margin: 20px 0;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.credit-bank-logo {
+    width: 220px;
+    height: auto;
+}
