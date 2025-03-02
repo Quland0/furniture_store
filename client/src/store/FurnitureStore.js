@@ -16,11 +16,96 @@ export default class FurnitureStore {
             { id: 2, name: "Milana group" },
         ];
         this._furnitures = [
-            { id: 1, name: "Спальня виктория", price: 130000, rating: 1, reviewsCount: 12, new: true, img: img1 },
-            { id: 2, name: "Кухня Джоконда", price: 120000, rating: 4, reviewsCount: 12, new: true, img: img2 },
-            { id: 3, name: "Кровать Версаль", price: 10000, rating: 3.5, reviewsCount: 12, new: true, img: img3 },
-            { id: 4, name: "Стол стулович", price: 30000, rating: 3, reviewsCount: 12, new: false, img: img4 },
-            { id: 5, name: "Диван креслович", price: 100000, rating: 5, reviewsCount: 12, new: true, img: img5 },
+            {
+                id: 1,
+                name: "Спальня виктория",
+                price: 130000,
+                rating: 1,
+                reviewsCount: 12,
+                new: true,
+                img: img1,
+                category: "bedroom"
+            },
+            {
+                id: 2,
+                name: "Кухня Джоконда",
+                price: 120000,
+                rating: 4,
+                reviewsCount: 12,
+                new: true,
+                img: img2,
+                category: "kitchen"
+            },
+            {
+                id: 3,
+                name: "Кровать Версаль",
+                price: 10000,
+                rating: 3.5,
+                reviewsCount: 12,
+                new: true,
+                img: img3,
+                categories: ["bedroom", "bed"]
+            },
+            {
+                id: 4,
+                name: "Стол стулович",
+                price: 30000,
+                rating: 3,
+                reviewsCount: 12,
+                new: false,
+                img: img4,
+                category: "tables"
+            },
+            {
+                id: 5,
+                name: "Диван креслович",
+                price: 100000,
+                rating: 5,
+                reviewsCount: 12,
+                new: true,
+                img: img5,
+                category: "sofas"
+            },
+            {
+                id: 6,
+                name: "Кровать Версаль",
+                price: 10000,
+                rating: 3.5,
+                reviewsCount: 12,
+                new: true,
+                img: img3,
+                categories: ["bedroom", "bed"]
+            },
+            {
+                id: 7,
+                name: "Кровать Версаль",
+                price: 10000,
+                rating: 3.5,
+                reviewsCount: 12,
+                new: true,
+                img: img3,
+                categories: ["bedroom", "bed"]
+            },
+            {
+                id: 8,
+                name: "Кровать Версаль",
+                price: 10000,
+                rating: 3.5,
+                reviewsCount: 12,
+                new: true,
+                img: img3,
+                categories: ["bedroom", "bed"]
+            },
+            {
+                id: 9,
+                name: "Кровать Версаль",
+                price: 10000,
+                rating: 3.5,
+                reviewsCount: 12,
+                new: true,
+                img: img3,
+                categories: ["bedroom", "bed"]
+            },
         ];
         makeAutoObservable(this);
     }

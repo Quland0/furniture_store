@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import "../styles/Navbar.css";
 import logo from "../assets/images/logos/logo.png";
@@ -47,7 +47,9 @@ const Navbar = () => {
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
+
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const catalogButtonRef = useRef(null);
 
     const handleToggleSidebar = () => {
         setSidebarOpen((prev) => !prev);
@@ -83,7 +85,7 @@ const Navbar = () => {
                         <Link to={SHOP_ROUTE}>
                             <img src={logo} alt="МебельРум161" className="navbar-logo"/>
                         </Link>
-                        <button className="catalog-button" onClick={handleToggleSidebar}>
+                        <button className="catalog-button" onClick={handleToggleSidebar} ref={catalogButtonRef}>
                             <span className="catalog-icon">&#9776;</span> Каталог
                         </button>
                         <div className="search-bar">
@@ -109,7 +111,7 @@ const Navbar = () => {
                     </div>
                 </div>
             </nav>
-            <CatalogSidebar isOpen={sidebarOpen} onClose={handleCloseSidebar} />
+            <CatalogSidebar isOpen={sidebarOpen} onClose={handleCloseSidebar} catalogButtonRef={catalogButtonRef} />
         </header>
     );
 };

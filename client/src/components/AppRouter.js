@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { authRoutes, publicRoutes } from '../routes';
 import { SHOP_ROUTE } from '../utils/consts';
 import {Context} from "../index";
+import CategoryPage from "../pages/CategoryPage";
 
 
 const AppRouter = () => {
@@ -18,6 +19,7 @@ const AppRouter = () => {
                 <Route key={path} path={path} element={<Component />} />
             ))}
             <Route path="*" element={<Navigate to={SHOP_ROUTE} />} />
+            <Route path="/category/:categoryName" element={<CategoryPage />} />
         </Routes>
     );
 };

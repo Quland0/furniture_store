@@ -1,27 +1,49 @@
-import React from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useContext, useEffect, useState } from 'react';
+import { useParams, useLocation } from 'react-router-dom';
+import { Context } from '../index';
+import ProductCard from '../components/ProductCard';
+import '../styles/CategoryPage.css';
 
 const CategoryPage = () => {
     const { categoryName } = useParams();
+    const { furniture } = useContext(Context);
+    const [filteredProducts, setFilteredProducts] = useState([]);
+    const location = useLocation();
 
-    // Данные категорий
-    const categoryData = {
-        bedroom: 'Информация о спальнях: кровати, шкафы, прикроватные тумбы.',
-        kitchen: 'Информация о кухнях: кухонные гарнитуры, столешницы.',
-        "living-room": 'Информация о гостиных: диваны, шкафы, журнальные столики.',
-        "kids-room": 'Информация о детских: кроватки, рабочие столы, стулья.',
-        tables: 'Информация о столах и стульях.',
-        sofas: 'Информация о мягкой мебели: диваны, кресла.',
-        hallway: 'Информация о мебели для прихожей.',
-        chandeliers: 'Информация о люстрах.',
-    };
+    useEffect(() => {
+        let products = furniture.Furnitures;
 
-    const content = categoryData[categoryName] || 'Категория не найдена';
+        if (categoryName === 'new') {
+            products = products.filter(product => product.new);
+        } else {
+            products = products.filter(product => {
+                if (product.categories && Array.isArray(product.categories)) {
+                    return product.categories.includes(categoryName);
+                } else if (product.category) {
+                    return product.category === categoryName;
+                }
+                return false;
+            });
+        }
+        products = products.sort((a, b) => b.id - a.id);
+
+        setFilteredProducts(products);
+    }, [categoryName, furniture.Furnitures, location]);
 
     return (
-        <div style={{padding: '20px'}}>
-            <h1 style={{marginTop: '120px'}}>Категория: {categoryName}</h1>
-            <p>{content}</p>
+        <div className="category-page">
+            <h1 className="category-title">
+                {categoryName === 'new' ? 'Новинки' : `Мебель для ${categoryName}`}
+            </h1>
+            <div className="category-grid">
+                {filteredProducts.length > 0 ? (
+                    filteredProducts.map(product => (
+                        <ProductCard key={product.id} product={product} />
+                    ))
+                ) : (
+                    <p>В данной категории пока нет товаров.</p>
+                )}
+            </div>
         </div>
     );
 };

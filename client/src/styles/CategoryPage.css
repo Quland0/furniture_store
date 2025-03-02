@@ -1,0 +1,21 @@
+.category-page {
+    max-width: 1615px;
+    margin: 40px auto;
+    padding: 20px 40px;
+    background-color: #fff;
+}
+
+.category-title {
+    font-size: 28px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 32px;
+    text-align: left;
+}
+
+.category-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 40px;
+    margin: 0 auto;
+}

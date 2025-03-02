@@ -1,9 +1,5 @@
 .catalog-sidebar {
-    position: absolute;
-    top: 110px;
-    left: 0;
     width: 800px;
-    margin-left: 520px;
     border-radius: 10px;
     background-color: #fff;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -28,7 +24,6 @@
     position: relative;
 }
 
-/* Кнопка закрытия */
 .close-btn {
     position: absolute;
     top: 10px;
@@ -39,7 +34,6 @@
     cursor: pointer;
 }
 
-/* Левая колонка */
 .catalog-sidebar-left {
     width: 240px;
     border-right: 1px solid #ddd;

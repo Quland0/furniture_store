@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/CatalogSidebar.css';
 
-// Импорт иконок для категорий
 import kitchenIcon from '../assets/icons/kitchen.svg';
 import bedroomIcon from '../assets/icons/bedroom.svg';
 import livingRoomIcon from '../assets/icons/livingroom.svg';
@@ -63,12 +62,12 @@ const catalogData = [
     },
 ];
 
-const CatalogSidebar = ({ isOpen, onClose }) => {
+const CatalogSidebar = ({ isOpen, onClose, catalogButtonRef }) => {
     const [selectedCategory, setSelectedCategory] = useState(null);
+    const [sidebarPosition, setSidebarPosition] = useState({ top: 0, left: 0 });
     const sidebarRef = useRef(null);
 
     const handleSelectCategory = (catId) => {
-
         if (selectedCategory === catId) {
             setSelectedCategory(null);
         } else {
@@ -79,8 +78,20 @@ const CatalogSidebar = ({ isOpen, onClose }) => {
     const activeCategory = catalogData.find(cat => cat.id === selectedCategory);
 
     useEffect(() => {
+        if (isOpen && catalogButtonRef && catalogButtonRef.current) {
+            const buttonRect = catalogButtonRef.current.getBoundingClientRect();
+
+            setSidebarPosition({
+                top: buttonRect.bottom + 15,
+                left: buttonRect.right - 130
+            });
+        }
+    }, [isOpen, catalogButtonRef]);
+
+    useEffect(() => {
         const handleClickOutside = (e) => {
-            if (isOpen && sidebarRef.current && !sidebarRef.current.contains(e.target)) {
+            if (isOpen && sidebarRef.current && !sidebarRef.current.contains(e.target) &&
+                catalogButtonRef && catalogButtonRef.current && !catalogButtonRef.current.contains(e.target)) {
                 onClose();
             }
         };
@@ -92,12 +103,42 @@ const CatalogSidebar = ({ isOpen, onClose }) => {
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
-    }, [isOpen, onClose]);
+    }, [isOpen, onClose, catalogButtonRef]);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            if (isOpen && catalogButtonRef && catalogButtonRef.current) {
+                const buttonRect = catalogButtonRef.current.getBoundingClientRect();
+
+                setSidebarPosition({
+                    top: buttonRect.bottom + 15,
+                    left: buttonRect.right - 650
+                });
+            }
+        };
+
+        if (isOpen) {
+            window.addEventListener('scroll', handleScroll);
+        }
+
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, [isOpen, catalogButtonRef]);
 
     return (
-        <div className={`catalog-sidebar ${isOpen ? 'open' : ''}`} ref={sidebarRef}>
+        <div
+            className={`catalog-sidebar ${isOpen ? 'open' : ''}`}
+            ref={sidebarRef}
+            style={{
+                position: 'fixed',
+                top: `${sidebarPosition.top}px`,
+                left: `${sidebarPosition.left}px`,
+                transform: 'none',
+                marginLeft: 0
+            }}
+        >
             <div className="catalog-sidebar-container">
-
                 <button className="close-btn" onClick={onClose}>×</button>
 
                 <div className="catalog-sidebar-left">
