@@ -6,7 +6,7 @@
     transition: opacity 0.3s ease, visibility 0.3s ease;
     opacity: 0;
     visibility: hidden;
-    z-index: 2000;
+    z-index: 1100;
     min-height: 300px;
 }
 
@@ -71,7 +71,6 @@
     height: 20px;
 }
 
-/* Правая колонка */
 .catalog-sidebar-right {
     flex: 1;
     padding-left: 20px;

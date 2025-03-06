@@ -22,32 +22,23 @@ import CatalogSidebar from "./CatalogSidebar";
 
 const Navbar = () => {
     useEffect(() => {
-        let ticking = false;
-
         const handleScroll = () => {
-            if (!ticking) {
-                window.requestAnimationFrame(() => {
-                    const currentScroll = window.scrollY;
-                    const topBar = document.querySelector('.top-bar');
-                    const navbar = document.querySelector('.navbar');
+            const currentScroll = window.scrollY;
+            const topBar = document.querySelector('.top-bar');
+            const navbar = document.querySelector('.navbar');
 
-                    if (currentScroll > 50) {
-                        topBar.style.transform = `translateY(${Math.max(-50, -currentScroll/2)}px)`;
-                        navbar.style.top = `${Math.max(0, 50 - currentScroll/2)}px`;
-                    } else {
-                        topBar.style.transform = 'translateY(0)';
-                        navbar.style.top = '50px';
-                    }
-                    ticking = false;
-                });
-                ticking = true;
+            if (currentScroll > 50) {
+                topBar.style.transform = 'translateY(-100%)';
+                navbar.style.top = '0';
+            } else {
+                topBar.style.transform = 'translateY(0)';
+                navbar.style.top = '50px';
             }
         };
 
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
-
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const catalogButtonRef = useRef(null);
 

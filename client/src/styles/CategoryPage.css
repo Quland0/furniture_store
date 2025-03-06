@@ -19,3 +19,142 @@
     gap: 40px;
     margin: 0 auto;
 }
+
+.filter-item {
+    position: relative;
+    margin-bottom: 20px;
+    margin-right: 15px;
+    display: inline-block;
+}
+
+.filter-item > button {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 30px;
+    padding: 10px 35px 10px 20px;
+    font-size: 16px;
+    color: #000;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.filter-item > button:hover {
+    background-color: #f5f5f5;
+    border-color: #d0d0d0;
+}
+
+.filter-item > button::after {
+    content: "";
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 9px;
+    height: 9px;
+    background-image: url("../assets/icons/dropdown.svg");
+    background-size: contain;
+    background-repeat: no-repeat;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.filter-item > button[aria-expanded='true']::after {
+    transform: translateY(-50%) rotate(180deg);
+}
+
+.price-filter-button {
+    min-width: 80px;
+    justify-content: center;
+}
+
+.filter-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 300px;
+    background-color: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    padding: 15px;
+    margin-top: 10px;
+}
+
+.filter-dropdown > div {
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.2s ease;
+}
+
+.filter-dropdown > div:hover {
+    background-color: #f5f5f5;
+}
+
+.filter-dropdown > div.active {
+    background-color: #f0f0f0;
+    font-weight: 500;
+}
+
+.price-dropdown {
+    width: 320px;
+}
+
+.range-slider-wrapper {
+    margin: 5px 0 15px;
+    padding: 0;
+}
+
+.price-inputs {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 5px;
+}
+
+.price-input-group {
+    display: flex;
+    align-items: center;
+    flex: 1;
+}
+
+.price-input-label {
+    color: #999;
+    font-size: 14px;
+    margin-right: 8px;
+    white-space: nowrap;
+}
+
+.price-inputs input {
+    flex: 0 0 auto;
+    width: 90px;
+    padding: 8px 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 30px;
+    font-size: 14px;
+    background-color: #f9f9f9;
+    text-align: center;
+    max-width: 100px;
+}
+
+.price-inputs input:focus {
+    outline: none;
+    border-color: #9e7f45;
+    background-color: #fff;
+}
+
+.price-input-separator {
+    margin: 0 8px;
+    color: #999;
+    font-weight: 500;
+}
+.sorting-container {
+    margin: 20px 0 30px;
+    padding-bottom: 15px;
+    display: flex;
+    align-items: center;
+
+}

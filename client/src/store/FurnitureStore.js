@@ -24,7 +24,8 @@ export default class FurnitureStore {
                 reviewsCount: 12,
                 new: true,
                 img: img1,
-                category: "bedroom"
+                category: "bedroom",
+                manufacturer: "арида",
             },
             {
                 id: 2,
@@ -34,7 +35,8 @@ export default class FurnitureStore {
                 reviewsCount: 12,
                 new: true,
                 img: img2,
-                category: "kitchen"
+                category: "kitchen",
+                manufacturer: "Арида",
             },
             {
                 id: 3,
@@ -44,7 +46,8 @@ export default class FurnitureStore {
                 reviewsCount: 12,
                 new: true,
                 img: img3,
-                categories: ["bedroom", "bed"]
+                categories: ["bedroom", "bed"],
+                manufacturer: "Milana group",
             },
             {
                 id: 4,
@@ -54,7 +57,8 @@ export default class FurnitureStore {
                 reviewsCount: 12,
                 new: false,
                 img: img4,
-                category: "tables"
+                category: "tables",
+                manufacturer: "Арида",
             },
             {
                 id: 5,
@@ -64,7 +68,8 @@ export default class FurnitureStore {
                 reviewsCount: 12,
                 new: true,
                 img: img5,
-                category: "sofas"
+                category: "sofas",
+                manufacturer: "Арида",
             },
             {
                 id: 6,
@@ -74,37 +79,41 @@ export default class FurnitureStore {
                 reviewsCount: 12,
                 new: true,
                 img: img3,
-                categories: ["bedroom", "bed"]
+                categories: ["bedroom", "bed"],
+                manufacturer: "скфм"
             },
             {
                 id: 7,
                 name: "Кровать Версаль",
                 price: 10000,
                 rating: 3.5,
-                reviewsCount: 12,
+                reviewsCount: 14,
                 new: true,
                 img: img3,
-                categories: ["bedroom", "bed"]
+                categories: ["bedroom", "bed"],
+                manufacturer: "фортуна"
             },
             {
                 id: 8,
                 name: "Кровать Версаль",
-                price: 10000,
+                price: 15000,
                 rating: 3.5,
-                reviewsCount: 12,
+                reviewsCount: 19,
                 new: true,
                 img: img3,
-                categories: ["bedroom", "bed"]
+                categories: ["bedroom", "bed"],
+                manufacturer: "милана"
             },
             {
                 id: 9,
                 name: "Кровать Версаль",
-                price: 10000,
+                price: 80000,
                 rating: 3.5,
                 reviewsCount: 12,
                 new: true,
                 img: img3,
-                categories: ["bedroom", "bed"]
+                categories: ["bedroom", "bed"],
+                manufacturer: "эра"
             },
         ];
         makeAutoObservable(this);
