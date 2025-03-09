@@ -35,7 +35,7 @@ export default class FurnitureStore {
                 reviewsCount: 12,
                 new: true,
                 img: img2,
-                category: "kitchen",
+                categories: ["kitchen", "Прямые кухни"],
                 manufacturer: "Арида",
             },
             {
@@ -46,7 +46,7 @@ export default class FurnitureStore {
                 reviewsCount: 12,
                 new: true,
                 img: img3,
-                categories: ["bedroom", "bed"],
+                categories: ["bedroom", "Кровати"],
                 manufacturer: "Milana group",
             },
             {
@@ -79,7 +79,7 @@ export default class FurnitureStore {
                 reviewsCount: 12,
                 new: true,
                 img: img3,
-                categories: ["bedroom", "bed"],
+                categories: ["bedroom", "Кровати"],
                 manufacturer: "скфм"
             },
             {
@@ -90,7 +90,7 @@ export default class FurnitureStore {
                 reviewsCount: 14,
                 new: true,
                 img: img3,
-                categories: ["bedroom", "bed"],
+                categories: ["bedroom", "Кровати"],
                 manufacturer: "фортуна"
             },
             {
@@ -101,7 +101,7 @@ export default class FurnitureStore {
                 reviewsCount: 19,
                 new: true,
                 img: img3,
-                categories: ["bedroom", "bed"],
+                categories: ["bedroom", "Кровати"],
                 manufacturer: "милана"
             },
             {
@@ -112,7 +112,249 @@ export default class FurnitureStore {
                 reviewsCount: 12,
                 new: true,
                 img: img3,
-                categories: ["bedroom", "bed"],
+                categories: ["bedroom", "Кровати"],
+                manufacturer: "эра"
+            },
+            {
+                id: 10,
+                name: "Кровать Версаль",
+                price: 80000,
+                rating: 3.5,
+                reviewsCount: 12,
+                new: true,
+                img: img3,
+                categories: ["bedroom", "Кровати"],
+                manufacturer: "эра"
+            },
+            {
+                id: 11,
+                name: "Кровать Версаль",
+                price: 80000,
+                rating: 3.5,
+                reviewsCount: 12,
+                new: true,
+                img: img3,
+                categories: ["bedroom", "Кровати"],
+                manufacturer: "эра"
+            },
+            {
+                id: 12,
+                name: "Кровать Версаль",
+                price: 80000,
+                rating: 3.5,
+                reviewsCount: 12,
+                new: true,
+                img: img3,
+                categories: ["bedroom", "Кровати"],
+                manufacturer: "эра"
+            },
+            {
+                id: 13,
+                name: "Кровать Версаль",
+                price: 80000,
+                rating: 3.5,
+                reviewsCount: 12,
+                new: true,
+                img: img3,
+                categories: ["bedroom", "Кровати"],
+                manufacturer: "эра"
+            },
+            {
+                id: 14,
+                name: "Кровать Версаль",
+                price: 80000,
+                rating: 3.5,
+                reviewsCount: 12,
+                new: true,
+                img: img3,
+                categories: ["bedroom", "Кровати"],
+                manufacturer: "эра"
+            },
+            {
+                id: 15,
+                name: "Кровать Версаль",
+                price: 80000,
+                rating: 3.5,
+                reviewsCount: 12,
+                new: true,
+                img: img3,
+                categories: ["bedroom", "Кровати"],
+                manufacturer: "эра"
+            },
+            {
+                id: 16,
+                name: "Кровать Версаль",
+                price: 80000,
+                rating: 3.5,
+                reviewsCount: 12,
+                new: true,
+                img: img3,
+                categories: ["bedroom", "Кровати"],
+                manufacturer: "эра"
+            },
+            {
+                id: 17,
+                name: "Кровать Версаль",
+                price: 80000,
+                rating: 3.5,
+                reviewsCount: 12,
+                new: true,
+                img: img3,
+                categories: ["bedroom", "Кровати"],
+                manufacturer: "эра"
+            },
+            {
+                id: 18,
+                name: "Кровать Версаль",
+                price: 80000,
+                rating: 3.5,
+                reviewsCount: 12,
+                new: true,
+                img: img3,
+                categories: ["bedroom", "Кровати"],
+                manufacturer: "эра"
+            },
+            {
+                id: 19,
+                name: "Кровать Версаль",
+                price: 80000,
+                rating: 3.5,
+                reviewsCount: 12,
+                new: true,
+                img: img3,
+                categories: ["bedroom", "Кровати"],
+                manufacturer: "эра"
+            },
+            {
+                id: 20,
+                name: "Кровать Версаль",
+                price: 80000,
+                rating: 3.5,
+                reviewsCount: 12,
+                new: true,
+                img: img3,
+                categories: ["bedroom", "Кровати"],
+                manufacturer: "эра"
+            },
+            {
+                id: 21,
+                name: "Кровать Версаль",
+                price: 80000,
+                rating: 3.5,
+                reviewsCount: 12,
+                new: true,
+                img: img3,
+                categories: ["bedroom", "Кровати"],
+                manufacturer: "эра"
+            },
+            {
+                id: 22,
+                name: "Кровать Версаль",
+                price: 80000,
+                rating: 3.5,
+                reviewsCount: 12,
+                new: true,
+                img: img3,
+                categories: ["bedroom", "Кровати"],
+                manufacturer: "эра"
+            },
+            {
+                id: 23,
+                name: "Кровать Версаль",
+                price: 80000,
+                rating: 3.5,
+                reviewsCount: 12,
+                new: true,
+                img: img3,
+                categories: ["bedroom", "Кровати"],
+                manufacturer: "эра"
+            },
+            {
+                id: 24,
+                name: "Кровать Версаль",
+                price: 80000,
+                rating: 3.5,
+                reviewsCount: 12,
+                new: true,
+                img: img3,
+                categories: ["bedroom", "Кровати"],
+                manufacturer: "эра"
+            },
+            {
+                id: 25,
+                name: "Кровать Версаль",
+                price: 80000,
+                rating: 3.5,
+                reviewsCount: 12,
+                new: true,
+                img: img3,
+                categories: ["bedroom", "Кровати"],
+                manufacturer: "эра"
+            },
+            {
+                id: 26,
+                name: "Кровать Версаль",
+                price: 80000,
+                rating: 3.5,
+                reviewsCount: 12,
+                new: true,
+                img: img3,
+                categories: ["bedroom", "Кровати"],
+                manufacturer: "эра"
+            },
+            {
+                id: 27,
+                name: "Кровать Версаль",
+                price: 80000,
+                rating: 3.5,
+                reviewsCount: 12,
+                new: true,
+                img: img3,
+                categories: ["bedroom", "Кровати"],
+                manufacturer: "эра"
+            },
+            {
+                id: 28,
+                name: "Кровать Версаль",
+                price: 80000,
+                rating: 3.5,
+                reviewsCount: 12,
+                new: true,
+                img: img3,
+                categories: ["bedroom", "Кровати"],
+                manufacturer: "эра"
+            },
+            {
+                id: 29,
+                name: "Кровать Версаль",
+                price: 80000,
+                rating: 3.5,
+                reviewsCount: 12,
+                new: true,
+                img: img3,
+                categories: ["bedroom", "Кровати"],
+                manufacturer: "эра"
+            },
+            {
+                id: 30,
+                name: "Кровать Версаль",
+                price: 80000,
+                rating: 3.5,
+                reviewsCount: 12,
+                new: true,
+                img: img3,
+                categories: ["bedroom", "Кровати"],
+                manufacturer: "эра"
+            },
+            {
+                id: 31,
+                name: "Кровать Версаль",
+                price: 80000,
+                rating: 3.5,
+                reviewsCount: 12,
+                new: true,
+                img: img3,
+                categories: ["bedroom", "Кровати"],
                 manufacturer: "эра"
             },
         ];

@@ -16,48 +16,56 @@ const catalogData = [
         id: 'kitchen',
         name: 'Кухня',
         icon: kitchenIcon,
+        titlePrefix: 'Мебель для кухни',
         subcategories: ['Прямые кухни', 'Угловые кухни', 'Кухонные острова'],
     },
     {
         id: 'bedroom',
         name: 'Спальня',
         icon: bedroomIcon,
+        titlePrefix: 'Мебель для спальни',
         subcategories: ['Спальные гарнитуры', 'Шкафы', 'Кровати', 'Тумбочки', 'Комоды', 'Туалетные столики', 'Пуфы'],
     },
     {
         id: 'living-room',
         name: 'Гостиная',
         icon: livingRoomIcon,
+        titlePrefix: 'Мебель для гостиной',
         subcategories: ['Гостинные и стенки', 'Комоды', 'ТВ-тумбы', 'Шкафы и витрины', 'Столы и Журнальные столики', 'Консоли и зеркала'],
     },
     {
         id: 'sofas',
         name: 'Мягкая мебель',
         icon: sofasIcon,
+        titlePrefix: 'Мягкая мебель',
         subcategories: ['Диваны', 'Кресла', 'Банкетки и пуфы'],
     },
     {
         id: 'hallway',
         name: 'Прихожая',
         icon: hallwayIcon,
+        titlePrefix: 'Мебель для прихожей',
         subcategories: ['Прихожие', 'Банкетки'],
     },
     {
         id: 'kids-room',
         name: 'Детская',
         icon: kidsRoomIcon,
+        titlePrefix: 'Мебель для детской',
         subcategories: ['Наборы детской мебели', 'Кровати', 'Столы, стулья и парты'],
     },
     {
         id: 'chandeliers',
         name: 'Люстры',
         icon: chandelierIcon,
+        titlePrefix: 'Люстры',
         subcategories: [],
     },
     {
         id: 'tables',
         name: 'Столы и стулья',
         icon: tablesIcon,
+        titlePrefix: 'Столы и стулья',
         subcategories: ['Столы', 'Стулья'],
     },
 ];
@@ -68,33 +76,25 @@ const CatalogSidebar = ({ isOpen, onClose, catalogButtonRef }) => {
     const sidebarRef = useRef(null);
 
     const handleSelectCategory = (catId) => {
-        if (selectedCategory === catId) {
-            setSelectedCategory(null);
-        } else {
-            setSelectedCategory(catId);
-        }
+        setSelectedCategory(prev => (prev === catId ? null : catId));
     };
 
     const activeCategory = catalogData.find(cat => cat.id === selectedCategory);
 
     const calculatePosition = useCallback(() => {
-        if (isOpen && catalogButtonRef && catalogButtonRef.current) {
+        if (isOpen && catalogButtonRef?.current) {
             const buttonRect = catalogButtonRef.current.getBoundingClientRect();
             const topBar = document.querySelector('.top-bar');
             const navbar = document.querySelector('.navbar');
-
             let baseTop = buttonRect.bottom + 15;
-
             if (window.scrollY < 50 && topBar) {
                 baseTop = buttonRect.bottom + 15;
-            }
-            else if (navbar) {
+            } else if (navbar) {
                 baseTop = buttonRect.bottom + 15 - 10;
             }
-
             setSidebarPosition({
                 top: baseTop,
-                left: buttonRect.right - 135
+                left: buttonRect.right - 135,
             });
         }
     }, [isOpen, catalogButtonRef]);
@@ -105,16 +105,19 @@ const CatalogSidebar = ({ isOpen, onClose, catalogButtonRef }) => {
 
     useEffect(() => {
         const handleClickOutside = (e) => {
-            if (isOpen && sidebarRef.current && !sidebarRef.current.contains(e.target) &&
-                catalogButtonRef && catalogButtonRef.current && !catalogButtonRef.current.contains(e.target)) {
+            if (
+                isOpen &&
+                sidebarRef.current &&
+                !sidebarRef.current.contains(e.target) &&
+                catalogButtonRef?.current &&
+                !catalogButtonRef.current.contains(e.target)
+            ) {
                 onClose();
             }
         };
-
         if (isOpen) {
             document.addEventListener('mousedown', handleClickOutside);
         }
-
         return () => {
             document.removeEventListener('mousedown', handleClickOutside);
         };
@@ -125,7 +128,6 @@ const CatalogSidebar = ({ isOpen, onClose, catalogButtonRef }) => {
             calculatePosition();
             window.addEventListener('scroll', calculatePosition);
         }
-
         return () => {
             window.removeEventListener('scroll', calculatePosition);
         };
@@ -140,12 +142,11 @@ const CatalogSidebar = ({ isOpen, onClose, catalogButtonRef }) => {
                 top: `${sidebarPosition.top}px`,
                 left: `${sidebarPosition.left}px`,
                 transform: 'none',
-                marginLeft: 0
+                marginLeft: 0,
             }}
         >
             <div className="catalog-sidebar-container">
                 <button className="close-btn" onClick={onClose}>×</button>
-
                 <div className="catalog-sidebar-left">
                     <ul className="category-list">
                         {catalogData.map(category => (
@@ -160,7 +161,6 @@ const CatalogSidebar = ({ isOpen, onClose, catalogButtonRef }) => {
                         ))}
                     </ul>
                 </div>
-
                 <div className="catalog-sidebar-right">
                     {activeCategory ? (
                         <>
@@ -170,7 +170,7 @@ const CatalogSidebar = ({ isOpen, onClose, catalogButtonRef }) => {
                                     onClick={onClose}
                                     style={{ textDecoration: 'none', color: 'inherit' }}
                                 >
-                                    Мебель для {activeCategory.name.toLowerCase()}
+                                    {activeCategory.titlePrefix}
                                 </Link>
                             </h3>
                             <ul className="subcategory-list">

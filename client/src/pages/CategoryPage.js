@@ -1,41 +1,108 @@
 import React, { useContext, useEffect, useState, useCallback, useMemo, useRef } from 'react';
-import { useParams, useLocation } from 'react-router-dom';
+import { useParams, useLocation, Link } from 'react-router-dom';
 import { Context } from '../index';
 import ProductCard from '../components/ProductCard';
 import '../styles/CategoryPage.css';
 import { Range, getTrackBackground } from 'react-range';
 
+const ITEMS_PER_PAGE = 24;
+
+const catalogData = [
+    { id: 'kitchen', name: 'Мебель для кухни' },
+    { id: 'bedroom', name: 'Мебель для спальни' },
+    { id: 'living-room', name: 'Мебель для гостиной' },
+    { id: 'sofas', name: 'Мягкая мебель' },
+    { id: 'hallway', name: 'Мебель для прихожей' },
+    { id: 'kids-room', name: 'Мебель для детской' },
+    { id: 'chandeliers', name: 'Люстры' },
+    { id: 'tables', name: 'Столы и стулья' },
+];
+
+function getDisplayedPages(currentPage, totalPages) {
+    const visiblePages = [];
+    const boundaryPages = 2;
+    const aroundCurrent = 2;
+
+    for (let i = 1; i <= Math.min(boundaryPages, totalPages); i++) {
+        visiblePages.push(i);
+    }
+
+    let start = Math.max(
+        boundaryPages + 1,
+        currentPage - aroundCurrent
+    );
+    let end = Math.min(
+        totalPages - boundaryPages,
+        currentPage + aroundCurrent
+    );
+
+    if (start > boundaryPages + 1) {
+        visiblePages.push('...');
+    }
+
+    for (let i = start; i <= end; i++) {
+        visiblePages.push(i);
+    }
+
+    if (end < totalPages - boundaryPages) {
+        visiblePages.push('...');
+    }
+
+    for (
+        let i = Math.max(totalPages - boundaryPages + 1, boundaryPages + 1);
+        i <= totalPages;
+        i++
+    ) {
+        if (!visiblePages.includes(i)) {
+            visiblePages.push(i);
+        }
+    }
+
+    return visiblePages;
+}
+
 const CategoryPage = () => {
-    const { categoryName } = useParams();
+    const { categoryName, subcategory, pageNumber } = useParams();
+    const location = useLocation();
     const { furniture } = useContext(Context);
+
     const [filteredProducts, setFilteredProducts] = useState([]);
+    const [paginatedProducts, setPaginatedProducts] = useState([]);
     const [selectedManufacturer, setSelectedManufacturer] = useState(null);
     const [isManufacturerDropdownOpen, setIsManufacturerDropdownOpen] = useState(false);
     const [isPriceDropdownOpen, setIsPriceDropdownOpen] = useState(false);
     const [categoryMinPrice, setCategoryMinPrice] = useState(0);
-    const [categoryMaxPrice, setCategoryMaxPrice] = useState(0);
-    const [rangeValues, setRangeValues] = useState([0, 0]);
+    const [categoryMaxPrice, setCategoryMaxPrice] = useState(1000);
+    const [rangeValues, setRangeValues] = useState([0, 1000]);
     const [sortType, setSortType] = useState('default');
-    const location = useLocation();
+
+    const currentPage = pageNumber ? parseInt(pageNumber, 10) : 1;
+
     const priceFilterRef = useRef(null);
     const manufacturerFilterRef = useRef(null);
 
     useEffect(() => {
         const handleClickOutside = (event) => {
-            if (isPriceDropdownOpen &&
-                !priceFilterRef.current?.contains(event.target)) {
+            if (
+                isPriceDropdownOpen &&
+                !priceFilterRef.current?.contains(event.target)
+            ) {
                 setIsPriceDropdownOpen(false);
             }
-
-            if (isManufacturerDropdownOpen &&
-                !manufacturerFilterRef.current?.contains(event.target)) {
+            if (
+                isManufacturerDropdownOpen &&
+                !manufacturerFilterRef.current?.contains(event.target)
+            ) {
                 setIsManufacturerDropdownOpen(false);
             }
         };
-
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [isPriceDropdownOpen, isManufacturerDropdownOpen]);
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [currentPage, location.pathname]);
 
     const getProductsInCategory = useCallback(() => {
         let products = furniture.Furnitures;
@@ -43,25 +110,43 @@ const CategoryPage = () => {
             products = products.filter(product => product.new);
         } else {
             products = products.filter(product => {
-                return Array.isArray(product.categories)
-                    ? product.categories.includes(categoryName)
-                    : product.category === categoryName;
+                if (Array.isArray(product.categories)) {
+                    return product.categories.includes(categoryName);
+                }
+                return product.category === categoryName;
+            });
+        }
+        if (subcategory) {
+            products = products.filter(product => {
+                if (Array.isArray(product.categories)) {
+                    return product.categories.includes(subcategory);
+                }
+                return false;
             });
         }
         return products;
-    }, [categoryName, furniture.Furnitures]);
+    }, [categoryName, subcategory, furniture.Furnitures]);
 
     useEffect(() => {
         const productsInCat = getProductsInCategory();
         if (productsInCat.length > 0) {
             const prices = productsInCat.map(p => p.price);
-            setCategoryMinPrice(Math.min(...prices));
-            setCategoryMaxPrice(Math.max(...prices));
-            setRangeValues([Math.min(...prices), Math.max(...prices)]);
+            const minPrice = Math.min(...prices);
+            const maxPrice = Math.max(...prices);
+
+            if (minPrice === maxPrice) {
+                setCategoryMinPrice(minPrice > 50 ? minPrice - 50 : 0);
+                setCategoryMaxPrice(maxPrice + 50);
+                setRangeValues([minPrice > 50 ? minPrice - 50 : 0, maxPrice + 50]);
+            } else {
+                setCategoryMinPrice(minPrice);
+                setCategoryMaxPrice(maxPrice);
+                setRangeValues([minPrice, maxPrice]);
+            }
         } else {
             setCategoryMinPrice(0);
-            setCategoryMaxPrice(0);
-            setRangeValues([0, 0]);
+            setCategoryMaxPrice(1000);
+            setRangeValues([0, 1000]);
         }
         setSelectedManufacturer(null);
     }, [getProductsInCategory]);
@@ -70,7 +155,9 @@ const CategoryPage = () => {
         const productsInCat = getProductsInCategory();
         const manufacturers = [...new Set(productsInCat.map(p => p.manufacturer).filter(Boolean))];
         const countMap = productsInCat.reduce((acc, item) => {
-            item.manufacturer && (acc[item.manufacturer] = (acc[item.manufacturer] || 0) + 1);
+            if (item.manufacturer) {
+                acc[item.manufacturer] = (acc[item.manufacturer] || 0) + 1;
+            }
             return acc;
         }, {});
         return [manufacturers, countMap];
@@ -87,7 +174,7 @@ const CategoryPage = () => {
             p.price >= rangeValues[0] && p.price <= rangeValues[1]
         );
 
-        switch(sortType) {
+        switch (sortType) {
             case 'popular':
                 finalProducts.sort((a, b) => (b.reviewsCount || 0) - (a.reviewsCount || 0));
                 break;
@@ -104,15 +191,26 @@ const CategoryPage = () => {
         setFilteredProducts(finalProducts);
     }, [getProductsInCategory, selectedManufacturer, rangeValues, location, sortType]);
 
+    useEffect(() => {
+        const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+        const endIndex = startIndex + ITEMS_PER_PAGE;
+        const pageItems = filteredProducts.slice(startIndex, endIndex);
+        setPaginatedProducts(pageItems);
+    }, [filteredProducts, currentPage]);
+
     const handleSliderChange = (values) => setRangeValues(values);
 
     const handleMinInputChange = (e) => {
-        let val = Math.max(categoryMinPrice, Math.min(rangeValues[1], parseInt(e.target.value) || 0));
+        let val = parseInt(e.target.value, 10) || 0;
+        if (val < categoryMinPrice) val = categoryMinPrice;
+        if (val > rangeValues[1] - 1) val = rangeValues[1] - 1;
         setRangeValues([val, rangeValues[1]]);
     };
 
     const handleMaxInputChange = (e) => {
-        let val = Math.min(categoryMaxPrice, Math.max(rangeValues[0], parseInt(e.target.value) || 0));
+        let val = parseInt(e.target.value, 10) || 0;
+        if (val > categoryMaxPrice) val = categoryMaxPrice;
+        if (val < rangeValues[0] + 1) val = rangeValues[0] + 1;
         setRangeValues([rangeValues[0], val]);
     };
 
@@ -121,25 +219,41 @@ const CategoryPage = () => {
             onClick={() => setSortType(type)}
             style={{
                 color: sortType === type ? '#2D2B2B' : '#A6A6A6',
-                fontWeight:'600',
+                fontWeight: '600',
                 marginRight: '15px',
                 background: 'none',
                 border: 'none',
                 cursor: 'pointer',
-                fontSize: '14px'
+                fontSize: '14px',
             }}
         >
             {label}
         </button>
     );
 
+    const getPageTitle = () => {
+        if (categoryName === 'new') return 'Новинки';
+        if (subcategory) return subcategory;
+        const cat = catalogData.find(item => item.id === categoryName);
+        return cat ? cat.name : categoryName;
+    };
+    const headerTitle = getPageTitle();
+
+    const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
+
+    const makePageLink = (page) => {
+        if (subcategory) {
+            return `/category/${categoryName}/${subcategory}/page/${page}`;
+        }
+        return `/category/${categoryName}/page/${page}`;
+    };
+
+    const shouldRenderSlider = categoryMinPrice < categoryMaxPrice;
+
     return (
         <div className="category-page">
-            <h1 className="category-title">
-                {categoryName === 'new' ? 'Новинки' : `Мебель для ${categoryName}`}
-            </h1>
+            <h1 className="category-title">{headerTitle}</h1>
 
-            {/* Фильтр по цене */}
             <div className="filter-item" ref={priceFilterRef}>
                 <button
                     onClick={() => {
@@ -153,46 +267,51 @@ const CategoryPage = () => {
                 </button>
                 {isPriceDropdownOpen && (
                     <div className="filter-dropdown price-dropdown">
-                        <div className="range-slider-wrapper">
-                            <Range
-                                step={1}
-                                min={categoryMinPrice}
-                                max={categoryMaxPrice}
-                                values={rangeValues}
-                                onChange={handleSliderChange}
-                                renderTrack={({ props, children }) => (
-                                    <div {...props} style={{
-                                        ...props.style,
-                                        height: '4px',
-                                        width: '100%',
-                                        margin: '15px 0',
-                                        background: getTrackBackground({
-                                            values: rangeValues,
-                                            colors: ['#e0e0e0', '#9e7f45', '#e0e0e0'],
-                                            min: categoryMinPrice,
-                                            max: categoryMaxPrice
-                                        })
-                                    }}>
-                                        {children}
-                                    </div>
-                                )}
-                                renderThumb={({ props }) => (
-                                    <div
-                                        {...props}
-                                        style={{
-                                            ...props.style,
-                                            height: '24px',
-                                            width: '24px',
-                                            borderRadius: '50%',
-                                            backgroundColor: '#9e7f45',
-                                            border: '3px solid white',
-                                            boxShadow: '0 0 5px rgba(0, 0, 0, 0.2)',
-                                            cursor: 'pointer',
-                                        }}
-                                    />
-                                )}
-                            />
-                        </div>
+                        {shouldRenderSlider && (
+                            <div className="range-slider-wrapper">
+                                <Range
+                                    step={1}
+                                    min={categoryMinPrice}
+                                    max={categoryMaxPrice}
+                                    values={rangeValues}
+                                    onChange={handleSliderChange}
+                                    renderTrack={({ props, children }) => (
+                                        <div
+                                            {...props}
+                                            style={{
+                                                ...props.style,
+                                                height: '4px',
+                                                width: '100%',
+                                                margin: '15px 0',
+                                                background: getTrackBackground({
+                                                    values: rangeValues,
+                                                    colors: ['#e0e0e0', '#9e7f45', '#e0e0e0'],
+                                                    min: categoryMinPrice,
+                                                    max: categoryMaxPrice,
+                                                }),
+                                            }}
+                                        >
+                                            {children}
+                                        </div>
+                                    )}
+                                    renderThumb={({ props }) => (
+                                        <div
+                                            {...props}
+                                            style={{
+                                                ...props.style,
+                                                height: '24px',
+                                                width: '24px',
+                                                borderRadius: '50%',
+                                                backgroundColor: '#9e7f45',
+                                                border: '3px solid white',
+                                                boxShadow: '0 0 5px rgba(0, 0, 0, 0.2)',
+                                                cursor: 'pointer',
+                                            }}
+                                        />
+                                    )}
+                                />
+                            </div>
+                        )}
                         <div className="price-inputs">
                             <div className="price-input-group">
                                 <span className="price-input-label">от</span>
@@ -240,7 +359,12 @@ const CategoryPage = () => {
                                 {m} ({manufacturerCountMap[m] || 0})
                             </div>
                         ))}
-                        <div onClick={() => setSelectedManufacturer(null)}>
+                        <div
+                            onClick={() => {
+                                setSelectedManufacturer(null);
+                                setIsManufacturerDropdownOpen(false);
+                            }}
+                        >
                             Все производители
                         </div>
                     </div>
@@ -248,20 +372,62 @@ const CategoryPage = () => {
             </div>
 
             <div className="sorting-container">
-                <SortButton type="default" label="Сначала популярные" />
+                <SortButton type="popular" label="Сначала популярные" />
                 <SortButton type="price_asc" label="Сначала дешевле" />
                 <SortButton type="price_desc" label="Сначала дороже" />
             </div>
 
             <div className="category-grid">
-                {filteredProducts.length > 0 ? (
-                    filteredProducts.map(product => (
+                {paginatedProducts.length > 0 ? (
+                    paginatedProducts.map(product => (
                         <ProductCard key={product.id} product={product} />
                     ))
                 ) : (
                     <p>В данной категории пока нет товаров.</p>
                 )}
             </div>
+
+            {filteredProducts.length > ITEMS_PER_PAGE && (
+                <div className="pagination-container">
+                    <div className="pagination-content">
+                        <Link
+                            to={makePageLink(currentPage - 1)}
+                            className={`pagination-arrow ${currentPage <= 1 ? 'disabled' : ''}`}
+                        >
+                            ← НАЗАД
+                        </Link>
+
+                        <div className="page-numbers">
+                            {getDisplayedPages(currentPage, totalPages).map((page, index) => {
+                                if (page === '...') {
+                                    return (
+                                        <span key={`dots-${index}`} className="dots">
+                ...
+              </span>
+                                    );
+                                }
+
+                                return (
+                                    <Link
+                                        key={page}
+                                        to={makePageLink(page)}
+                                        className={`page-number ${currentPage === page ? 'active' : ''}`}
+                                    >
+                                        {page}
+                                    </Link>
+                                );
+                            })}
+                        </div>
+
+                        <Link
+                            to={makePageLink(currentPage + 1)}
+                            className={`pagination-arrow ${currentPage >= totalPages ? 'disabled' : ''}`}
+                        >
+                            ВПЕРЁД →
+                        </Link>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
