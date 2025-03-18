@@ -1,9 +1,33 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/ProductCard.css';
 import favoriteIcon from '../assets/icons/favorite.svg';
+import { FavoritesContext } from '../context/FavoritesContext';
+import { BasketContext } from '../context/BasketContext';
 
 const ProductCard = ({ product }) => {
+    const { favorites, addToFavorites, removeFromFavorites } = useContext(FavoritesContext);
+    const { basket, addToBasket, removeFromBasket } = useContext(BasketContext);
+
+    const isFavorite = favorites.some(p => p.id === product.id);
+    const isInCart = basket.some(item => item.id === product.id);
+
+    const handleAddToFavorite = () => {
+        if (isFavorite) {
+            removeFromFavorites(product.id);
+        } else {
+            addToFavorites(product);
+        }
+    };
+
+    const handleBasketClick = () => {
+        if (isInCart) {
+            removeFromBasket(product.id);
+        } else {
+            addToBasket(product);
+        }
+    };
+
     const renderStars = (rating) => {
         const stars = [];
         for (let i = 1; i <= 5; i++) {
@@ -50,12 +74,15 @@ const ProductCard = ({ product }) => {
         </span>
                 <div className="product-actions">
                     <button
-                        className="add-to-cart-button"
-                        disabled={product.inCart}
+                        className={`add-to-cart-button ${isInCart ? 'active' : ''}`}
+                        onClick={handleBasketClick}
                     >
-                        {product.inCart ? 'В корзине' : 'В корзину'}
+                        {isInCart ? 'В корзине' : 'В корзину'}
                     </button>
-                    <button className="favorite-button">
+                    <button
+                        className={`favorite-button ${isFavorite ? 'active' : ''}`}
+                        onClick={handleAddToFavorite}
+                    >
                         <img src={favoriteIcon} alt="Избранное" />
                     </button>
                 </div>

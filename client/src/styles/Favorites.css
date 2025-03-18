@@ -1,0 +1,25 @@
+.favorites-page {
+    max-width: 1615px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: #fff;
+}
+
+.favorites-page h1 {
+    font-size: 28px;
+    margin-bottom: 30px;
+    color: #333;
+}
+
+.favorites-page p {
+    font-size: 16px;
+    color: #555;
+    line-height: 1.5;
+}
+
+.favorites-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 40px;
+    margin: 0 auto;
+}

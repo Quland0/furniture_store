@@ -1,8 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import '../styles/FurniturePage.css';
 import favoriteIcon from '../assets/icons/favorite.svg';
+import { BasketContext } from '../context/BasketContext';
 
+// Импорт изображений
 import victoriaMain from '../assets/images/products/bedroom/spalnya_mebel_gracia_4.jpg';
 import victoria1 from '../assets/images/products/bedroom/spalnya_mebel_gracia_4_detali_6-scaled.jpg';
 import victoria2 from '../assets/images/products/bedroom/krovat_spalnya_mebel_gracia_4.png';
@@ -22,8 +24,16 @@ const mockFurniture = {
     reviewsCount: 12,
     new: true,
     images: [
-        victoriaMain, victoria1, victoria2, victoria3,
-        victoria4, victoria5, victoria6, victoria7, victoria8, victoria9,
+        victoriaMain,
+        victoria1,
+        victoria2,
+        victoria3,
+        victoria4,
+        victoria5,
+        victoria6,
+        victoria7,
+        victoria8,
+        victoria9,
     ],
     manufacturer: { id: 2, name: 'Milana group' },
     types: [{ id: 1, name: 'Спальни' }],
@@ -75,7 +85,6 @@ const mockFurniture = {
             rating: 4,
             review: 'Хорошее качество, но доставка затянулась.',
         },
-
     ],
 };
 
@@ -97,18 +106,26 @@ const FurniturePage = () => {
         console.log(isFavorite ? "Удалено из избранного" : "Добавлено в избранное", furniture.name);
     };
 
-    const handleTabClick = (tab) => setActiveTab(tab);
-
-    const handleAddToCart = () => {
-        console.log(isInCart ? "Удалено из корзины" : "Добавлено в корзину", furniture.name);
-        setIsInCart(!isInCart);
-    };
-
     const [isInCart, setIsInCart] = useState(false);
     const [quantity, setQuantity] = useState(1);
-
     const handleIncrement = () => setQuantity(prev => prev + 1);
     const handleDecrement = () => setQuantity(prev => Math.max(1, prev - 1));
+
+    const { basket, addToBasket, removeFromBasket } = useContext(BasketContext);
+
+    const handleAddToCart = () => {
+        if (!isInCart) {
+            addToBasket(furniture, quantity);
+            setIsInCart(true);
+            console.log("Добавлено в корзину:", furniture.name, "в количестве", quantity);
+        } else {
+            removeFromBasket(furniture.id);
+            setIsInCart(false);
+            console.log("Удалено из корзины:", furniture.name);
+        }
+    };
+
+    const handleTabClick = (tab) => setActiveTab(tab);
 
     const openLightbox = () => {
         setLightboxImage(selectedImage);
@@ -143,7 +160,6 @@ const FurniturePage = () => {
 
     const handleKeyDown = useCallback((e) => {
         if (!lightboxOpen) return;
-
         if (e.key === 'ArrowLeft') prevImage(e);
         else if (e.key === 'ArrowRight') nextImage(e);
         else if (e.key === 'Escape') closeLightbox();
@@ -159,16 +175,12 @@ const FurniturePage = () => {
     }, [lightboxOpen, handleKeyDown]);
 
     const [reviewModalOpen, setReviewModalOpen] = useState(false);
-
     const [reviewName, setReviewName] = useState('');
     const [reviewRating, setReviewRating] = useState(0);
     const [reviewText, setReviewText] = useState('');
+    const [hoverRating, setHoverRating] = useState(0);
 
     const openReviewModal = () => {
-        if (!isAuth) {
-            console.log('Для отправки отзыва нужно авторизоваться.');
-            return;
-        }
         setReviewModalOpen(true);
     };
 
@@ -190,30 +202,36 @@ const FurniturePage = () => {
         setReviewRating(0);
         setReviewText('');
         setReviewModalOpen(false);
-
-        closeReviewModal();
     };
 
     const renderRatingStars = () => {
-        return Array.from({ length: 5 }, (_, i) => 5 - i).map((ratingValue) => (
-            <span
-                key={ratingValue}
-                className={`star-selector ${ratingValue <= reviewRating ? 'filled' : ''}`}
-                onClick={() => setReviewRating(ratingValue)}
-            >
-            ★
+        const stars = [];
+        for (let i = 1; i <= 5; i++) {
+            const isFilled = hoverRating ? i <= hoverRating : i <= reviewRating;
+            stars.push(
+                <span
+                    key={i}
+                    className={`star-selector ${isFilled ? 'filled' : ''}`}
+                    onMouseEnter={() => setHoverRating(i)}
+                    onMouseLeave={() => setHoverRating(0)}
+                    onClick={() => setReviewRating(i)}
+                >
+          ★
         </span>
-        ));
+            );
+        }
+        return stars;
     };
 
     const hasReviews = furniture.reviews && furniture.reviews.length > 0;
 
     return (
         <div className="furniture-page">
+            {/* Галерея и информация */}
             <div className="furniture-page-top">
                 <div className="furniture-gallery">
                     <div className="furniture-main-image" onClick={openLightbox}>
-                        <img src={selectedImage} alt={furniture.name}/>
+                        <img src={selectedImage} alt={furniture.name} />
                     </div>
                     <div className="furniture-thumbnails">
                         {furniture.images.map((img, idx) => (
@@ -233,44 +251,26 @@ const FurniturePage = () => {
                         <span className="stars">{furniture.rating} ★</span>
                         <span className="reviews-count">({furniture.reviewsCount} отзывов)</span>
                     </div>
-                    <div className="furniture-price">{furniture.price.toLocaleString()} ₽</div>
-
+                    <div className="furniture-price">
+                        {furniture.price.toLocaleString()} ₽
+                    </div>
                     <p className="manufacturer">Производитель: {furniture.manufacturer.name}</p>
 
                     <div className="quantity-controls">
-                        <button
-                            className="quantity-btn"
-                            onClick={handleDecrement}
-                            disabled={quantity === 1}
-                        >
-                            -
-                        </button>
+                        <button className="quantity-btn" onClick={handleDecrement} disabled={quantity === 1}>-</button>
                         <input
                             type="number"
                             min="1"
                             value={quantity}
-                            onChange={(e) => {
-                                const value = Math.max(1, parseInt(e.target.value) || 1);
-                                setQuantity(value);
-                            }}
+                            onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
                             className="quantity-input"
                         />
-                        <button
-                            className="quantity-btn"
-                            onClick={handleIncrement}
-                        >
-                            +
-                        </button>
+                        <button className="quantity-btn" onClick={handleIncrement}>+</button>
                     </div>
 
                     <div className="action-buttons">
                         <button
-                            className="add-to-cart-btn"
-                            style={{
-                                backgroundColor: isInCart ? 'white' : '#c0956c',
-                                color: isInCart ? '#c0956c' : 'white',
-                                border: isInCart ? '1px solid #c0956c' : 'none'
-                            }}
+                            className={`add-to-cart-btn ${isInCart ? 'in-cart' : ''}`}
                             onClick={handleAddToCart}
                         >
                             {isInCart ? 'В корзине' : 'В корзину'}
@@ -279,12 +279,13 @@ const FurniturePage = () => {
                             className={`favorite-button ${isFavorite ? 'active' : ''}`}
                             onClick={handleAddToFavorite}
                         >
-                            <img src={favoriteIcon} alt="Избранное"/>
+                            <img src={favoriteIcon} alt="Избранное" />
                         </button>
                     </div>
                 </div>
             </div>
 
+            {/* Вкладки */}
             <div className="furniture-tabs">
                 <button
                     className={`tab-btn ${activeTab === 'details' ? 'active' : ''}`}
@@ -321,7 +322,6 @@ const FurniturePage = () => {
                         <button className="review-button" onClick={openReviewModal}>
                             Оставить отзыв
                         </button>
-
                         {hasReviews ? (
                             <>
                                 {furniture.reviews.map((review) => (
@@ -362,7 +362,6 @@ const FurniturePage = () => {
                     </div>
                 </div>
             )}
-
             {reviewModalOpen && (
                 <div className="review-modal-overlay" onClick={closeReviewModal}>
                     <div className="review-modal" onClick={(e) => e.stopPropagation()}>
@@ -382,12 +381,10 @@ const FurniturePage = () => {
                                         required
                                     />
                                 </div>
-
                                 <div className="form-group">
                                     <label>Ваша оценка *</label>
                                     <div className="rating-stars">{renderRatingStars()}</div>
                                 </div>
-
                                 <div className="form-group">
                                     <label>Ваш отзыв *</label>
                                     <textarea
@@ -396,7 +393,6 @@ const FurniturePage = () => {
                                         required
                                     />
                                 </div>
-
                                 <button type="submit" className="submit-review-button">
                                     Отправить
                                 </button>

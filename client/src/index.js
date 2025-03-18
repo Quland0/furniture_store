@@ -2,10 +2,11 @@ import React, { createContext } from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import UserStore from './store/UserStore';
-import FurnitureStore from "./store/FurnitureStore";
+import FurnitureStore from './store/FurnitureStore';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-
+import { FavoritesProvider } from './context/FavoritesContext';
+import { BasketProvider } from './context/BasketContext';
 
 export const Context = createContext(null);
 
@@ -15,8 +16,10 @@ root.render(
         user: new UserStore(),
         furniture: new FurnitureStore(),
     }}>
-        <App />
+        <FavoritesProvider isAuth={false}>
+            <BasketProvider isAuth={false}>
+                <App />
+            </BasketProvider>
+        </FavoritesProvider>
     </Context.Provider>
-
 );
-
