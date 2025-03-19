@@ -3,7 +3,7 @@ import {
     ADMIN_ROUTE,
     BASKET_ROUTE,
     CATEGORY_ROUTE,
-    DELIVERYANDASSEMBLY_ROUTE,
+    DELIVERYANDPAYMENT_ROUTE,
     FAVORITES_ROUTE,
     FURNITURE_ROUTE,
     LOGIN_ROUTE,
@@ -23,7 +23,7 @@ import FurniturePage from './pages/FurniturePage';
 import Credit from './pages/Credit';
 import Payment from './pages/Payment';
 import Warranty from './pages/Warranty';
-import DeliveryAndAssembly from './pages/DeliveryAndAssembly';
+import DeliveryAndPayment from './pages/DeliveryAndPayment';
 import Measurer from "./pages/Measurer";
 import Contacts from "./pages/Contacts";
 import CategoryPage from "./pages/CategoryPage";
@@ -61,8 +61,8 @@ export const publicRoutes = [
         Component: FurniturePage
     },
     {
-        path: DELIVERYANDASSEMBLY_ROUTE,
-        Component: DeliveryAndAssembly
+        path: DELIVERYANDPAYMENT_ROUTE,
+        Component: DeliveryAndPayment
     },
     {
         path: PAYMENT_ROUTE,

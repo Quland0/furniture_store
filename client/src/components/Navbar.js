@@ -13,10 +13,10 @@ import {
     LOGIN_ROUTE,
     FAVORITES_ROUTE,
     BASKET_ROUTE,
-    DELIVERYANDASSEMBLY_ROUTE,
+    DELIVERYANDPAYMENT_ROUTE,
     MEASURER_ROUTE,
     CONTACTS_ROUTE,
-    CREDIT_ROUTE,
+    CREDIT_ROUTE
 } from "../utils/consts";
 import CatalogSidebar from "./CatalogSidebar";
 
@@ -62,7 +62,7 @@ const Navbar = () => {
                         <Link to={CONTACTS_ROUTE}>Контакты</Link>
                         <Link to={MEASURER_ROUTE}>Замерщик</Link>
                         <Link to={CREDIT_ROUTE}>Кредит и рассрочка</Link>
-                        <Link to={DELIVERYANDASSEMBLY_ROUTE}>Доставка и сборка</Link>
+                        <Link to={DELIVERYANDPAYMENT_ROUTE}>Доставка и оплата</Link>
                     </div>
                     <div className="top-bar-phones">
                         <a href="tel:+79188988822">+7 (918) 898-88-22</a>
