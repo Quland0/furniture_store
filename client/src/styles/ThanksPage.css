@@ -1,0 +1,40 @@
+.thanks-container {
+    text-align: left;
+    max-width: 500px;
+    margin: 80px auto;
+    font-family: "PT Sans", sans-serif;
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.thanks-container h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    font-weight: 700;
+}
+
+.thanks-container p {
+    font-size: 16px;
+    margin-bottom: 10px;
+    line-height: 1.4;
+}
+
+.thanks-print-button {
+    display: inline-block;
+    background-color: #C6A47F;
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    padding: 12px 30px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    text-decoration: none;
+}
+
+.thanks-print-button:hover {
+    background-color: #b5936e;
+}

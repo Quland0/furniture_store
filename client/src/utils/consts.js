@@ -12,4 +12,6 @@ export const WARRANTY_ROUTE = '/warranty';
 export const CREDIT_ROUTE = '/credit';
 export const MEASURER_ROUTE = '/measurer';
 export const CONTACTS_ROUTE = '/contacts';
-
+export const ORDER_ROUTE = '/order';
+export const ORDER_THANKS_ROUTE = '/order/thanks';
+export const ORDER_PRINT_ROUTE = '/order/print';

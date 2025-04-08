@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import "../styles/Navbar.css";
 import logo from "../assets/images/logos/logo.png";
@@ -16,30 +16,35 @@ import {
     DELIVERYANDPAYMENT_ROUTE,
     MEASURER_ROUTE,
     CONTACTS_ROUTE,
-    CREDIT_ROUTE
+    ADMIN_ROUTE,
 } from "../utils/consts";
 import CatalogSidebar from "./CatalogSidebar";
+import { Context } from "../index";
 
 const Navbar = () => {
+    const { user } = useContext(Context);
+
     useEffect(() => {
         const handleScroll = () => {
             const currentScroll = window.scrollY;
-            const topBar = document.querySelector('.top-bar');
-            const navbar = document.querySelector('.navbar');
+            const topBar = document.querySelector(".top-bar");
+            const navbar = document.querySelector(".navbar");
 
             if (currentScroll > 50) {
-                topBar.style.transform = 'translateY(-100%)';
-                navbar.style.top = '0';
+                topBar.style.transform = "translateY(-100%)";
+                navbar.style.top = "0";
             } else {
-                topBar.style.transform = 'translateY(0)';
-                navbar.style.top = '50px';
+                topBar.style.transform = "translateY(0)";
+                navbar.style.top = "50px";
             }
         };
 
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
     }, []);
+
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const catalogButtonRef = useRef(null);
 
     const handleToggleSidebar = () => {
@@ -50,18 +55,23 @@ const Navbar = () => {
         setSidebarOpen(false);
     };
 
+    const toggleMobileMenu = () => {
+        setMobileMenuOpen((prev) => !prev);
+    };
+
     return (
         <header>
             <div className="top-bar">
                 <div className="top-bar-container">
                     <div className="top-bar-address">
-                        <img src={locationIcon} alt="Местоположение" className="location-logo"/>
-                        <span>Ростовская обл., Мясниковский район, <br/> с. Крым, ул. Большесальская 45а</span>
+                        <img src={locationIcon} alt="Местоположение" className="location-logo" />
+                        <span>
+              Ростовская обл., Мясниковский район, <br /> с. Крым, ул. Большесальская 45а
+            </span>
                     </div>
                     <div className="top-bar-info">
                         <Link to={CONTACTS_ROUTE}>Контакты</Link>
                         <Link to={MEASURER_ROUTE}>Замерщик</Link>
-                        <Link to={CREDIT_ROUTE}>Кредит и рассрочка</Link>
                         <Link to={DELIVERYANDPAYMENT_ROUTE}>Доставка и оплата</Link>
                     </div>
                     <div className="top-bar-phones">
@@ -70,38 +80,62 @@ const Navbar = () => {
                     </div>
                 </div>
             </div>
+
             <nav className="navbar">
                 <div className="navbar-container">
                     <div className="navbar-content">
                         <Link to={SHOP_ROUTE}>
-                            <img src={logo} alt="МебельРум161" className="navbar-logo"/>
+                            <img src={logo} alt="МебельРум161" className="navbar-logo" />
                         </Link>
-                        <button className="catalog-button" onClick={handleToggleSidebar} ref={catalogButtonRef}>
-                            <span className="catalog-icon">&#9776;</span> Каталог
-                        </button>
-                        <div className="search-bar">
-                            <input type="text" placeholder="Поиск по сайту..."/>
-                            <button className="search-button">
-                                <img src={searchIcon} alt="Search"/>
+                        <div className="desktop-controls">
+                            <button className="catalog-button" onClick={handleToggleSidebar} ref={catalogButtonRef}>
+                                <span className="catalog-icon">&#9776;</span> Каталог
                             </button>
+                            <div className="search-bar">
+                                <input type="text" placeholder="Поиск по сайту..." />
+                                <button className="search-button">
+                                    <img src={searchIcon} alt="Search" />
+                                </button>
+                            </div>
+                            <div className="navbar-icons">
+                                <Link to={LOGIN_ROUTE} className="navbar-icon login">
+                                    <img src={userIcon} alt="Войти" title="Войти" />
+                                    <span className="icon-text login-icon">Войти</span>
+                                </Link>
+                                <Link to={FAVORITES_ROUTE} className="navbar-icon favorite-icon">
+                                    <img src={favoriteIcon} alt="Избранное" title="Избранное" />
+                                    <span className="icon-text favorite-icon">Избранное</span>
+                                </Link>
+                                <Link to={BASKET_ROUTE} className="navbar-icon basket-icon">
+                                    <img src={basketIcon} alt="Корзина" title="Корзина" />
+                                    <span className="icon-text basket-icon">Корзина</span>
+                                </Link>
+                                {user.isAuth && user.user.role === "ADMIN" && (
+                                    <Link to={ADMIN_ROUTE} className="navbar-icon admin-icon">
+                                        <span className="icon-text admin-icon">Admin</span>
+                                    </Link>
+                                )}
+                            </div>
                         </div>
-                        <div className="navbar-icons">
-                            <Link to={LOGIN_ROUTE} className="navbar-icon login">
-                                <img src={userIcon} alt="Войти" title="Войти"/>
-                                <span className="icon-text login-icon">Войти</span>
-                            </Link>
-                            <Link to={FAVORITES_ROUTE} className="navbar-icon favorite-icon">
-                                <img src={favoriteIcon} alt="Избранное" title="Избранное"/>
-                                <span className="icon-text favorite-icon">Избранное</span>
-                            </Link>
-                            <Link to={BASKET_ROUTE} className="navbar-icon basket-icon">
-                                <img src={basketIcon} alt="Корзина" title="Корзина"/>
-                                <span className="icon-text basket-icon">Корзина</span>
-                            </Link>
+
+                        <div className="mobile-menu-button" onClick={toggleMobileMenu}>
+                            <span>&#9776;</span>
                         </div>
                     </div>
                 </div>
+                {mobileMenuOpen && (
+                    <div className="mobile-menu">
+                        <Link to={SHOP_ROUTE} onClick={() => setMobileMenuOpen(false)}>Главная</Link>
+                        <Link to={LOGIN_ROUTE} onClick={() => setMobileMenuOpen(false)}>Войти</Link>
+                        <Link to={FAVORITES_ROUTE} onClick={() => setMobileMenuOpen(false)}>Избранное</Link>
+                        <Link to={BASKET_ROUTE} onClick={() => setMobileMenuOpen(false)}>Корзина</Link>
+                        {user.isAuth && user.user.role === "ADMIN" && (
+                            <Link to={ADMIN_ROUTE} onClick={() => setMobileMenuOpen(false)}>Админ</Link>
+                        )}
+                    </div>
+                )}
             </nav>
+
             <CatalogSidebar isOpen={sidebarOpen} onClose={handleCloseSidebar} catalogButtonRef={catalogButtonRef} />
         </header>
     );

@@ -1,0 +1,130 @@
+.forms-container {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 0;
+}
+
+.forms-tabs {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 0;
+    align-items: center;
+}
+.tab-button {
+    padding: 8px 16px;
+    font-weight: 600;
+    border: none;
+    border-radius: 6px;
+    background-color: #f8f8f8;
+    color: #333;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.tab-button:hover {
+    background-color: #ececec;
+}
+
+.form-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.form-modal {
+    position: relative;
+    background: #fff;
+    padding: 24px;
+    border-radius: 6px;
+    width: 90%;
+    max-width: 1000px;
+    max-height: 80vh;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    animation: fadeIn 0.25s ease-out;
+}
+
+.modal-title {
+    margin: 0 0 16px;
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+}
+
+.close-button {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #666;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.close-button:hover {
+    color: #333;
+}
+
+.forms-list {
+    max-height: calc(80vh - 100px);
+    overflow-y: auto;
+    padding-right: 8px;
+}
+
+.form-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.form-item:last-child {
+    border-bottom: none;
+}
+
+.form-content {
+    flex: 1;
+    font-size: 14px;
+    color: #333;
+    margin-right: 16px;
+    white-space: normal;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    max-width: calc(100% - 120px);
+}
+
+.forms-container .delete-btn {
+    background-color: #e53e3e;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.forms-container .delete-btn:hover {
+    background-color: #c53030;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.97);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}

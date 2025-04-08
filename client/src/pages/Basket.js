@@ -1,14 +1,17 @@
 import React, { useContext, useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { BasketContext } from '../context/BasketContext';
 import { FavoritesContext } from '../context/FavoritesContext';
 import '../styles/Basket.css';
 import favoriteIcon from "../assets/icons/favorite.svg";
 import deleteIcon from "../assets/icons/delete.svg";
+import { ORDER_ROUTE } from '../utils/consts';
 
 const Basket = ({ isAuth }) => {
     const { basket, removeFromBasket, updateQuantity, clearBasket } = useContext(BasketContext);
     const { favorites, addToFavorites, removeFromFavorites } = useContext(FavoritesContext);
     const [selectedItems, setSelectedItems] = useState([]);
+
     const totalPrice = basket.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
     useEffect(() => {
@@ -73,11 +76,13 @@ const Basket = ({ isAuth }) => {
                         </button>
                     </div>
                     <div className="basket-item-price">
+                        {/* Верхняя строка: итоговая цена */}
                         {(item.price * item.quantity).toLocaleString()} ₽
+                        {/* Нижняя строка: цена за единицу (показывается, если количество > 1) */}
                         {item.quantity > 1 && (
                             <span className="item-price-per-unit">
-                {item.price.toLocaleString()} ₽/шт
-              </span>
+                                {item.price.toLocaleString()} ₽/шт
+                            </span>
                         )}
                     </div>
                     <div className="basket-item-actions">
@@ -118,7 +123,9 @@ const Basket = ({ isAuth }) => {
                                 <h2>
                                     Итого <span>{totalPrice.toLocaleString()} ₽</span>
                                 </h2>
-                                <button className="checkout-button">Оформить заказ</button>
+                                <Link to={ORDER_ROUTE} className="checkout-button">
+                                    Оформить заказ
+                                </Link>
                             </div>
                         </div>
                     </>
@@ -145,7 +152,9 @@ const Basket = ({ isAuth }) => {
                             <h2>
                                 Итого <span>{totalPrice.toLocaleString()} ₽</span>
                             </h2>
-                            <button className="checkout-button">Оформить заказ</button>
+                            <Link to={ORDER_ROUTE} className="checkout-button">
+                                Оформить заказ
+                            </Link>
                         </div>
                     </div>
                 </>

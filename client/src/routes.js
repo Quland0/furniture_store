@@ -11,22 +11,29 @@ import {
     SHOP_ROUTE,
     WARRANTY_ROUTE,
     PAYMENT_ROUTE,
-    CREDIT_ROUTE,
     MEASURER_ROUTE,
-    CONTACTS_ROUTE
+    CONTACTS_ROUTE,
+    ORDER_ROUTE,
+    ORDER_THANKS_ROUTE,
+    ORDER_PRINT_ROUTE,
 } from "./utils/consts";
+
 import Basket from './pages/Basket';
 import Favorites from './pages/Favorites';
 import Shop from './pages/Shop';
 import Auth from './pages/Auth';
 import FurniturePage from './pages/FurniturePage';
-import Credit from './pages/Credit';
 import Payment from './pages/Payment';
 import Warranty from './pages/Warranty';
 import DeliveryAndPayment from './pages/DeliveryAndPayment';
 import Measurer from "./pages/Measurer";
 import Contacts from "./pages/Contacts";
 import CategoryPage from "./pages/CategoryPage";
+import Order from "./pages/Order";
+import ThanksPage from "./pages/ThanksPage";
+import PrintOrderPage from "./pages/PrintOrderPage";
+
+
 
 export const authRoutes = [
     {
@@ -73,10 +80,6 @@ export const publicRoutes = [
         Component: Warranty
     },
     {
-        path: CREDIT_ROUTE,
-        Component: Credit
-    },
-    {
         path: MEASURER_ROUTE,
         Component: Measurer
     },
@@ -87,5 +90,17 @@ export const publicRoutes = [
     {
         path: CATEGORY_ROUTE + '/:categoryName',
         Component: CategoryPage
-    }
+    },
+    {
+        path: ORDER_ROUTE,
+        Component: Order
+    },
+    {
+        path: ORDER_THANKS_ROUTE,
+        Component: ThanksPage
+    },
+    {
+        path: ORDER_PRINT_ROUTE,
+        Component: PrintOrderPage
+    },
 ];
