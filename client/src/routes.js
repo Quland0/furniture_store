@@ -9,8 +9,6 @@ import {
     LOGIN_ROUTE,
     REGISTRATION_ROUTE,
     SHOP_ROUTE,
-    WARRANTY_ROUTE,
-    PAYMENT_ROUTE,
     MEASURER_ROUTE,
     CONTACTS_ROUTE,
     ORDER_ROUTE,
@@ -23,8 +21,6 @@ import Favorites from './pages/Favorites';
 import Shop from './pages/Shop';
 import Auth from './pages/Auth';
 import FurniturePage from './pages/FurniturePage';
-import Payment from './pages/Payment';
-import Warranty from './pages/Warranty';
 import DeliveryAndPayment from './pages/DeliveryAndPayment';
 import Measurer from "./pages/Measurer";
 import Contacts from "./pages/Contacts";
@@ -70,14 +66,6 @@ export const publicRoutes = [
     {
         path: DELIVERYANDPAYMENT_ROUTE,
         Component: DeliveryAndPayment
-    },
-    {
-        path: PAYMENT_ROUTE,
-        Component: Payment
-    },
-    {
-        path: WARRANTY_ROUTE,
-        Component: Warranty
     },
     {
         path: MEASURER_ROUTE,

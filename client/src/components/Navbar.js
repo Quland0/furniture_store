@@ -1,5 +1,7 @@
+// src/components/Navbar.js
 import React, { useContext, useEffect, useState, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import {observer} from "mobx-react-lite";
 import "../styles/Navbar.css";
 import logo from "../assets/images/logos/logo.png";
 import userIcon from "../assets/icons/user.svg";
@@ -21,8 +23,9 @@ import {
 import CatalogSidebar from "./CatalogSidebar";
 import { Context } from "../index";
 
-const Navbar = () => {
+const Navbar = observer( () => {
     const { user } = useContext(Context);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const handleScroll = () => {
@@ -59,15 +62,34 @@ const Navbar = () => {
         setMobileMenuOpen((prev) => !prev);
     };
 
+    const handleLogout = () => {
+        if (window.confirm("Вы уверены, что хотите выйти из аккаунта?")) {
+            localStorage.removeItem("token");
+
+            if (user.logout) {
+                user.logout();
+            } else {
+                user.setIsAuth(false);
+                user.setUser({});
+            }
+            navigate(LOGIN_ROUTE);
+        }
+    };
+
     return (
         <header>
             <div className="top-bar">
                 <div className="top-bar-container">
                     <div className="top-bar-address">
-                        <img src={locationIcon} alt="Местоположение" className="location-logo" />
+                        <img
+                            src={locationIcon}
+                            alt="Местоположение"
+                            className="location-logo"
+                        />
                         <span>
-              Ростовская обл., Мясниковский район, <br /> с. Крым, ул. Большесальская 45а
-            </span>
+                            Ростовская обл., Мясниковский район,
+                            <br /> с. Крым, ул. Большесальская 45а
+                        </span>
                     </div>
                     <div className="top-bar-info">
                         <Link to={CONTACTS_ROUTE}>Контакты</Link>
@@ -88,7 +110,11 @@ const Navbar = () => {
                             <img src={logo} alt="МебельРум161" className="navbar-logo" />
                         </Link>
                         <div className="desktop-controls">
-                            <button className="catalog-button" onClick={handleToggleSidebar} ref={catalogButtonRef}>
+                            <button
+                                className="catalog-button"
+                                onClick={handleToggleSidebar}
+                                ref={catalogButtonRef}
+                            >
                                 <span className="catalog-icon">&#9776;</span> Каталог
                             </button>
                             <div className="search-bar">
@@ -98,16 +124,43 @@ const Navbar = () => {
                                 </button>
                             </div>
                             <div className="navbar-icons">
-                                <Link to={LOGIN_ROUTE} className="navbar-icon login">
-                                    <img src={userIcon} alt="Войти" title="Войти" />
-                                    <span className="icon-text login-icon">Войти</span>
-                                </Link>
+                                {!user.isAuth ? (
+                                    <Link to={LOGIN_ROUTE} className="navbar-icon login">
+                                        <img
+                                            src={userIcon}
+                                            alt="Войти"
+                                            title="Войти"
+                                        />
+                                        <span className="icon-text login-icon">Войти</span>
+                                    </Link>
+                                ) : (
+                                    <div
+                                        className="navbar-icon login"
+                                        onClick={handleLogout}
+                                        style={{ cursor: "pointer" }}
+                                    >
+                                        <img
+                                            src={userIcon}
+                                            alt="Выйти"
+                                            title="Выйти"
+                                        />
+                                        <span className="icon-text login-icon">Выйти</span>
+                                    </div>
+                                )}
                                 <Link to={FAVORITES_ROUTE} className="navbar-icon favorite-icon">
-                                    <img src={favoriteIcon} alt="Избранное" title="Избранное" />
+                                    <img
+                                        src={favoriteIcon}
+                                        alt="Избранное"
+                                        title="Избранное"
+                                    />
                                     <span className="icon-text favorite-icon">Избранное</span>
                                 </Link>
                                 <Link to={BASKET_ROUTE} className="navbar-icon basket-icon">
-                                    <img src={basketIcon} alt="Корзина" title="Корзина" />
+                                    <img
+                                        src={basketIcon}
+                                        alt="Корзина"
+                                        title="Корзина"
+                                    />
                                     <span className="icon-text basket-icon">Корзина</span>
                                 </Link>
                                 {user.isAuth && user.user.role === "ADMIN" && (
@@ -125,20 +178,43 @@ const Navbar = () => {
                 </div>
                 {mobileMenuOpen && (
                     <div className="mobile-menu">
-                        <Link to={SHOP_ROUTE} onClick={() => setMobileMenuOpen(false)}>Главная</Link>
-                        <Link to={LOGIN_ROUTE} onClick={() => setMobileMenuOpen(false)}>Войти</Link>
-                        <Link to={FAVORITES_ROUTE} onClick={() => setMobileMenuOpen(false)}>Избранное</Link>
-                        <Link to={BASKET_ROUTE} onClick={() => setMobileMenuOpen(false)}>Корзина</Link>
+                        <Link to={SHOP_ROUTE} onClick={() => setMobileMenuOpen(false)}>
+                            Главная
+                        </Link>
+                        {!user.isAuth ? (
+                            <Link to={LOGIN_ROUTE} onClick={() => setMobileMenuOpen(false)}>
+                                Войти
+                            </Link>
+                        ) : (
+                            <div onClick={() => {
+                                toggleMobileMenu();
+                                handleLogout();
+                            }}>
+                                Выйти
+                            </div>
+                        )}
+                        <Link to={FAVORITES_ROUTE} onClick={() => setMobileMenuOpen(false)}>
+                            Избранное
+                        </Link>
+                        <Link to={BASKET_ROUTE} onClick={() => setMobileMenuOpen(false)}>
+                            Корзина
+                        </Link>
                         {user.isAuth && user.user.role === "ADMIN" && (
-                            <Link to={ADMIN_ROUTE} onClick={() => setMobileMenuOpen(false)}>Админ</Link>
+                            <Link to={ADMIN_ROUTE} onClick={() => setMobileMenuOpen(false)}>
+                                Админ
+                            </Link>
                         )}
                     </div>
                 )}
             </nav>
 
-            <CatalogSidebar isOpen={sidebarOpen} onClose={handleCloseSidebar} catalogButtonRef={catalogButtonRef} />
+            <CatalogSidebar
+                isOpen={sidebarOpen}
+                onClose={handleCloseSidebar}
+                catalogButtonRef={catalogButtonRef}
+            />
         </header>
     );
-};
+});
 
 export default Navbar;

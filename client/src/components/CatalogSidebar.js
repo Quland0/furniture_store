@@ -1,7 +1,8 @@
+// src/components/CatalogSidebar.js
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/CatalogSidebar.css';
-
+import defaultIcon from "../assets/icons/default-type.svg";
 import kitchenIcon from '../assets/icons/kitchen.svg';
 import bedroomIcon from '../assets/icons/bedroom.svg';
 import livingRoomIcon from '../assets/icons/livingroom.svg';
@@ -10,106 +11,85 @@ import hallwayIcon from '../assets/icons/hallway.svg';
 import kidsRoomIcon from '../assets/icons/kidsroom.svg';
 import chandelierIcon from '../assets/icons/chandeliers.svg';
 import tablesIcon from '../assets/icons/tables.svg';
+import { fetchTypes, fetchSubtypesByTypeId } from '../http/FurnitureAPI';
 
-const catalogData = [
-    {
-        id: 'kitchen',
-        name: 'Кухня',
-        icon: kitchenIcon,
-        titlePrefix: 'Мебель для кухни',
-        subcategories: ['Прямые кухни', 'Угловые кухни', 'Кухонные острова'],
-    },
-    {
-        id: 'bedroom',
-        name: 'Спальня',
-        icon: bedroomIcon,
-        titlePrefix: 'Мебель для спальни',
-        subcategories: ['Спальные гарнитуры', 'Шкафы', 'Кровати', 'Тумбочки', 'Комоды', 'Туалетные столики', 'Пуфы'],
-    },
-    {
-        id: 'living-room',
-        name: 'Гостиная',
-        icon: livingRoomIcon,
-        titlePrefix: 'Мебель для гостиной',
-        subcategories: ['Гостинные и стенки', 'Комоды', 'ТВ-тумбы', 'Шкафы и витрины', 'Столы и Журнальные столики', 'Консоли и зеркала'],
-    },
-    {
-        id: 'sofas',
-        name: 'Мягкая мебель',
-        icon: sofasIcon,
-        titlePrefix: 'Мягкая мебель',
-        subcategories: ['Диваны', 'Кресла', 'Банкетки и пуфы'],
-    },
-    {
-        id: 'hallway',
-        name: 'Прихожая',
-        icon: hallwayIcon,
-        titlePrefix: 'Мебель для прихожей',
-        subcategories: ['Прихожие', 'Банкетки'],
-    },
-    {
-        id: 'kids-room',
-        name: 'Детская',
-        icon: kidsRoomIcon,
-        titlePrefix: 'Мебель для детской',
-        subcategories: ['Наборы детской мебели', 'Кровати', 'Столы, стулья и парты'],
-    },
-    {
-        id: 'chandeliers',
-        name: 'Люстры',
-        icon: chandelierIcon,
-        titlePrefix: 'Люстры',
-        subcategories: [],
-    },
-    {
-        id: 'tables',
-        name: 'Столы и стулья',
-        icon: tablesIcon,
-        titlePrefix: 'Столы и стулья',
-        subcategories: ['Столы', 'Стулья'],
-    },
-];
+// Мэппинг иконок по имени типа
+const iconMapping = {
+    "Кухня": kitchenIcon,
+    "Спальня": bedroomIcon,
+    "Гостиная": livingRoomIcon,
+    "Мягкая мебель": sofasIcon,
+    "Прихожая": hallwayIcon,
+    "Детская": kidsRoomIcon,
+    "Люстры": chandelierIcon,
+    "Столы и стулья": tablesIcon
+};
 
 const CatalogSidebar = ({ isOpen, onClose, catalogButtonRef }) => {
-    const [selectedCategory, setSelectedCategory] = useState(null);
-    const [sidebarPosition, setSidebarPosition] = useState({ top: 0, left: 0 });
+    const [types, setTypes] = useState([]);
+    const [selectedType, setSelectedType] = useState(null);
+    const [subtypes, setSubtypes] = useState([]);
     const sidebarRef = useRef(null);
+    const [sidebarPosition, setSidebarPosition] = useState({ top: 0, left: 0 });
 
-    const handleSelectCategory = (catId) => {
-        setSelectedCategory(prev => (prev === catId ? null : catId));
-    };
+    // 1) Загрузка типов при монтировании
+    useEffect(() => {
+        fetchTypes()
+            .then(data => setTypes(data))
+            .catch(err => console.error("Ошибка получения типов мебели:", err));
+    }, []);
 
-    const activeCategory = catalogData.find(cat => cat.id === selectedCategory);
+    // 2) При выборе типа подгружаем его подкатегории
+    useEffect(() => {
+        if (selectedType) {
+            fetchSubtypesByTypeId(selectedType)
+                .then(data => setSubtypes(data))
+                .catch(err => {
+                    console.error("Ошибка получения подкатегорий:", err);
+                    setSubtypes([]);
+                });
+        } else {
+            setSubtypes([]);
+        }
+    }, [selectedType]);
 
+    // 3) Сброс выбора при закрытии
+    useEffect(() => {
+        if (!isOpen) {
+            setSelectedType(null);
+            setSubtypes([]);
+        }
+    }, [isOpen]);
+
+    // 4) Расчёт позиции сайдбара под кнопку
     const calculatePosition = useCallback(() => {
         if (isOpen && catalogButtonRef?.current) {
-            const buttonRect = catalogButtonRef.current.getBoundingClientRect();
-            const topBar = document.querySelector('.top-bar');
-            const navbar = document.querySelector('.navbar');
-            let baseTop = buttonRect.bottom + 15;
-            if (window.scrollY < 50 && topBar) {
-                baseTop = buttonRect.bottom + 15;
-            } else if (navbar) {
-                baseTop = buttonRect.bottom + 15 - 10;
-            }
+            const btn = catalogButtonRef.current.getBoundingClientRect();
+            // поправка на шапку
+            const offsetY = window.scrollY < 50 ? btn.bottom + 15 : btn.bottom + 5;
             setSidebarPosition({
-                top: baseTop,
-                left: buttonRect.right - 135,
+                top: offsetY,
+                left: btn.right - 135,
             });
         }
     }, [isOpen, catalogButtonRef]);
 
     useEffect(() => {
         calculatePosition();
-    }, [calculatePosition]);
+        if (isOpen) {
+            window.addEventListener('scroll', calculatePosition);
+        }
+        return () => window.removeEventListener('scroll', calculatePosition);
+    }, [isOpen, calculatePosition]);
 
+    // 5) Закрытие при клике вне
     useEffect(() => {
         const handleClickOutside = (e) => {
             if (
                 isOpen &&
                 sidebarRef.current &&
                 !sidebarRef.current.contains(e.target) &&
-                catalogButtonRef?.current &&
+                catalogButtonRef.current &&
                 !catalogButtonRef.current.contains(e.target)
             ) {
                 onClose();
@@ -118,20 +98,8 @@ const CatalogSidebar = ({ isOpen, onClose, catalogButtonRef }) => {
         if (isOpen) {
             document.addEventListener('mousedown', handleClickOutside);
         }
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
+        return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [isOpen, onClose, catalogButtonRef]);
-
-    useEffect(() => {
-        if (isOpen) {
-            calculatePosition();
-            window.addEventListener('scroll', calculatePosition);
-        }
-        return () => {
-            window.removeEventListener('scroll', calculatePosition);
-        };
-    }, [isOpen, calculatePosition]);
 
     return (
         <div
@@ -142,53 +110,63 @@ const CatalogSidebar = ({ isOpen, onClose, catalogButtonRef }) => {
                 top: `${sidebarPosition.top}px`,
                 left: `${sidebarPosition.left}px`,
                 transform: 'none',
-                marginLeft: 0,
             }}
         >
             <div className="catalog-sidebar-container">
                 <button className="close-btn" onClick={onClose}>×</button>
                 <div className="catalog-sidebar-left">
                     <ul className="category-list">
-                        {catalogData.map(category => (
+                        {types.map(type => (
                             <li
-                                key={category.id}
-                                className={selectedCategory === category.id ? 'active' : ''}
-                                onClick={() => handleSelectCategory(category.id)}
+                                key={type.id}
+                                className={selectedType === type.id ? 'active' : ''}
+                                onClick={() => setSelectedType(type.id)}
                             >
-                                <img src={category.icon} alt={category.name} className="category-icon" />
-                                <span>{category.name}</span>
+                                <img
+                                    src={type.icon
+                                        ? `http://localhost:5000/${type.icon}`
+                                        : (iconMapping[type.name] || defaultIcon)}
+                                    alt={type.name}
+                                    className="category-icon"
+                                />
+                                <span>{type.name}</span>
                             </li>
                         ))}
                     </ul>
                 </div>
+
                 <div className="catalog-sidebar-right">
-                    {activeCategory ? (
+                    {selectedType ? (
                         <>
-                            <h3>
+                            <h3 className="type-title">
                                 <Link
-                                    to={`/category/${activeCategory.id}`}
+                                    to={`/category/${selectedType}`}
                                     onClick={onClose}
-                                    style={{ textDecoration: 'none', color: 'inherit' }}
+                                    className="type-link"
                                 >
-                                    {activeCategory.titlePrefix}
+                                    {types.find(t => t.id === selectedType)?.name}
                                 </Link>
                             </h3>
-                            <ul className="subcategory-list">
-                                {activeCategory.subcategories.map((sub, index) => (
-                                    <li key={index}>
-                                        <Link
-                                            to={`/category/${activeCategory.id}/${encodeURIComponent(sub)}`}
-                                            onClick={onClose}
-                                            style={{ textDecoration: 'none', color: 'inherit' }}
-                                        >
-                                            {sub}
-                                        </Link>
-                                    </li>
-                                ))}
-                            </ul>
+                            {subtypes.length > 0 ? (
+                                <ul className="subcategory-list">
+                                    {subtypes.map(sub => (
+                                        <li key={sub.id} className="subcategory-item">
+                                            <Link
+                                                to={`/category/${selectedType}/${encodeURIComponent(sub.name)}`}
+                                                onClick={onClose}
+                                                className="subcategory-link"
+                                            >
+                                                {sub.name}
+                                            </Link>
+                                        </li>
+                                    ))}
+                                </ul>
+                            ) : (
+                                <p className="no-subtypes">Подкатегорий нет</p>
+                            )}
                         </>
                     ) : (
-                        <p>Выберите категорию</p>
+                        <p className="prompt">Выберите тип слева</p>
                     )}
                 </div>
             </div>

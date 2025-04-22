@@ -15,10 +15,7 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <Context.Provider
         value={{
-            user: {
-                isAuth: true,
-                user: { role: 'ADMIN' }
-            },
+            user: new UserStore(),
             furniture: new FurnitureStore(),
         }}
     >

@@ -1,6 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
 
-// Имитируем API
 const fakeServerFetchFavorites = () => {
     return [{ id: 1, name: 'Товар из сервера', price: 1000 }];
 };

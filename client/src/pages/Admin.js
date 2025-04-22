@@ -20,7 +20,6 @@ const Admin = () => {
                     <button onClick={() => setFurnitureVisible(true)}>
                         Добавить мебель
                     </button>
-                    {/* Кнопка "Добавить категорию" убрана */}
                     <button onClick={() => setManufacturerVisible(true)}>
                         Добавить производителя
                     </button>

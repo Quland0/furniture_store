@@ -3,12 +3,15 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Context } from '../index';
 import { LOGIN_ROUTE, REGISTRATION_ROUTE, SHOP_ROUTE } from '../utils/consts';
 import '../styles/Auth.css';
+import { login, registration } from "../http/userAPI";
+import { observer } from "mobx-react-lite";
 
-const Auth = () => {
+const Auth = observer(() => {
     const { user } = useContext(Context);
     const location = useLocation();
     const navigate = useNavigate();
     const isLogin = location.pathname === LOGIN_ROUTE;
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -28,15 +31,21 @@ const Auth = () => {
         }
 
         try {
+            let data;
             if (isLogin) {
-                console.log('Авторизация:', { email, password });
-                navigate(SHOP_ROUTE);
+                data = await login(email, password);
+                console.log('Авторизация успешна:', data);
             } else {
-                console.log('Регистрация:', { email, password });
-                navigate(LOGIN_ROUTE);
+                data = await registration(email, password);
+                console.log('Регистрация успешна:', data);
             }
+            user.setUser(data);
+            user.setIsAuth(true);
+            navigate(SHOP_ROUTE);
         } catch (e) {
-            setError(e.response?.data?.message || 'Ошибка при выполнении запроса.');
+            const errorMessage = e.response?.data?.message || 'Ошибка при выполнении запроса.';
+            setError(errorMessage);
+            console.error('Ошибка при запросе:', e);
         }
     };
 
@@ -54,7 +63,6 @@ const Auth = () => {
                     <label>Email</label>
                     <input
                         type="email"
-                        placeholder="Введите Email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                     />
@@ -63,7 +71,6 @@ const Auth = () => {
                     <label>Пароль</label>
                     <input
                         type="password"
-                        placeholder="Введите пароль"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                     />
@@ -73,7 +80,6 @@ const Auth = () => {
                         <label>Подтвердите пароль</label>
                         <input
                             type="password"
-                            placeholder="Повторите пароль"
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
                         />
@@ -85,16 +91,12 @@ const Auth = () => {
             </form>
             <div className="auth-switch">
                 {isLogin ? 'Нет аккаунта?' : 'Уже есть аккаунт?'}{' '}
-                <a
-                    href="#"
-                    onClick={handleSwitchMode}
-                    className="switch-button"
-                >
+                <button type="button" onClick={handleSwitchMode} className="switch-button">
                     {isLogin ? 'Зарегистрироваться' : 'Войти'}
-                </a>
+                </button>
             </div>
         </div>
     );
-};
+});
 
 export default Auth;

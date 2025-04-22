@@ -8,8 +8,7 @@ router.post('/registration', [
     check('email', 'Некорректный email').isEmail(),
     check('password', "Пароль не может быть пустым").notEmpty(),
     check('password', 'Пароль должен быть минимум 6 символов').isLength({ min: 6 })
-])
-router.post('/registration',userController.registration)
+], userController.registration)
 router.post('/login', userController.login)
 router.get('/auth', authMiddleware, userController.check)
 

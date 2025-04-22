@@ -8,12 +8,8 @@ import img5 from "../assets/images/products/upholstered−furniture/диван.j
 export default class FurnitureStore {
     constructor() {
         this._types = [
-            { id: 1, name: "Спальни" },
-            { id: 2, name: "Кухни" }
         ];
         this._manufacturers = [
-            { id: 1, name: "Арида" },
-            { id: 2, name: "Milana group" },
         ];
         this._furnitures = [
             {
