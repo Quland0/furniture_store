@@ -300,3 +300,7 @@
     width: 23px;
     height: 23px;
 }
+.item-name.hidden {
+    color: red;
+    font-weight: bold;
+}

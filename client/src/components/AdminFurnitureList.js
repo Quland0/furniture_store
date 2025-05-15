@@ -1,4 +1,8 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, {
+    useState,
+    useEffect,
+    useMemo
+} from 'react';
 import '../styles/AdminFurnitureList.css';
 import ErrorIcon from "../assets/icons/404.svg";
 import MakeNewIcon from "../assets/icons/checkmark.svg";
@@ -6,334 +10,296 @@ import UnNewIcon from "../assets/icons/close.svg";
 import editIcon from "../assets/icons/pencil.svg";
 import deleteIcon from "../assets/icons/delete.svg";
 import addIcon from "../assets/icons/plus.svg";
-import CreateFurniture from "../components/modals/CreateFurniture"; // подключаем модалку
+import CreateFurniture from "../components/modals/CreateFurniture";
+import {
+    fetchFurniture,
+    fetchTypes,
+    fetchSubTypes,
+    deleteFurniture, createSubType, editType, editSubType, updateType, deleteType, deleteSubType
+} from '../http/FurnitureAPI';
+import CreateSubcategory from "./modals/CreateSubcategory";
+import EditCategoryModal from "./modals/EditCategoryModal";
+import { fetchOneFurniture, updateFurniture } from '../http/FurnitureAPI';
 
-const mockFurnitures = [
-    {
-        id: 1,
-        name: "Спальня Виктория 6 дв.",
-        manufacturer: "Milana group",
-        price: 89000,
-        categories: ["Мебель для спальни", "Шкафы"],
-        isNew: true,
-        img: "/placeholder-product.jpg"
-    },
-    {
-        id: 2,
-        name: "Стол Стулович",
-        manufacturer: "Арида",
-        price: 30000,
-        categories: ["Мебель для гостиной", "Столы"],
-        isNew: false,
-        img: "/placeholder-product.jpg"
-    },
-    {
-        id: 3,
-        name: "Стол Стулович",
-        manufacturer: "Арида",
-        price: 30000,
-        categories: ["Мебель для гостиной", "Столы"],
-        isNew: false,
-        img: "/placeholder-product.jpg"
-    },
-];
-
-const adminCategories = [
-    {
-        id: 'all',
-        label: 'Все',
-        subcategories: []
-    },
-    {
-        id: 'bedroom',
-        label: 'Мебель для спальни',
-        subcategories: ['Кровати', 'Шкафы', 'Тумбочки', 'Комоды', 'Пуфы']
-    },
-    {
-        id: 'living-room',
-        label: 'Мебель для гостиной',
-        subcategories: ['Гостиные и стенки', 'Комоды', 'ТВ-тумбы', 'Шкафы и витрины', 'Столы и журнальные столики', 'Консоли и зеркала']
-    },
-    {
-        id: 'kitchen',
-        label: 'Кухня',
-        subcategories: ['Прямые кухни', 'Угловые кухни', 'Кухонные острова']
-    },
-    {
-        id: 'sofas',
-        label: 'Мягкая мебель',
-        subcategories: ['Диваны', 'Кресла', 'Банкетки и пуфы']
-    },
-    {
-        id: 'hallway',
-        label: 'Мебель для прихожей',
-        subcategories: ['Прихожие', 'Банкетки']
-    },
-    {
-        id: 'kids-room',
-        label: 'Мебель для детской',
-        subcategories: ['Наборы детской мебели', 'Кровати', 'Столы, стулья и парты']
-    },
-    {
-        id: 'tables',
-        label: 'Столы и стулья',
-        subcategories: ['Столы', 'Стулья']
-    },
-    {
-        id: 'chandeliers',
-        label: 'Люстры',
-        subcategories: []
-    },
-];
-
+const ITEMS_PER_PAGE = 28;
 const selectOptions = [
     { id: 'allInPage', label: 'Все на странице' },
     { id: 'all', label: 'Все' },
 ];
-
 const actionOptions = [
     { id: 'delete', label: 'Удалить', icon: deleteIcon },
     { id: 'hide', label: 'Скрыть (404)', icon: ErrorIcon },
     { id: 'makeNew', label: 'Новинка', icon: MakeNewIcon },
     { id: 'unNew', label: 'Не новинка', icon: UnNewIcon },
+    { id: 'unhide', label: 'Отобразить', icon: ErrorIcon }
 ];
-
-const ITEMS_PER_PAGE = 28;
 
 function computeDisplayedPages(currentPage, totalPages) {
     const pages = [];
     const boundaryPages = 2;
     const aroundCurrent = 2;
-
-    for (let i = 1; i <= Math.min(boundaryPages, totalPages); i++) {
-        pages.push(i);
-    }
-
+    for (let i = 1; i <= Math.min(boundaryPages, totalPages); i++) pages.push(i);
     let start = Math.max(boundaryPages + 1, currentPage - aroundCurrent);
     let end = Math.min(totalPages - boundaryPages, currentPage + aroundCurrent);
-
-    if (start > boundaryPages + 1) {
-        pages.push('...');
-    }
-
-    for (let i = start; i <= end; i++) {
-        pages.push(i);
-    }
-
-    if (end < totalPages - boundaryPages) {
-        pages.push('...');
-    }
-
-    for (let i = Math.max(totalPages - boundaryPages + 1, boundaryPages + 1); i <= totalPages; i++) {
-        if (!pages.includes(i)) {
-            pages.push(i);
-        }
-    }
-
+    if (start > boundaryPages + 1) pages.push('...');
+    for (let i = start; i <= end; i++) pages.push(i);
+    if (end < totalPages - boundaryPages) pages.push('...');
+    for (let i = Math.max(totalPages - boundaryPages + 1, boundaryPages + 1); i <= totalPages; i++)
+        if (!pages.includes(i)) pages.push(i);
     return pages;
 }
 
 const AdminFurnitureList = ({ onAddCategory }) => {
-    const [furnitures, setFurnitures] = useState(mockFurnitures);
+    // --- state ---
+    const [furnitures, setFurnitures] = useState([]);
+    const [types, setTypes] = useState([]);
+    const [categories, setCategories] = useState([]);
+    const [subtypes, setSubtypes] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState('all');
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedItems, setSelectedItems] = useState([]);
     const [sortOption, setSortOption] = useState('name');
     const [currentPage, setCurrentPage] = useState(1);
-
     const [isSelectOpen, setIsSelectOpen] = useState(false);
     const [isActionOpen, setIsActionOpen] = useState(false);
     const [expandedCategories, setExpandedCategories] = useState([]);
-
     const [contextMenu, setContextMenu] = useState({
-        visible: false,
-        x: 0,
-        y: 0,
-        categoryId: null,
-        isSubcategory: false,
+        visible: false, x: 0, y: 0, categoryId: null, isSubcategory: false
     });
+    const [showFurnitureModal, setShowFurnitureModal] = useState(false);
+    const [editingFurniture, setEditingFurniture] = useState(null);
+
+    const [editModalData, setEditModalData] = useState(null);
+
+    const [showSubModal, setShowSubModal] = useState(false);
+    const [selectedTypeId, setSelectedTypeId] = useState(null);
+    const [editingFurnitureFull, setEditingFurnitureFull] = useState(null);
+
+    const createFormData = item => {
+        const form = new FormData();
+        form.append('name', item.name);
+        form.append('price', item.price);
+        form.append('manufacturerId', item.manufacturerId);
+        form.append('typeId', item.types?.[0]?.id || '');
+        form.append('subTypeId', item.subTypeId || '');
+        form.append('isNew', item.new ? 'true' : 'false');
+        form.append('hidden', item.hidden ? 'true' : 'false');
+        form.append('existingImages', JSON.stringify(
+            (item.images || []).map(img => ({ id: img.id, order: img.order }))
+        ));
+        form.append('info', JSON.stringify(item.info || []));
+        return form;
+    };
+
+    useEffect(() => {
+        fetchFurniture()
+            .then(data => setFurnitures(data.rows || []))
+            .catch(e => console.error("Ошибка загрузки мебели:", e));
+        Promise.all([fetchTypes(), fetchSubTypes()])
+            .then(([typesData, subtypesData]) => {
+                setTypes(typesData);
+                setSubtypes(subtypesData);
+                const cats = typesData.map(t => ({
+                    id: t.id,
+                    label: t.name,
+                    subcategories: subtypesData
+                        .filter(s => s.typeId === t.id)
+                        .map(s => s.name)
+                }));
+                setCategories([{ id: 'all', label: 'Все', subcategories: [] }, ...cats]);
+            })
+            .catch(e => console.error("Ошибка загрузки типов/подтипов:", e));
+    }, []);
 
     useEffect(() => {
         if (contextMenu.visible) {
-            const handleGlobalClick = () => {
-                setContextMenu(prev => ({ ...prev, visible: false }));
-            };
-            document.addEventListener('click', handleGlobalClick);
-            return () => document.removeEventListener('click', handleGlobalClick);
+            const handler = () => setContextMenu(prev => ({ ...prev, visible: false }));
+            document.addEventListener('click', handler);
+            return () => document.removeEventListener('click', handler);
         }
     }, [contextMenu.visible]);
 
     const handleCategoryContextMenu = (e, catId) => {
         e.preventDefault();
-        setContextMenu({
-            visible: true,
-            x: e.pageX,
-            y: e.pageY,
-            categoryId: catId,
-            isSubcategory: false,
-        });
+        setContextMenu({ visible: true, x: e.pageX, y: e.pageY, categoryId: catId, isSubcategory: false });
     };
-
-    const handleSubcategoryContextMenu = (e, subName) => {
+    const handleSubcategoryContextMenu = (e, sub) => {
         e.preventDefault();
-        setContextMenu({
-            visible: true,
-            x: e.pageX,
-            y: e.pageY,
-            categoryId: subName,
-            isSubcategory: true,
-        });
+        setContextMenu({ visible: true, x: e.pageX, y: e.pageY, categoryId: sub, isSubcategory: true });
     };
-
     const handleAddSubcategory = () => {
-        console.log("Добавить подкатегорию к категории ID=", contextMenu.categoryId);
+        setSelectedTypeId(contextMenu.categoryId);
+        setShowSubModal(true);
+        setContextMenu(prev => ({ ...prev, visible: false }));
     };
 
     const handleEditCategory = () => {
-        console.log("Редактировать категорию или подкатегорию:", contextMenu.categoryId);
+        setEditModalData({
+            id: contextMenu.categoryId,
+            isSubcategory: contextMenu.isSubcategory,
+            name: contextMenu.categoryId // если хочешь отображать текущее имя
+        });
+        setContextMenu(prev => ({ ...prev, visible: false }));
+    };
+    const handleDeleteCategory = async () => {
+        try {
+            if (contextMenu.isSubcategory) {
+                const sub = subtypes.find(s => s.name === contextMenu.categoryId);
+                if (sub) await deleteSubType(sub.id);
+            } else {
+                await deleteType(contextMenu.categoryId);
+            }
+            window.location.reload();
+        } catch (e) {
+            console.error("Ошибка удаления:", e);
+        }
+        setContextMenu(prev => ({ ...prev, visible: false }));
+    };
+    const handleEditClick = async (id) => {
+        try {
+            const full = await fetchOneFurniture(id);
+            setEditingFurnitureFull(full);
+            setShowFurnitureModal(true);
+        } catch (e) {
+            console.error("Не удалось загрузить товар:", e);
+        }
     };
 
-    const handleDeleteCategory = () => {
-        console.log("Удалить категорию или подкатегорию:", contextMenu.categoryId);
+    const toggleSelectItem = id => {
+        setSelectedItems(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
     };
-
-    const handleCategorySelect = (catIdOrSub) => {
-        setSelectedCategory(catIdOrSub);
-        setCurrentPage(1);
+    const handleDeleteOne = id => {
+        deleteFurniture(id)
+            .then(() => setFurnitures(prev => prev.filter(f => f.id !== id)))
+            .catch(e => console.error("Ошибка удаления мебели:", e));
+        setSelectedItems(prev => prev.filter(x => x !== id));
     };
-
-    const toggleExpand = (catId) => {
-        setExpandedCategories(prev =>
-            prev.includes(catId) ? prev.filter(id => id !== catId) : [...prev, catId]
-        );
-    };
-
-    const handleSearch = (e) => {
-        setSearchQuery(e.target.value);
-        setCurrentPage(1);
-    };
-
-    const handleSortChange = (e) => {
-        setSortOption(e.target.value);
-    };
-
-    const toggleSelectItem = (itemId) => {
-        setSelectedItems(prev =>
-            prev.includes(itemId) ? prev.filter(id => id !== itemId) : [...prev, itemId]
-        );
-    };
-
-    const handleDeleteOne = (id) => {
-        setFurnitures(prev => prev.filter(f => f.id !== id));
-        setSelectedItems(prev => prev.filter(itemId => itemId !== id));
+    const handleCreateSubcategory = async (subName, typeId) => {
+        try {
+            await createSubType({ name: subName, typeId });
+            alert("Подкатегория добавлена!");
+        } catch (e) {
+            console.error("Ошибка при добавлении подкатегории", e);
+        }
     };
 
     const filteredAndSortedFurnitures = useMemo(() => {
         let result = [...furnitures];
-
         if (selectedCategory !== 'all') {
-            const mainCat = adminCategories.find(cat => cat.id === selectedCategory);
-            if (mainCat) {
-                const catLabel = mainCat.label.toLowerCase();
+            const cat = categories.find(c => c.id === selectedCategory);
+            if (cat) {
                 result = result.filter(item =>
-                    item.categories?.some(cat => cat.toLowerCase().includes(catLabel))
-                );
-            } else {
-                result = result.filter(item =>
-                    item.categories?.includes(selectedCategory)
+                    item.typeId === selectedCategory ||
+                    item.categories?.some(sub => cat.subcategories.includes(sub))
                 );
             }
         }
-
-        if (searchQuery.trim()) {
-            const query = searchQuery.toLowerCase();
+        if (searchQuery) {
+            const q = searchQuery.toLowerCase();
             result = result.filter(item =>
-                item.name.toLowerCase().includes(query) ||
-                item.manufacturer.toLowerCase().includes(query)
+                item.name.toLowerCase().includes(q) ||
+                (item.manufacturerName || '').toLowerCase().includes(q)
+            );
+        }
+        switch (sortOption) {
+            case 'price_asc': result.sort((a,b)=>a.price-b.price); break;
+            case 'price_desc': result.sort((a,b)=>b.price-a.price); break;
+            default: result.sort((a,b)=>a.name.localeCompare(b.name)); break;
+        }
+        return result;
+    }, [furnitures, selectedCategory, searchQuery, sortOption, categories]);
+
+    const handleBulkAction = async actionId => {
+        console.log("Bulk action:", actionId, selectedItems);
+
+        if (actionId === 'delete') {
+            selectedItems.forEach(handleDeleteOne);
+        } else {
+            const promises = selectedItems.map(async id => {
+                const item = await fetchOneFurniture(id);
+                if (!item) return;
+
+                const updated = { ...item };
+
+                if (actionId === 'hide')   updated.hidden = true;
+                if (actionId === 'unhide') updated.hidden = false;
+                if (actionId === 'makeNew') updated.new    = true;
+                if (actionId === 'unNew')   updated.new    = false;
+
+                const fd = createFormData(updated);
+
+                await updateFurniture(id, fd);
+            });
+
+            await Promise.all(promises);
+
+            setFurnitures(prev =>
+                prev.map(f =>
+                    selectedItems.includes(f.id)
+                        ? {
+                            ...f,
+                            hidden: actionId === 'hide'
+                                ? true
+                                : actionId === 'unhide'
+                                    ? false
+                                    : f.hidden,
+                            new:    actionId === 'makeNew'
+                                ? true
+                                : actionId === 'unNew'
+                                    ? false
+                                    : f.new
+                        }
+                        : f
+                )
             );
         }
 
-        switch (sortOption) {
-            case 'price_asc':
-                result.sort((a, b) => a.price - b.price);
-                break;
-            case 'price_desc':
-                result.sort((a, b) => b.price - a.price);
-                break;
-            default:
-                result.sort((a, b) => a.name.localeCompare(b.name, 'ru'));
-                break;
-        }
-
-        return result;
-    }, [furnitures, selectedCategory, searchQuery, sortOption]);
-
+        setSelectedItems([]);
+        setIsActionOpen(false);
+    };
+    // --- pagination ---
     const totalPages = Math.ceil(filteredAndSortedFurnitures.length / ITEMS_PER_PAGE);
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     const paginatedFurnitures = filteredAndSortedFurnitures.slice(startIndex, startIndex + ITEMS_PER_PAGE);
     const displayedPages = useMemo(() => computeDisplayedPages(currentPage, totalPages), [currentPage, totalPages]);
 
-    const [showFurnitureModal, setShowFurnitureModal] = useState(false);
-    const [editingFurniture, setEditingFurniture] = useState(null);
-
-    const handleEditClick = (item) => {
-        setEditingFurniture(item);
-        setShowFurnitureModal(true);
-    };
-
-    const handleSaveFurniture = (updatedFurniture) => {
-        setFurnitures(prev =>
-            prev.map(item => (item.id === updatedFurniture.id ? updatedFurniture : item))
-        );
-        setShowFurnitureModal(false);
-        setEditingFurniture(null);
-    };
 
     return (
         <div className="admin-furniture-list">
             <aside className="admin-categories">
-                <button
-                    className="add-btn"
-                    onClick={onAddCategory}
-                >
-                    Добавить категорию
-                </button>
+                <button className="add-btn" onClick={onAddCategory}>Добавить категорию</button>
                 <ul className="category-list">
-                    {adminCategories.map(cat => (
+                    {categories.map(cat => (
                         <li key={cat.id} className="category-item">
                             <div
                                 className="category-row"
-                                onContextMenu={(e) => handleCategoryContextMenu(e, cat.id)}
+                                onContextMenu={e => handleCategoryContextMenu(e, cat.id)}
                             >
                                 {cat.subcategories.length > 0 && (
                                     <button
                                         className="expand-btn"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            toggleExpand(cat.id);
-                                        }}
+                                        onClick={e => { e.stopPropagation(); setExpandedCategories(prev =>
+                                            prev.includes(cat.id) ? prev.filter(x=>x!==cat.id) : [...prev, cat.id]
+                                        ); }}
                                     >
                                         {expandedCategories.includes(cat.id) ? '–' : '+'}
                                     </button>
                                 )}
                                 <span
-                                    className={`category-name ${selectedCategory === cat.id ? 'active' : ''}`}
-                                    onClick={() => handleCategorySelect(cat.id)}
+                                    className={`category-name ${selectedCategory===cat.id?'active':''}`}
+                                    onClick={() => { setSelectedCategory(cat.id); setCurrentPage(1); }}
                                 >
-                                    {cat.label}
-                                </span>
+                  {cat.label}
+                </span>
                             </div>
                             {expandedCategories.includes(cat.id) && (
                                 <ul className="subcategory-list">
                                     {cat.subcategories.map(sub => (
                                         <li
                                             key={sub}
-                                            className={`subcategory-item ${selectedCategory === sub ? 'active' : ''}`}
-                                            onContextMenu={(e) => handleSubcategoryContextMenu(e, sub)}
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                handleCategorySelect(sub);
-                                            }}
+                                            className={`subcategory-item ${selectedCategory===sub?'active':''}`}
+                                            onContextMenu={e => handleSubcategoryContextMenu(e, sub)}
+                                            onClick={e => { e.stopPropagation(); setSelectedCategory(sub); setCurrentPage(1); }}
                                         >
                                             {sub}
                                         </li>
@@ -348,57 +314,31 @@ const AdminFurnitureList = ({ onAddCategory }) => {
             <div className="admin-list-panel">
                 <div className="top-panel">
                     <div className="dropdown-container">
-                        <button className="dropdown-btn" onClick={() => setIsSelectOpen(prev => !prev)}>
-                            Выбрать
-                        </button>
+                        <button className="dropdown-btn" onClick={()=>setIsSelectOpen(o=>!o)}>Выбрать</button>
                         {isSelectOpen && (
                             <div className="dropdown-menu select-menu">
-                                {selectOptions.map(opt => (
-                                    <div key={opt.id} className="dropdown-item" onClick={() => {
-                                        if (opt.id === 'allInPage') {
-                                            setSelectedItems(paginatedFurnitures.map(f => f.id));
-                                        } else {
-                                            setSelectedItems(furnitures.map(f => f.id));
-                                        }
+                                {selectOptions.map(opt=>(
+                                    <div key={opt.id} className="dropdown-item" onClick={()=>{
+                                        if(opt.id==='allInPage') setSelectedItems(paginatedFurnitures.map(f=>f.id));
+                                        else setSelectedItems(furnitures.map(f=>f.id));
                                         setIsSelectOpen(false);
-                                    }}>
-                                        {opt.label}
-                                    </div>
+                                    }}>{opt.label}</div>
                                 ))}
                             </div>
                         )}
                     </div>
 
                     <div className="dropdown-container">
-                        <button className="dropdown-btn" onClick={() => setIsActionOpen(prev => !prev)}>
-                            Выберите действие
-                        </button>
+                        <button className="dropdown-btn" onClick={()=>setIsActionOpen(o=>!o)}>Выберите действие</button>
                         {isActionOpen && (
                             <div className="dropdown-menu action-menu">
                                 {actionOptions.map(opt => (
-                                    <div key={opt.id} className="dropdown-item action-item" onClick={() => {
-                                        switch (opt.id) {
-                                            case 'delete':
-                                                setFurnitures(prev => prev.filter(f => !selectedItems.includes(f.id)));
-                                                setSelectedItems([]);
-                                                break;
-                                            case 'hide':
-                                                console.log("Скрыть выбранные товары");
-                                                break;
-                                            case 'makeNew':
-                                                setFurnitures(prev => prev.map(f =>
-                                                    selectedItems.includes(f.id) ? { ...f, isNew: true } : f
-                                                ));
-                                                break;
-                                            case 'unNew':
-                                                setFurnitures(prev => prev.map(f =>
-                                                    selectedItems.includes(f.id) ? { ...f, isNew: false } : f
-                                                ));
-                                                break;
-                                        }
-                                        setIsActionOpen(false);
-                                    }}>
-                                        <img src={opt.icon} alt={opt.label} className="dropdown-icon" />
+                                    <div
+                                        key={opt.id}
+                                        className="dropdown-item action-item"
+                                        onClick={() => handleBulkAction(opt.id)}
+                                    >
+                                        <img src={opt.icon} alt="" className="dropdown-icon" />
                                         <span>{opt.label}</span>
                                     </div>
                                 ))}
@@ -406,7 +346,7 @@ const AdminFurnitureList = ({ onAddCategory }) => {
                         )}
                     </div>
 
-                    <select className="sort-select" value={sortOption} onChange={handleSortChange}>
+                    <select className="sort-select" value={sortOption} onChange={e=>setSortOption(e.target.value)}>
                         <option value="name">По названию</option>
                         <option value="price_asc">Сначала дешевле</option>
                         <option value="price_desc">Сначала дороже</option>
@@ -417,41 +357,31 @@ const AdminFurnitureList = ({ onAddCategory }) => {
                         className="search-input"
                         placeholder="Поиск..."
                         value={searchQuery}
-                        onChange={handleSearch}
+                        onChange={e=>{ setSearchQuery(e.target.value); setCurrentPage(1); }}
                     />
                 </div>
 
                 <table className="admin-furniture-table">
                     <thead>
                     <tr>
-                        <th></th>
-                        <th>Название</th>
-                        <th>Производитель</th>
-                        <th>Цена</th>
-                        <th>Действия</th>
+                        <th></th><th>Название</th><th>Производитель</th><th>Цена</th><th>Действия</th>
                     </tr>
                     </thead>
                     <tbody>
-                    {paginatedFurnitures.map(item => (
+                    {paginatedFurnitures.map(item=>(
                         <tr key={item.id}>
+                            <td><input type="checkbox" checked={selectedItems.includes(item.id)} onChange={()=>toggleSelectItem(item.id)}/></td>
                             <td>
-                                <input
-                                    type="checkbox"
-                                    checked={selectedItems.includes(item.id)}
-                                    onChange={() => toggleSelectItem(item.id)}
-                                />
+                                <div className={`item-name ${item.hidden ? 'hidden' : ''}`}>{item.name}</div>
+                                <div className="item-cats">{item.categories?.join(', ')}</div>
                             </td>
-                            <td>
-                                <div className="item-name">{item.name}</div>
-                                <div className="item-cats">{item.categories.join(', ')}</div>
-                            </td>
-                            <td>{item.manufacturer}</td>
+                            <td>{item.manufacturer?.name || '—'}</td>
                             <td>{item.price.toLocaleString()} ₽</td>
                             <td>
-                                <button className="edit-btn" onClick={() => handleEditClick(item)}>
+                                <button className="edit-btn" onClick={()=> handleEditClick(item.id)}>
                                     <img src={editIcon} alt="Редактировать" />
                                 </button>
-                                <button className="delete-btn" onClick={() => handleDeleteOne(item.id)}>
+                                <button className="delete-btn" onClick={()=>handleDeleteOne(item.id)}>
                                     <img src={deleteIcon} alt="Удалить" />
                                 </button>
                             </td>
@@ -460,76 +390,83 @@ const AdminFurnitureList = ({ onAddCategory }) => {
                     </tbody>
                 </table>
 
-                {filteredAndSortedFurnitures.length > ITEMS_PER_PAGE && (
+                {totalPages>1 && (
                     <div className="pagination-container">
-                        <div className="pagination-content">
-                            <button
-                                className={`pagination-arrow ${currentPage <= 1 ? 'disabled' : ''}`}
-                                onClick={() => setCurrentPage(prev => prev - 1)}
-                                disabled={currentPage <= 1}
-                            >
-                                ← НАЗАД
-                            </button>
-
-                            <div className="page-numbers">
-                                {displayedPages.map((p, i) =>
-                                    p === '...' ? (
-                                        <span key={i} className="dots">…</span>
-                                    ) : (
-                                        <button
-                                            key={p}
-                                            onClick={() => setCurrentPage(p)}
-                                            className={`page-number ${currentPage === p ? 'active' : ''}`}
-                                        >
-                                            {p}
-                                        </button>
-                                    )
-                                )}
-                            </div>
-
-                            <button
-                                className={`pagination-arrow ${currentPage >= totalPages ? 'disabled' : ''}`}
-                                onClick={() => setCurrentPage(prev => prev + 1)}
-                                disabled={currentPage >= totalPages}
-                            >
-                                ВПЕРЁД →
-                            </button>
+                        <button disabled={currentPage<=1} onClick={()=>setCurrentPage(p=>p-1)} className="pagination-arrow">← НАЗАД</button>
+                        <div className="page-numbers">
+                            {displayedPages.map((p,i)=>p==='...' ? <span key={i} className="dots">…</span>
+                                : <button key={p} onClick={()=>setCurrentPage(p)} className={`page-number ${currentPage===p?'active':''}`}>{p}</button>
+                            )}
                         </div>
+                        <button disabled={currentPage>=totalPages} onClick={()=>setCurrentPage(p=>p+1)} className="pagination-arrow">ВПЕРЁД →</button>
                     </div>
                 )}
             </div>
 
             {contextMenu.visible && (
-                <div
-                    className="category-context-menu"
-                    style={{ top: contextMenu.y, left: contextMenu.x }}
-                >
-                    <div className="context-menu-item" onClick={handleAddSubcategory}>
-                        <img src={addIcon} alt="Добавить подкатегорию" className="context-icon" />
-                        <span>Добавить подкатегорию</span>
-                    </div>
-                    <div className="context-menu-item" onClick={handleEditCategory}>
-                        <img src={editIcon} alt="Изменить" className="context-icon" />
-                        <span>Изменить</span>
-                    </div>
-                    <div className="context-menu-item delete-context-menu-item" onClick={handleDeleteCategory}>
-                        <img src={deleteIcon} alt="Удалить" className="context-icon" />
-                        <span>Удалить</span>
-                    </div>
+                <div className="category-context-menu" style={{ top: contextMenu.y, left: contextMenu.x }}>
+                    <div className="context-menu-item" onClick={handleAddSubcategory}><img src={addIcon} className="context-icon" />Добавить подкатегорию</div>
+                    <div className="context-menu-item" onClick={handleEditCategory}><img src={editIcon} className="context-icon" />Изменить</div>
+                    <div className="context-menu-item delete-context-menu-item" onClick={handleDeleteCategory}><img src={deleteIcon} className="context-icon" />Удалить</div>
                 </div>
             )}
 
             {showFurnitureModal && (
                 <CreateFurniture
                     show={showFurnitureModal}
-                    onHide={() => {
+                    onHide={()=>{setShowFurnitureModal(false); setEditingFurniture(null);}}
+                    editingFurniture={editingFurnitureFull}
+                    onSave={updated => {
+                        setFurnitures(f => f.map(x => x.id === updated.id ? updated : x));
                         setShowFurnitureModal(false);
-                        setEditingFurniture(null);
+                        setEditingFurnitureFull(null);
                     }}
-                    editingFurniture={editingFurniture}
-                    onSave={handleSaveFurniture}
                 />
             )}
+            {showSubModal && (
+                <CreateSubcategory
+                    show={showSubModal}
+                    onHide={() => setShowSubModal(false)}
+                    onCreate={handleCreateSubcategory}
+                    parentCategoryId={selectedTypeId}
+                />
+            )}
+            {editModalData && (
+                <EditCategoryModal
+                    show={true}
+                    onHide={() => setEditModalData(null)}
+                    data={editModalData}
+                    onSave={async (newName) => {
+                        try {
+                            if (editModalData.isSubcategory) {
+                                const sub = subtypes.find(s => s.name === editModalData.name);
+                                if (sub) await editSubType(sub.id, newName);
+                            } else {
+                                await editType(editModalData.id, newName);
+                            }
+
+                            const [updatedTypes, updatedSubtypes] = await Promise.all([fetchTypes(), fetchSubTypes()]);
+                            const updatedCategories = updatedTypes.map(t => ({
+                                id: t.id,
+                                label: t.name,
+                                subcategories: updatedSubtypes
+                                    .filter(s => s.typeId === t.id)
+                                    .map(s => s.name)
+                            }));
+                            setTypes(updatedTypes);
+                            setSubtypes(updatedSubtypes);
+                            setCategories([{ id: 'all', label: 'Все', subcategories: [] }, ...updatedCategories]);
+
+                            setEditModalData(null);
+                        } catch (e) {
+                            console.error("Ошибка при редактировании:", e);
+                            alert('Ошибка при сохранении');
+                        }
+                    }}
+                />
+            )}
+
+
         </div>
     );
 };

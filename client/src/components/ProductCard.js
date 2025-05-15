@@ -41,13 +41,27 @@ const ProductCard = ({ product }) => {
         }
         return stars;
     };
-
+    const getReviewWord = (count) => {
+        const mod100 = count % 100;
+        if (mod100 >= 11 && mod100 <= 14) return 'отзывов';
+        const mod10 = count % 10;
+        if (mod10 === 1) return 'отзыв';
+        if (mod10 >= 2 && mod10 <= 4) return 'отзыва';
+        return 'отзывов';
+    };
+    const reviewsCount = product.reviewsCount || 0;
+    const avgRating    = product.rating      || 0;
+    const sortedImages = product.images?.slice().sort((a, b) => a.order - b.order);
     return (
         <div className="product-card">
             <div className="product-image-container">
                 <Link to={`/furniture/${product.id}`}>
                     <img
-                        src={product.img || '/placeholder-product.jpg'}
+                        src={
+                            sortedImages?.[0]
+                                ? `${process.env.REACT_APP_API_URL}/${sortedImages[0].img}`
+                                : '/placeholder-product.jpg'
+                        }
                         alt={product.name}
                         className="product-image"
                         loading="lazy"
@@ -57,15 +71,17 @@ const ProductCard = ({ product }) => {
 
             <div className="product-info">
                 <h3 className="product-name">
-                    <Link to={`/furniture/${product.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                    <Link to={`/furniture/${product.id}`} style={{textDecoration: 'none', color: 'inherit'}}>
                         {product.name}
                     </Link>
                 </h3>
                 <div className="product-rating">
                     <div className="stars">
-                        {renderStars(product.rating)}
+                        {renderStars(avgRating)}
                     </div>
-                    <span className="reviews-count">({product.reviewsCount} отзывов)</span>
+                    <span className="reviews-count">
+                        ({reviewsCount} {getReviewWord(reviewsCount)})
+                    </span>
                 </div>
             </div>
             <div className="product-footer">

@@ -14,6 +14,7 @@ const Basket = sequelize.define("basket", {
 
 const BasketFurniture = sequelize.define("basket_furniture", {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    quantity: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 1 }
 });
 
 const Favorites = sequelize.define("favorites", {
@@ -22,16 +23,20 @@ const Favorites = sequelize.define("favorites", {
 
 const FavoritesFurniture = sequelize.define("favorites_furniture", {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    furnitureId: { type: DataTypes.INTEGER, allowNull: false },
+    favoritesId: { type: DataTypes.INTEGER, allowNull: false }
 });
 
 const Furniture = sequelize.define("furniture", {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     name: { type: DataTypes.STRING, allowNull: false },
     price: { type: DataTypes.INTEGER, allowNull: false },
-    rating: { type: DataTypes.INTEGER, defaultValue: 0 },
+    rating: { type: DataTypes.FLOAT, defaultValue: 0 },
     reviewsCount: { type: DataTypes.INTEGER, defaultValue: 0 },
     new: { type: DataTypes.BOOLEAN, allowNull: true },
-    img: { type: DataTypes.STRING, allowNull: false },
+    img: { type: DataTypes.STRING, allowNull: true },
+    subTypeId: { type: DataTypes.INTEGER, allowNull: true },
+    hidden: { type: DataTypes.BOOLEAN, allowNull: false, defaultValue: false },
 });
 
 const Type = sequelize.define("type", {
@@ -61,6 +66,7 @@ const Rating = sequelize.define("rating", {
     rate: { type: DataTypes.INTEGER, allowNull: false },
     review: { type: DataTypes.TEXT, allowNull: true },
     name: { type: DataTypes.STRING, allowNull: false },
+    furnitureId: {type: DataTypes.INTEGER, allowNull: false},
 });
 
 const FurnitureType = sequelize.define("furniture_type", {
@@ -78,11 +84,13 @@ const Question = sequelize.define("question", {
     question: { type: DataTypes.TEXT, allowNull: false },
 });
 
-const MeasureRequest = sequelize.define("measure_request", {
+const MeasurerRequest = sequelize.define("measurer_request", {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     name: { type: DataTypes.STRING, allowNull: false },
     contact: { type: DataTypes.STRING, allowNull: false },
     message: { type: DataTypes.TEXT, allowNull: false },
+}, {
+    tableName: 'measurer_requests'
 });
 
 const Order = sequelize.define("order", {
@@ -106,6 +114,14 @@ const OrderItem = sequelize.define("order_item", {
     price: { type: DataTypes.INTEGER, allowNull: false },
 });
 
+const FurnitureImg = sequelize.define('furniture_img', {
+    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    img: { type: DataTypes.STRING, allowNull: false },
+    order: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 }
+});
+
+Furniture.hasMany(FurnitureImg, { as: 'images' });
+FurnitureImg.belongsTo(Furniture);
 
 User.hasOne(Basket);
 Basket.belongsTo(User);
@@ -119,14 +135,12 @@ Rating.belongsTo(User);
 Basket.hasMany(BasketFurniture);
 BasketFurniture.belongsTo(Basket);
 
-Favorites.hasMany(FavoritesFurniture);
-FavoritesFurniture.belongsTo(Favorites);
+Favorites.hasMany(FavoritesFurniture, { foreignKey: 'favoritesId' });
+FavoritesFurniture.belongsTo(Favorites, { foreignKey: 'favoritesId' });
+FavoritesFurniture.belongsTo(Furniture, { foreignKey: 'furnitureId' });
 
 BasketFurniture.hasOne(Furniture);
 Furniture.belongsTo(BasketFurniture);
-
-FavoritesFurniture.hasMany(Furniture);
-Furniture.belongsTo(FavoritesFurniture);
 
 Furniture.hasMany(FurnitureInfo, { as: "info" });
 FurnitureInfo.belongsTo(Furniture);
@@ -140,18 +154,20 @@ Manufacturer.belongsToMany(Type, { through: TypeManufacturer });
 Type.hasMany(SubType, { as: 'subtypes' });
 SubType.belongsTo(Type);
 
+Furniture.belongsTo(SubType, { as: 'subtype', foreignKey: 'subTypeId' });
+SubType.hasMany(Furniture, { foreignKey: 'subTypeId' });
+
 Manufacturer.hasMany(Furniture);
 Furniture.belongsTo(Manufacturer);
 
-Furniture.hasMany(Rating);
-Rating.belongsTo(Furniture);
+Furniture.hasMany(Rating, { as: 'reviews', foreignKey: 'furnitureId' });
+Rating.belongsTo(Furniture,   { foreignKey: 'furnitureId' });
 
 Order.hasMany(OrderItem);
 OrderItem.belongsTo(Order);
 
 Furniture.hasMany(OrderItem);
 OrderItem.belongsTo(Furniture);
-
 
 module.exports = {
     User,
@@ -168,7 +184,9 @@ module.exports = {
     FurnitureType,
     Rating,
     Question,
-    MeasureRequest,
+    MeasurerRequest,
     Order,
     OrderItem,
+    FurnitureImg
 };
+

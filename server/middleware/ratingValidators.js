@@ -1,7 +1,7 @@
 const { check } = require('express-validator');
 
 const validateRating = [
-    check('productId')
+    check('furnitureId')
         .isInt({ min: 1 }).withMessage('ID продукта должен быть целым числом и больше 0'),
     check('rate')
         .isFloat({ min: 1, max: 5 }).withMessage('Рейтинг должен быть от 1 до 5'),

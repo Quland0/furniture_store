@@ -8,7 +8,7 @@ const ContactsPage = () => {
     const [formData, setFormData] = React.useState({
         name: '',
         email: '',
-        message: ''
+        question: ''
     });
 
     useEffect(() => {
@@ -47,10 +47,25 @@ const ContactsPage = () => {
         };
     }, []);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Отправленные данные:', formData);
-        //логика отправки формы
+        try {
+            const response = await fetch('/api/forms/questions', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+
+            if (response.ok) {
+                alert('Вопрос успешно отправлен!');
+                setFormData({ name: '', email: '', message: '' });
+            } else {
+                alert('Ошибка при отправке вопроса');
+            }
+        } catch (error) {
+            console.error('Ошибка при отправке:', error);
+            alert('Ошибка при отправке вопроса');
+        }
     };
 
     const handleChange = (e) => {
@@ -114,7 +129,7 @@ const ContactsPage = () => {
                                 </div>
 
                                 <textarea
-                                    name="message"
+                                    name="question"
                                     placeholder="Сообщение"
                                     value={formData.message}
                                     onChange={handleChange}
@@ -135,3 +150,4 @@ const ContactsPage = () => {
 };
 
 export default ContactsPage;
+

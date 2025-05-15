@@ -1,14 +1,23 @@
 import React, { useState } from 'react';
 import '../../styles/Modal.css';
+import { CreateType } from '../../http/FurnitureAPI';
+
 
 const CreateCategory = ({ show, onHide }) => {
     const [value, setValue] = useState('');
 
-    const handleSave = () => {
-        console.log('Добавлена категория:', value);
-        setValue('');
-        onHide();
+    const handleSave = async () => {
+        if (!value.trim()) return;
+
+        try {
+            await CreateType({ name: value });
+            setValue('');
+            onHide();
+        } catch (error) {
+            console.error('Ошибка при добавлении типа:', error);
+        }
     };
+
 
     if (!show) return null;
 

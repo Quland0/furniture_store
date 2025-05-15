@@ -3,98 +3,18 @@ import { useParams } from 'react-router-dom';
 import '../styles/FurniturePage.css';
 import favoriteIcon from '../assets/icons/favorite.svg';
 import { BasketContext } from '../context/BasketContext';
-
-// Импорт изображений
-import victoriaMain from '../assets/images/products/bedroom/spalnya_mebel_gracia_4.jpg';
-import victoria1 from '../assets/images/products/bedroom/spalnya_mebel_gracia_4_detali_6-scaled.jpg';
-import victoria2 from '../assets/images/products/bedroom/krovat_spalnya_mebel_gracia_4.png';
-import victoria3 from '../assets/images/products/bedroom/tumba_spalnya_mebel_gracia_4.png';
-import victoria4 from '../assets/images/products/bedroom/spalnya_gracia_6_detali_3-scaled.jpg';
-import victoria5 from '../assets/images/products/bedroom/spalnya_gracia_6_detali_9-scaled.jpg';
-import victoria6 from '../assets/images/products/bedroom/spalnya_gracia_6_detali_11-scaled.jpg';
-import victoria7 from '../assets/images/products/bedroom/spalnya_gracia_6_shkaf.png';
-import victoria8 from '../assets/images/products/bedroom/spalnya_gracia_6_komod.png';
-import victoria9 from '../assets/images/products/bedroom/spalnya_gracia_6_shkaf1.png';
-
-const mockFurniture = {
-    id: 1,
-    name: 'Спальня "Виктория" 6-ти дверная',
-    price: 130000,
-    rating: 4.5,
-    reviewsCount: 12,
-    new: true,
-    images: [
-        victoriaMain,
-        victoria1,
-        victoria2,
-        victoria3,
-        victoria4,
-        victoria5,
-        victoria6,
-        victoria7,
-        victoria8,
-        victoria9,
-    ],
-    manufacturer: { id: 2, name: 'Milana group' },
-    types: [{ id: 1, name: 'Спальни' }],
-    info: [
-        { id: 1, title: 'Цвет', description: 'Шимо светлый' },
-        { id: 2, title: 'Материал', description: 'ЛДСП, пленочный МДФ (фрезеровка)' },
-        { id: 3, title: 'Размер кровати', description: 'ш: 2434 мм, г: 2070 мм, в: 1420 мм' },
-    ],
-    reviews: [
-        {
-            id: 101,
-            author: 'Елена',
-            rating: 5,
-            review: 'Отличная спальня, очень довольна покупкой!',
-        },
-        {
-            id: 102,
-            author: 'Владимир',
-            rating: 4,
-            review: 'Хорошее качество, но доставка затянулась.',
-        },
-        {
-            id: 103,
-            author: 'Владимир',
-            rating: 4,
-            review: 'Хорошее качество, но доставка затянулась.',
-        },
-        {
-            id: 104,
-            author: 'Владимир',
-            rating: 4,
-            review: 'Хорошее качество, но доставка затянулась.',
-        },
-        {
-            id: 105,
-            author: 'Владимир',
-            rating: 4,
-            review: 'Хорошее качество, но доставка затянулась.',
-        },
-        {
-            id: 106,
-            author: 'Владимир',
-            rating: 4,
-            review: 'Хорошее качество, но доставка затянулась.',
-        },
-        {
-            id: 107,
-            author: 'Владимир',
-            rating: 4,
-            review: 'Хорошее качество, но доставка затянулась.',
-        },
-    ],
-};
+import {addRating, fetchOneFurniture} from '../http/FurnitureAPI';
 
 const FurniturePage = () => {
     const { id } = useParams();
-    const furniture = mockFurniture;
 
     const isAuth = true;
+    const [furniture, setFurniture] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    const [selectedImage, setSelectedImage] = useState(furniture.images[0]);
+    const [selectedImage, setSelectedImage] = useState(null);
+    const [images, setImages] = useState([]);
     const [lightboxImage, setLightboxImage] = useState(null);
     const [lightboxImageIndex, setLightboxImageIndex] = useState(0);
     const [activeTab, setActiveTab] = useState("details");
@@ -108,6 +28,22 @@ const FurniturePage = () => {
 
     const [isInCart, setIsInCart] = useState(false);
     const [quantity, setQuantity] = useState(1);
+
+    const reviews = furniture?.reviews || [];
+    const manufacturerName = furniture?.manufacturer?.name || '—';
+
+    const reviewsCount = reviews.length;
+    const avgRating = reviewsCount > 0
+        ? (reviews.reduce((sum, r) => sum + r.rate, 0) / reviewsCount).toFixed(1)
+        : 0;
+    const getReviewWord = (count) => {
+        const mod100 = count % 100;
+        if (mod100 >= 11 && mod100 <= 14) return 'отзывов';
+        const mod10 = count % 10;
+        if (mod10 === 1) return 'отзыв';
+        if (mod10 >= 2 && mod10 <= 4) return 'отзыва';
+        return 'отзывов';
+    };
     const handleIncrement = () => setQuantity(prev => prev + 1);
     const handleDecrement = () => setQuantity(prev => Math.max(1, prev - 1));
 
@@ -129,7 +65,7 @@ const FurniturePage = () => {
 
     const openLightbox = () => {
         setLightboxImage(selectedImage);
-        const index = furniture.images.findIndex(img => img === selectedImage);
+        const index = images.findIndex(img => img === selectedImage);
         setLightboxImageIndex(index !== -1 ? index : 0);
         setLightboxOpen(true);
         document.body.classList.add('lightbox-open');
@@ -143,20 +79,20 @@ const FurniturePage = () => {
     const prevImage = useCallback((e) => {
         e.stopPropagation();
         setLightboxImageIndex((prevIndex) => {
-            const newIndex = prevIndex === 0 ? furniture.images.length - 1 : prevIndex - 1;
-            setLightboxImage(furniture.images[newIndex]);
+            const newIndex = prevIndex === 0 ? images.length - 1 : prevIndex - 1;
+            setLightboxImage(images[newIndex]);
             return newIndex;
         });
-    }, [furniture.images]);
+    }, [images]);
 
     const nextImage = useCallback((e) => {
         e.stopPropagation();
         setLightboxImageIndex((prevIndex) => {
-            const newIndex = prevIndex === furniture.images.length - 1 ? 0 : prevIndex + 1;
-            setLightboxImage(furniture.images[newIndex]);
+            const newIndex = prevIndex === images.length - 1 ? 0 : prevIndex + 1;
+            setLightboxImage(images[newIndex]);
             return newIndex;
         });
-    }, [furniture.images]);
+    }, [images]);
 
     const handleKeyDown = useCallback((e) => {
         if (!lightboxOpen) return;
@@ -164,6 +100,35 @@ const FurniturePage = () => {
         else if (e.key === 'ArrowRight') nextImage(e);
         else if (e.key === 'Escape') closeLightbox();
     }, [lightboxOpen, prevImage, nextImage, closeLightbox]);
+
+
+    useEffect(() => {
+        const fetchFurniture = async () => {
+            try {
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/api/furniture/${id}`);
+                if (!response.ok) throw new Error('Ошибка при получении данных');
+                const data = await response.json();
+
+                const imagesWithUrls = data.images.map(img => ({
+                    ...img,
+                    url: `${process.env.REACT_APP_API_URL}/${img.img}`
+                }));
+
+                setFurniture(data);
+                setImages(imagesWithUrls);
+                setSelectedImage(imagesWithUrls[0]?.url || null); // ← берём из imagesWithUrls
+                console.log('images state →', imagesWithUrls);
+                console.log('selectedImage →', imagesWithUrls[0]?.url);
+            } catch (err) {
+                console.error(err);
+                setError(err.message || 'Не удалось загрузить товар');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchFurniture();
+    }, [id]);
 
     useEffect(() => {
         if (lightboxOpen) {
@@ -191,13 +156,26 @@ const FurniturePage = () => {
         setReviewText('');
     };
 
-    const handleSubmitReview = (e) => {
+    const handleSubmitReview = async (e) => {
         e.preventDefault();
         if (!reviewName || !reviewRating || !reviewText) {
             console.log('Заполните все поля');
             return;
         }
         console.log('Отзыв отправлен:', { reviewName, reviewRating, reviewText });
+        try {
+                await addRating({
+                    furnitureId: id,
+                    rate: reviewRating,
+                    name: reviewName,
+                    review: reviewText
+                });
+            const updated = await fetchOneFurniture(id);
+            setFurniture(updated);
+                console.log('Отзыв успешно отправлен на сервер');
+            } catch (err) {
+                console.error('Ошибка при отправке отзыва:', err);
+            }
         setReviewName('');
         setReviewRating(0);
         setReviewText('');
@@ -223,38 +201,44 @@ const FurniturePage = () => {
         return stars;
     };
 
-    const hasReviews = furniture.reviews && furniture.reviews.length > 0;
+    const hasReviews = reviews.length > 0;
 
+    if (loading) return <div className="furniture-page">Загрузка...</div>;
+    if (error)   return <div className="furniture-page">Ошибка: {error}</div>;
+    if (!furniture) return <div className="furniture-page">Товар не найден</div>;
     return (
         <div className="furniture-page">
             {/* Галерея и информация */}
             <div className="furniture-page-top">
                 <div className="furniture-gallery">
                     <div className="furniture-main-image" onClick={openLightbox}>
-                        <img src={selectedImage} alt={furniture.name} />
+                        <img src={selectedImage} alt={furniture.name}/>
                     </div>
                     <div className="furniture-thumbnails">
-                        {furniture.images.map((img, idx) => (
+                        {images.map((imgObj, idx) => (
                             <img
                                 key={idx}
-                                src={img}
+                                src={imgObj.url}
                                 alt={`${furniture.name} вариант ${idx + 1}`}
-                                className={selectedImage === img ? 'thumbnail active' : 'thumbnail'}
-                                onClick={() => setSelectedImage(img)}
+                                className={selectedImage === imgObj.url ? 'thumbnail active' : 'thumbnail'}
+                                onClick={() => setSelectedImage(imgObj.url)}
                             />
                         ))}
                     </div>
                 </div>
+
                 <div className="furniture-info">
                     <h1>{furniture.name}</h1>
                     <div className="furniture-rating">
-                        <span className="stars">{furniture.rating} ★</span>
-                        <span className="reviews-count">({furniture.reviewsCount} отзывов)</span>
+                        <span className="stars">{avgRating} ★</span>
+                        <span className="reviews-count">
+                            ({reviewsCount} {getReviewWord(reviewsCount)})
+                        </span>
                     </div>
                     <div className="furniture-price">
                         {furniture.price.toLocaleString()} ₽
                     </div>
-                    <p className="manufacturer">Производитель: {furniture.manufacturer.name}</p>
+                    <p className="manufacturer">Производитель: {manufacturerName}</p>
 
                     <div className="quantity-controls">
                         <button className="quantity-btn" onClick={handleDecrement} disabled={quantity === 1}>-</button>
@@ -279,7 +263,7 @@ const FurniturePage = () => {
                             className={`favorite-button ${isFavorite ? 'active' : ''}`}
                             onClick={handleAddToFavorite}
                         >
-                            <img src={favoriteIcon} alt="Избранное" />
+                            <img src={favoriteIcon} alt="Избранное"/>
                         </button>
                     </div>
                 </div>
@@ -297,7 +281,7 @@ const FurniturePage = () => {
                     className={`tab-btn ${activeTab === 'reviews' ? 'active' : ''}`}
                     onClick={() => handleTabClick('reviews')}
                 >
-                    Отзывы ({furniture.reviews.length})
+                    Отзывы ({reviews.length})
                 </button>
             </div>
 
@@ -324,10 +308,10 @@ const FurniturePage = () => {
                         </button>
                         {hasReviews ? (
                             <>
-                                {furniture.reviews.map((review) => (
+                                {reviews.map((review) => (
                                     <div key={review.id} className="review-item">
-                                        <div className="review-author">{review.author}</div>
-                                        <div className="review-rating">{review.rating} ★</div>
+                                        <div className="review-author">{review.name}</div>
+                                        <div className="review-rating">{review.rate} ★</div>
                                         <div className="review-text">{review.review}</div>
                                     </div>
                                 ))}
@@ -357,7 +341,7 @@ const FurniturePage = () => {
                             &#10095;
                         </button>
                         <div className="lightbox-counter">
-                            {lightboxImageIndex + 1} / {furniture.images.length}
+                            {lightboxImageIndex + 1} / {images.length}
                         </div>
                     </div>
                 </div>

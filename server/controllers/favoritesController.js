@@ -1,61 +1,74 @@
-const { Favorites, Furniture } = require('../models/models')
+const { Favorites, FavoritesFurniture, Furniture } = require('../models/models');
+const ApiError = require('../error/ApiError');
 
 class FavoritesController {
-    async addToFavorites(req, res) {
+    async addToFavorites(req, res, next) {
         try {
-            const { userId } = req.user
-            const { furnitureId } = req.body
+            const userId = req.user.id;
+            const { furnitureId } = req.body;
 
-            const favoriteExists = await Favorites.findOne({
-                where: { userId, furnitureId }
-            })
-
-            if (favoriteExists) {
-                return res.status(400).json({ message: 'Этот товар уже в избранном' })
+            let fav = await Favorites.findOne({ where: { userId } });
+            if (!fav) {
+                fav = await Favorites.create({ userId });
             }
 
-            const favorite = await Favorites.create({ userId, furnitureId })
-            return res.json(favorite)
+            const exists = await FavoritesFurniture.findOne({
+                where: { favoritesId: fav.id, furnitureId }
+            });
+            if (exists) {
+                return res.status(400).json({ message: 'Уже в избранном' });
+            }
+
+            await FavoritesFurniture.create({
+                favoritesId: fav.id,
+                furnitureId
+            });
+
+            return res.json({ message: 'Добавлено в избранное' });
         } catch (e) {
-            console.error(e)
-            return res.status(400).json({ message: 'Ошибка добавления в избранное' })
+            console.error(e);
+            return next(ApiError.internal('Ошибка добавления в избранное'));
         }
     }
 
-    async getFavorites(req, res) {
+    async getFavorites(req, res, next) {
         try {
-            const { userId } = req.user
-            const favorites = await Favorites.findAll({
-                where: { userId },
+            const userId = req.user.id;
+            const fav = await Favorites.findOne({ where: { userId } });
+            if (!fav) return res.json([]);
+
+            const items = await FavoritesFurniture.findAll({
+                where: { favoritesId: fav.id },
                 include: [{ model: Furniture }]
-            })
-
-            return res.json(favorites)
+            });
+            const products = items.map(i => i.furniture);
+            return res.json(products);
         } catch (e) {
-            console.error(e)
-            return res.status(400).json({ message: 'Ошибка получения избранного' })
+            console.error(e);
+            return next(ApiError.internal('Ошибка получения избранного'));
         }
     }
 
-    async removeFromFavorites(req, res) {
+    async removeFromFavorites(req, res, next) {
         try {
-            const { userId } = req.user
-            const { furnitureId } = req.body
+            const userId = req.user.id;
+            const { furnitureId } = req.body;
+            const fav = await Favorites.findOne({ where: { userId } });
+            if (!fav) return res.status(400).json({ message: 'Избранное не найдено' });
 
-            const favorite = await Favorites.destroy({
-                where: { userId, furnitureId }
-            })
-
-            if (!favorite) {
-                return res.status(400).json({ message: 'Товар не найден в избранном' })
+            const deleted = await FavoritesFurniture.destroy({
+                where: { favoritesId: fav.id, furnitureId }
+            });
+            if (!deleted) {
+                return res.status(400).json({ message: 'Товар не найден в избранном' });
             }
 
-            return res.json({ message: 'Товар удален из избранного' })
+            return res.json({ message: 'Удалено из избранного' });
         } catch (e) {
-            console.error(e)
-            return res.status(400).json({ message: 'Ошибка удаления из избранного' })
+            console.error(e);
+            return next(ApiError.internal('Ошибка удаления из избранного'));
         }
     }
 }
 
-module.exports = new FavoritesController()
+module.exports = new FavoritesController();

@@ -6,6 +6,7 @@ import "../styles/Slider.css";
 import Slide1 from "../assets/images/slider/Slide1.jpg";
 import Slide2 from "../assets/images/slider/Slide2.jpg";
 import Slide3 from "../assets/images/slider/Slide3.jpg";
+import { Link } from "react-router-dom";
 
 const ImageSlider = () => {
     const settings = {
@@ -21,18 +22,36 @@ const ImageSlider = () => {
         cssEase: "linear"
     };
 
-    const slides = [Slide1, Slide2, Slide3];
+    const slides = [
+        {
+            image: Slide1,
+            url: "/furniture/21",
+        },
+        {
+            image: Slide2,
+            url: "/furniture/45",
+        },
+        {
+            image: Slide3,
+            url: "/kitchens",
+        }
+    ];
 
     return (
         <div className="slider-wrapper">
             <Slider {...settings}>
                 {slides.map((slide, index) => (
                     <div key={index} className="slider-item">
-                        <img
-                            src={slide}
-                            alt={`Slide ${index + 1}`}
-                            className="slider-image"
-                        />
+                        <Link
+                            to={slide.url}
+                            className="slide-link"
+                        >
+                            <img
+                                src={slide.image}
+                                alt={slide.title}
+                                className="slider-image"
+                            />
+                        </Link>
                     </div>
                 ))}
             </Slider>

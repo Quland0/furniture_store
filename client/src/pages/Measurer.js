@@ -4,6 +4,11 @@ import '../styles/Measurer.css';
 const Measurer = () => {
     const [showRequestForm, setShowRequestForm] = useState(false);
     const formRef = useRef(null);
+    const [formData, setFormData] = useState({
+        name: '',
+        contact: '',
+        message: ''
+    });
     const handleOpenForm = () => {
         setShowRequestForm(true);
     };
@@ -11,11 +16,33 @@ const Measurer = () => {
     const handleCloseForm = () => {
         setShowRequestForm(false);
     };
+    const handleChange = (e) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value
+        });
+    };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        alert('Заявка отправлена!');
-        setShowRequestForm(false);
+        try {
+            const response = await fetch('/api/forms/measurer-requests', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+
+            if (response.ok) {
+                alert('Заявка успешно отправлена!');
+                setFormData({ name: '', contact: '', message: '' });
+                setShowRequestForm(false);
+            } else {
+                alert('Ошибка при отправке заявки');
+            }
+        } catch (error) {
+            console.error('Ошибка при отправке:', error);
+            alert('Ошибка при отправке заявки');
+        }
     };
 
     useEffect(() => {
@@ -86,15 +113,35 @@ const Measurer = () => {
                         <h2>Создать заявку</h2>
                         <form onSubmit={handleSubmit}>
                             <label>
-                                <input type="text" name="name" placeholder="Имя" required />
+                                <input
+                                    type="text"
+                                    name="name"
+                                    placeholder="Имя"
+                                    value={formData.name}
+                                    onChange={handleChange}
+                                    required
+                                />
                             </label>
 
                             <label>
-                                <input type="text" name="contact" placeholder="Телефон/Email" required />
+                                <input
+                                    type="text"
+                                    name="contact"
+                                    placeholder="Контактный телефон или email"
+                                    value={formData.contact}
+                                    onChange={handleChange}
+                                    required
+                                />
                             </label>
 
                             <label>
-                                <textarea name="message" rows="4" placeholder="Сообщение" />
+                                <textarea
+                                    name="message"
+                                    rows="4"
+                                    placeholder="Сообщение"
+                                    value={formData.message}
+                                    onChange={handleChange}
+                                />
                             </label>
 
                             <div className="form-buttons">

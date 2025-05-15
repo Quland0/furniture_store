@@ -1,4 +1,3 @@
-// src/components/CatalogSidebar.js
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/CatalogSidebar.css';
@@ -13,7 +12,6 @@ import chandelierIcon from '../assets/icons/chandeliers.svg';
 import tablesIcon from '../assets/icons/tables.svg';
 import { fetchTypes, fetchSubtypesByTypeId } from '../http/FurnitureAPI';
 
-// Мэппинг иконок по имени типа
 const iconMapping = {
     "Кухня": kitchenIcon,
     "Спальня": bedroomIcon,
@@ -32,14 +30,12 @@ const CatalogSidebar = ({ isOpen, onClose, catalogButtonRef }) => {
     const sidebarRef = useRef(null);
     const [sidebarPosition, setSidebarPosition] = useState({ top: 0, left: 0 });
 
-    // 1) Загрузка типов при монтировании
     useEffect(() => {
         fetchTypes()
             .then(data => setTypes(data))
             .catch(err => console.error("Ошибка получения типов мебели:", err));
     }, []);
 
-    // 2) При выборе типа подгружаем его подкатегории
     useEffect(() => {
         if (selectedType) {
             fetchSubtypesByTypeId(selectedType)
@@ -53,7 +49,6 @@ const CatalogSidebar = ({ isOpen, onClose, catalogButtonRef }) => {
         }
     }, [selectedType]);
 
-    // 3) Сброс выбора при закрытии
     useEffect(() => {
         if (!isOpen) {
             setSelectedType(null);
@@ -61,11 +56,9 @@ const CatalogSidebar = ({ isOpen, onClose, catalogButtonRef }) => {
         }
     }, [isOpen]);
 
-    // 4) Расчёт позиции сайдбара под кнопку
     const calculatePosition = useCallback(() => {
         if (isOpen && catalogButtonRef?.current) {
             const btn = catalogButtonRef.current.getBoundingClientRect();
-            // поправка на шапку
             const offsetY = window.scrollY < 50 ? btn.bottom + 15 : btn.bottom + 5;
             setSidebarPosition({
                 top: offsetY,
@@ -82,7 +75,6 @@ const CatalogSidebar = ({ isOpen, onClose, catalogButtonRef }) => {
         return () => window.removeEventListener('scroll', calculatePosition);
     }, [isOpen, calculatePosition]);
 
-    // 5) Закрытие при клике вне
     useEffect(() => {
         const handleClickOutside = (e) => {
             if (
@@ -140,9 +132,10 @@ const CatalogSidebar = ({ isOpen, onClose, catalogButtonRef }) => {
                         <>
                             <h3 className="type-title">
                                 <Link
-                                    to={`/category/${selectedType}`}
+                                    to={`/category/${types.find(t => t.id === selectedType)?.id}`}
                                     onClick={onClose}
                                     className="type-link"
+                                    style={{ textDecoration: 'none', color: '#2D2B2B', fontWeight: 'bold' }}
                                 >
                                     {types.find(t => t.id === selectedType)?.name}
                                 </Link>

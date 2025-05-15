@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "../styles/Catalog.css";
 import bedroomImg from "../assets/images/catalog/bedroom1.png";
@@ -9,31 +9,43 @@ import tableImg from "../assets/images/catalog/dining1.png";
 import sofaImg from "../assets/images/catalog/sofa1.png";
 import hallwayImg from "../assets/images/catalog/hallway1.png";
 import chandelierImg from "../assets/images/catalog/chandelier1.png";
+import { fetchTypes } from "../http/FurnitureAPI";
 
-const categories = [
-    { id: "bedroom", name: "Мебель для спальни", img: bedroomImg },
-    { id: "kitchen", name: "Мебель для кухни", img: kitchenImg },
-    { id: "living-room", name: "Мебель для гостиной", img: livingRoomImg },
-    { id: "kids-room", name: "Мебель для детской", img: kidsRoomImg },
-    { id: "tables", name: "Столы и стулья", img: tableImg },
-    { id: "sofas", name: "Мягкая мебель", img: sofaImg },
-    { id: "hallway", name: "Мебель для прихожей", img: hallwayImg },
-    { id: "chandeliers", name: "Люстры", img: chandelierImg },
-];
+const staticImages = {
+    "Спальня": bedroomImg,
+    "Кухня": kitchenImg,
+    "Гостиная": livingRoomImg,
+    "Детская": kidsRoomImg,
+    "Столы и стулья": tableImg,
+    "Диваны и кресла": sofaImg,
+    "Прихожая": hallwayImg,
+    "Люстры": chandelierImg,
+};
 
 const Catalog = () => {
+    const [types, setTypes] = useState([]);
+
+    useEffect(() => {
+        fetchTypes()
+            .then(data => setTypes(data))
+            .catch(err => console.error('Ошибка загрузки типов:', err));
+    }, []);
+
     return (
         <div className="catalog">
             <h2>Каталог</h2>
             <div className="catalog-grid">
-                {categories.map((category) => (
+                {types.map((type) => (
                     <Link
-                        to={`/category/${category.id}`}
-                        key={category.id}
+                        to={`/category/${type.id}`}
+                        key={type.id}
                         className="catalog-item"
                     >
-                        <img src={category.img} alt={category.name} />
-                        <p>{category.name}</p>
+                        <img
+                            src={staticImages[type.name] || kitchenImg}
+                            alt={type.name}
+                        />
+                        <p>{type.name}</p>
                     </Link>
                 ))}
             </div>

@@ -53,7 +53,7 @@ const Basket = ({ isAuth }) => {
                         onChange={() => toggleSelectItem(item.id)}
                     />
                     <img
-                        src={item.img || (item.images && item.images[0]) || '/placeholder-product.jpg'}
+                        src={item.img}
                         alt={item.name}
                         className="basket-item-image"
                     />
@@ -90,10 +90,10 @@ const Basket = ({ isAuth }) => {
                             className={`favorite-button ${favorites.some(p => p.id === item.id) ? 'active' : ''}`}
                             onClick={() => handleFavoriteClick(item)}
                         >
-                            <img src={favoriteIcon} alt="В избранное" />
+                            <img src={favoriteIcon} alt="В избранное"/>
                         </button>
                         <button className="delete-button" onClick={() => removeFromBasket(item.id)}>
-                            <img src={deleteIcon} alt="Удалить" />
+                            <img src={deleteIcon} alt="Удалить"/>
                         </button>
                     </div>
                 </div>

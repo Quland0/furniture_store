@@ -7,7 +7,9 @@ import ProductCard from './ProductCard';
 
 const NewProductSection = observer(() => {
     const { furniture } = useContext(Context);
-    const newProducts = furniture.Furnitures.filter(product => product.new);
+    const newProducts = furniture.furnitures
+        .filter(product => product.new && !product.hidden);
+
     const lastFourNewProducts = newProducts
         .sort((a, b) => b.id - a.id)
         .slice(0, 4);

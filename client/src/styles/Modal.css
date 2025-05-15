@@ -430,3 +430,32 @@
     border-color: #9e7f45;
     outline: none;
 }
+.manufacturer-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.manufacturer-item:last-child {
+    border-bottom: none;
+}
+
+.icon-buttons {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.icon-btn {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+}
+
+.icon-btn:hover {
+    opacity: 1;
+}

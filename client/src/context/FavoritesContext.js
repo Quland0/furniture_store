@@ -1,11 +1,9 @@
 import React, { createContext, useState, useEffect } from 'react';
-
-const fakeServerFetchFavorites = () => {
-    return [{ id: 1, name: 'Товар из сервера', price: 1000 }];
-};
-const fakeServerSaveFavorites = (favorites) => {
-    console.log('Синхронизация с сервером:', favorites);
-};
+import {
+    fetchFavorites as apiFetch,
+    addToFavorites as apiAdd,
+    removeFromFavorites as apiRemove
+} from '../http/favoritesAPI';
 
 export const FavoritesContext = createContext();
 
@@ -14,43 +12,35 @@ export const FavoritesProvider = ({ children, isAuth }) => {
 
     useEffect(() => {
         if (isAuth) {
-            const serverFav = fakeServerFetchFavorites();
-            setFavorites(serverFav);
+            apiFetch().then(setFavorites).catch(console.error);
         } else {
-            const localFav = JSON.parse(localStorage.getItem('favorites')) || [];
-            setFavorites(localFav);
+            const local = JSON.parse(localStorage.getItem('favorites')) || [];
+            setFavorites(local);
         }
     }, [isAuth]);
 
-    const addToFavorites = (product) => {
-        setFavorites((prev) => {
+    const addToFavorites = async (product) => {
+        if (!favorites.find(p => p.id === product.id)) {
+            const newList = [...favorites, product];
+            setFavorites(newList);
 
-            if (prev.find((p) => p.id === product.id)) return prev;
-
-            const newList = [...prev, product];
-
-            if (!isAuth) {
-                localStorage.setItem('favorites', JSON.stringify(newList));
+            if (isAuth) {
+                await apiAdd(product.id);
             } else {
-                // Авторизован: отправляем на сервер
-                fakeServerSaveFavorites(newList);
+                localStorage.setItem('favorites', JSON.stringify(newList));
             }
-
-            return newList;
-        });
+        }
     };
 
-    const removeFromFavorites = (productId) => {
-        setFavorites((prev) => {
-            const newList = prev.filter((p) => p.id !== productId);
+    const removeFromFavorites = async (productId) => {
+        const newList = favorites.filter(p => p.id !== productId);
+        setFavorites(newList);
 
-            if (!isAuth) {
-                localStorage.setItem('favorites', JSON.stringify(newList));
-            } else {
-                fakeServerSaveFavorites(newList);
-            }
-            return newList;
-        });
+        if (isAuth) {
+            await apiRemove(productId);
+        } else {
+            localStorage.setItem('favorites', JSON.stringify(newList));
+        }
     };
 
     return (

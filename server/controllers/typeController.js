@@ -1,6 +1,7 @@
 const path = require('path');
 const uuid = require('uuid');
 const { Type } = require('../models/models');
+const {badRequest, notFound} = require("../error/ApiError");
 
 class TypeController {
     async create(req, res) {
@@ -27,11 +28,32 @@ class TypeController {
         return res.json(types);
     }
 
+    async update(req, res, next) {
+        try {
+            const { id } = req.params;
+            const { name } = req.body;
+
+            const type = await Type.findByPk(id);
+            if (!type) {
+                return next(notFound('Категория не найдена'));
+            }
+
+            type.name = name;
+            await type.save();
+
+            return res.json(type);
+        } catch (e) {
+            next(badRequest(e.message));
+        }
+    }
+
+
     async delete(req, res) {
         const { id } = req.params;
         const deleted = await Type.destroy({ where: { id } });
         return res.json({ deleted });
     }
+
 }
 
 module.exports = new TypeController();

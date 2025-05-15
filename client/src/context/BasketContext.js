@@ -1,16 +1,10 @@
 import React, { createContext, useState, useEffect } from 'react';
-
-// Имитация API для серверной логики
-const fakeServerFetchBasket = () => {
-
-    return [
-        { id: 1, name: 'Спальня "Виктория" 6-ти дверная', price: 130000, manufacturer: 'Milana group', quantity: 2 }
-    ];
-};
-
-const fakeServerSaveBasket = (basketItems) => {
-    console.log('Сохраняем корзину на сервере:', basketItems);
-};
+import {
+    fetchBasket    as fetchBasketFromServer,
+    addToBasket    as addToBasketOnServer,
+    removeFromBasket as removeFromBasketOnServer,
+    updateBasketQuantity
+} from '../http/basketAPI';
 
 export const BasketContext = createContext();
 
@@ -19,67 +13,117 @@ export const BasketProvider = ({ children, isAuth }) => {
 
     useEffect(() => {
         if (isAuth) {
-            const serverBasket = fakeServerFetchBasket();
-            setBasket(serverBasket);
+            fetchBasketFromServer()
+                .then(serverBasket => setBasket(serverBasket))
+                .catch(console.error);
         } else {
-            const localBasket = JSON.parse(localStorage.getItem('basket')) || [];
-            setBasket(localBasket);
-        }
+            const raw = JSON.parse(localStorage.getItem('basket')) || [];
+            const normalized = raw.map(item => {
+                const fileName = item.images?.[0]?.img;
+                const url = fileName
+                    ? `${process.env.REACT_APP_API_URL}/${fileName}`
+                    : '/placeholder-product.jpg';
+            return {
+                basketItemId: item.id,
+                id:           item.id,
+                name:         item.name,
+                price:        item.price,
+                quantity:     item.quantity,
+                img:          url,
+                manufacturer: item.manufacturer,
+            };
+        });
+        setBasket(normalized);
+    }
     }, [isAuth]);
 
-    const syncBasket = (newBasket) => {
-        if (isAuth) {
-            fakeServerSaveBasket(newBasket);
-        } else {
-            localStorage.setItem('basket', JSON.stringify(newBasket));
-        }
-    };
-
     const addToBasket = (product, quantity = 1) => {
-        setBasket((prev) => {
-            const existingItem = prev.find((item) => item.id === product.id);
+        setBasket(prev => {
+            const existing = prev.find(item => item.id === product.id);
             let updatedBasket;
 
-            if (existingItem) {
-                updatedBasket = prev.map((item) =>
+            if (existing) {
+                updatedBasket = prev.map(item =>
                     item.id === product.id
                         ? { ...item, quantity: item.quantity + quantity }
                         : item
                 );
             } else {
-                updatedBasket = [...prev, { ...product, quantity }];
+                const fileName = product.images?.[0]?.img;
+                const url = fileName
+                    ? `${process.env.REACT_APP_API_URL}/${fileName}`
+                    : '/placeholder-product.jpg';
+                const norm = {
+                    basketItemId: product.id,
+                    id:           product.id,
+                    name:         product.name,
+                    price:        product.price,
+                    quantity,
+                    img:          url,
+                    manufacturer: product.manufacturer
+                };
+                updatedBasket = [...prev, norm];
             }
 
-            syncBasket(updatedBasket);
+            if (isAuth) {
+                addToBasketOnServer(product.id, quantity).catch(console.error);
+            } else {
+                localStorage.setItem('basket', JSON.stringify(updatedBasket));
+            }
+
             return updatedBasket;
         });
     };
 
     const removeFromBasket = (productId) => {
-        setBasket((prev) => {
-            const updatedBasket = prev.filter((item) => item.id !== productId);
-            syncBasket(updatedBasket);
+        setBasket(prev => {
+            const updatedBasket = prev.filter(item => item.id !== productId);
+
+            if (isAuth) {
+                removeFromBasketOnServer(productId).catch(console.error);
+            } else {
+                localStorage.setItem('basket', JSON.stringify(updatedBasket));
+            }
+
             return updatedBasket;
         });
     };
 
     const updateQuantity = (productId, newQuantity) => {
-        setBasket((prev) => {
-            const updatedBasket = prev.map((item) =>
-                item.id === productId ? { ...item, quantity: newQuantity } : item
+        setBasket(prev => {
+            const updatedBasket = prev.map(item =>
+                item.id === productId
+                    ? { ...item, quantity: newQuantity }
+                    : item
             );
-            syncBasket(updatedBasket);
+
+            if (isAuth) {
+                updateBasketQuantity(productId, newQuantity).catch(console.error);
+            } else {
+                localStorage.setItem('basket', JSON.stringify(updatedBasket));
+            }
+
             return updatedBasket;
         });
     };
 
     const clearBasket = () => {
         setBasket([]);
-        syncBasket([]);
+        if (isAuth) {
+
+        } else {
+            localStorage.removeItem('basket');
+        }
     };
 
     return (
-        <BasketContext.Provider value={{ basket, addToBasket, removeFromBasket, updateQuantity, clearBasket }}>
+        <BasketContext.Provider value={{
+            basket,
+            addToBasket,
+            removeFromBasket,
+            updateQuantity,
+            clearBasket
+        }}>
             {children}
         </BasketContext.Provider>
     );

@@ -4,19 +4,9 @@ import { Context } from '../index';
 import ProductCard from '../components/ProductCard';
 import '../styles/CategoryPage.css';
 import { Range, getTrackBackground } from 'react-range';
+import { fetchTypes, fetchFurniture } from '../http/FurnitureAPI';
 
 const ITEMS_PER_PAGE = 24;
-
-const catalogData = [
-    { id: 'kitchen', name: 'Мебель для кухни' },
-    { id: 'bedroom', name: 'Мебель для спальни' },
-    { id: 'living-room', name: 'Мебель для гостиной' },
-    { id: 'sofas', name: 'Мягкая мебель' },
-    { id: 'hallway', name: 'Мебель для прихожей' },
-    { id: 'kids-room', name: 'Мебель для детской' },
-    { id: 'chandeliers', name: 'Люстры' },
-    { id: 'tables', name: 'Столы и стулья' },
-];
 
 function getDisplayedPages(currentPage, totalPages) {
     const visiblePages = [];
@@ -27,14 +17,8 @@ function getDisplayedPages(currentPage, totalPages) {
         visiblePages.push(i);
     }
 
-    let start = Math.max(
-        boundaryPages + 1,
-        currentPage - aroundCurrent
-    );
-    let end = Math.min(
-        totalPages - boundaryPages,
-        currentPage + aroundCurrent
-    );
+    let start = Math.max(boundaryPages + 1, currentPage - aroundCurrent);
+    let end = Math.min(totalPages - boundaryPages, currentPage + aroundCurrent);
 
     if (start > boundaryPages + 1) {
         visiblePages.push('...');
@@ -48,11 +32,7 @@ function getDisplayedPages(currentPage, totalPages) {
         visiblePages.push('...');
     }
 
-    for (
-        let i = Math.max(totalPages - boundaryPages + 1, boundaryPages + 1);
-        i <= totalPages;
-        i++
-    ) {
+    for (let i = Math.max(totalPages - boundaryPages + 1, boundaryPages + 1); i <= totalPages; i++) {
         if (!visiblePages.includes(i)) {
             visiblePages.push(i);
         }
@@ -75,24 +55,37 @@ const CategoryPage = () => {
     const [categoryMaxPrice, setCategoryMaxPrice] = useState(1000);
     const [rangeValues, setRangeValues] = useState([0, 1000]);
     const [sortType, setSortType] = useState('default');
-
-    const currentPage = pageNumber ? parseInt(pageNumber, 10) : 1;
+    const [types, setTypes] = useState([]);
 
     const priceFilterRef = useRef(null);
     const manufacturerFilterRef = useRef(null);
+    const currentPage = pageNumber ? parseInt(pageNumber, 10) : 1;
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [currentPage, location.pathname]);
+
+    useEffect(() => {
+        fetchTypes()
+            .then(data => setTypes(data))
+            .catch(err => console.error('Ошибка загрузки типов:', err));
+        fetchTypes()
+            .then(data => setTypes(data))
+            .catch(err => console.error('Ошибка загрузки типов:', err));
+        fetchFurniture()
+            .then(data => {
+                const items = data.rows || data;
+                furniture.setFurnitures(items);
+            })
+            .catch(err => console.error('Ошибка загрузки товаров:', err));
+    }, []);
 
     useEffect(() => {
         const handleClickOutside = (event) => {
-            if (
-                isPriceDropdownOpen &&
-                !priceFilterRef.current?.contains(event.target)
-            ) {
+            if (isPriceDropdownOpen && !priceFilterRef.current?.contains(event.target)) {
                 setIsPriceDropdownOpen(false);
             }
-            if (
-                isManufacturerDropdownOpen &&
-                !manufacturerFilterRef.current?.contains(event.target)
-            ) {
+            if (isManufacturerDropdownOpen && !manufacturerFilterRef.current?.contains(event.target)) {
                 setIsManufacturerDropdownOpen(false);
             }
         };
@@ -100,35 +93,29 @@ const CategoryPage = () => {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [isPriceDropdownOpen, isManufacturerDropdownOpen]);
 
-    useEffect(() => {
-        window.scrollTo(0, 0);
-    }, [currentPage, location.pathname]);
-
     const getProductsInCategory = useCallback(() => {
-        let products = furniture.Furnitures;
+        let products = furniture.furnitures.filter(p => !p.hidden) || [];
+
         if (categoryName === 'new') {
             products = products.filter(product => product.new);
         } else {
-            products = products.filter(product => {
-                if (Array.isArray(product.categories)) {
-                    return product.categories.includes(categoryName);
-                }
-                return product.category === categoryName;
-            });
+            products = products.filter(product =>
+                product.types?.some(type => type.id.toString() === categoryName.toString())
+            );
         }
+
         if (subcategory) {
-            products = products.filter(product => {
-                if (Array.isArray(product.categories)) {
-                    return product.categories.includes(subcategory);
-                }
-                return false;
-            });
+            products = products.filter(product =>
+                product.subtype?.name === subcategory
+            );
         }
+
         return products;
-    }, [categoryName, subcategory, furniture.Furnitures]);
+    }, [categoryName, subcategory, furniture.furnitures]);
 
     useEffect(() => {
         const productsInCat = getProductsInCategory();
+
         if (productsInCat.length > 0) {
             const prices = productsInCat.map(p => p.price);
             const minPrice = Math.min(...prices);
@@ -153,6 +140,7 @@ const CategoryPage = () => {
 
     const [manufacturersInCategory, manufacturerCountMap] = useMemo(() => {
         const productsInCat = getProductsInCategory();
+
         const manufacturers = [...new Set(productsInCat.map(p => p.manufacturer).filter(Boolean))];
         const countMap = productsInCat.reduce((acc, item) => {
             if (item.manufacturer) {
@@ -194,9 +182,26 @@ const CategoryPage = () => {
     useEffect(() => {
         const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
         const endIndex = startIndex + ITEMS_PER_PAGE;
-        const pageItems = filteredProducts.slice(startIndex, endIndex);
-        setPaginatedProducts(pageItems);
+        setPaginatedProducts(filteredProducts.slice(startIndex, endIndex));
     }, [filteredProducts, currentPage]);
+
+    const getPageTitle = () => {
+        if (categoryName === 'new') return 'Новинки';
+        if (subcategory) return subcategory;
+        const type = types.find(t => t.id.toString() === categoryName.toString());
+        return type ? type.name : categoryName;
+    };
+
+    const headerTitle = getPageTitle();
+    const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
+    const shouldRenderSlider = categoryMinPrice < categoryMaxPrice;
+
+    const makePageLink = (page) => {
+        if (subcategory) {
+            return `/category/${categoryName}/${subcategory}/page/${page}`;
+        }
+        return `/category/${categoryName}/page/${page}`;
+    };
 
     const handleSliderChange = (values) => setRangeValues(values);
 
@@ -213,7 +218,8 @@ const CategoryPage = () => {
         if (val < rangeValues[0] + 1) val = rangeValues[0] + 1;
         setRangeValues([rangeValues[0], val]);
     };
-
+    console.log('Текущий categoryName:', categoryName);
+    console.log('Типы продуктов:', furniture.furnitures.map(p => p.typeId));
     const SortButton = ({ type, label }) => (
         <button
             onClick={() => setSortType(type)}
@@ -229,28 +235,11 @@ const CategoryPage = () => {
         >
             {label}
         </button>
+
     );
 
-    const getPageTitle = () => {
-        if (categoryName === 'new') return 'Новинки';
-        if (subcategory) return subcategory;
-        const cat = catalogData.find(item => item.id === categoryName);
-        return cat ? cat.name : categoryName;
-    };
-    const headerTitle = getPageTitle();
-
-    const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
-
-    const makePageLink = (page) => {
-        if (subcategory) {
-            return `/category/${categoryName}/${subcategory}/page/${page}`;
-        }
-        return `/category/${categoryName}/page/${page}`;
-    };
-
-    const shouldRenderSlider = categoryMinPrice < categoryMaxPrice;
-
     return (
+
         <div className="category-page">
             <h1 className="category-title">{headerTitle}</h1>
 
@@ -428,8 +417,10 @@ const CategoryPage = () => {
                     </div>
                 </div>
             )}
-        </div>
-    );
+
+</div>
+)
+    ;
 };
 
 export default CategoryPage;
