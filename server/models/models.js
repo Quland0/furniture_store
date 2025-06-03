@@ -161,7 +161,7 @@ Manufacturer.hasMany(Furniture);
 Furniture.belongsTo(Manufacturer);
 
 Furniture.hasMany(Rating, { as: 'reviews', foreignKey: 'furnitureId' });
-Rating.belongsTo(Furniture,   { foreignKey: 'furnitureId' });
+Rating.belongsTo(Furniture, { as: 'furniture', foreignKey: 'furnitureId' });
 
 Order.hasMany(OrderItem);
 OrderItem.belongsTo(Order);

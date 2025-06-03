@@ -41,7 +41,7 @@ class RatingController {
                 name:   rating.name,
             });
         } catch (e) {
-            console.error('Add Rating Error:', e);
+            console.log('Incoming rating body:', req.body);
             return res.status(500).json({ message: 'Ошибка добавления рейтинга' });
         }
     }
@@ -50,6 +50,10 @@ class RatingController {
         try {
             const { furnitureId } = req.params;
 
+            if (!furnitureId) {
+                return res.status(400).json({ message: 'Не указан ID мебели' });
+            }
+
             const ratings = await Rating.findAll({
                 where: { furnitureId },
                 attributes: ['id', 'rate', 'review', 'name'],
@@ -57,7 +61,7 @@ class RatingController {
 
             return res.json(ratings);
         } catch (e) {
-            console.error('Get Ratings Error:', e);
+            console.error('Get Ratings Error:', e.message);
             return res.status(500).json({ message: 'Ошибка получения рейтингов' });
         }
     }
@@ -74,6 +78,64 @@ class RatingController {
         } catch (e) {
             console.error('Get Average Rating Error:', e);
             return res.status(500).json({ message: 'Ошибка расчёта среднего рейтинга' });
+        }
+    }
+
+    async getAllRatings(req, res) {
+        try {
+            const ratings = await Rating.findAll({
+                include: [{ model: Furniture, as: 'furniture', attributes: ['name'] }],
+                attributes: ['id', 'rate', 'review', 'name'],
+            });
+
+            const response = ratings.map(r => ({
+                id: r.id,
+                rate: r.rate,
+                review: r.review,
+                name: r.name,
+                productName: r.furniture?.name || 'Неизвестно'
+            }));
+
+            return res.json(response);
+        } catch (e) {
+            console.error('Get All Ratings Error:', e);
+            return res.status(500).json({ message: 'Ошибка получения всех отзывов' });
+        }
+    }
+    async deleteRating(req, res) {
+        try {
+            const { id } = req.params;
+
+            const rating = await Rating.findByPk(id);
+            if (!rating) {
+                return res.status(404).json({ message: 'Отзыв не найден' });
+            }
+
+            const furnitureId = rating.furnitureId;
+            await rating.destroy();
+
+            // Пересчёт статистики
+            const stats = await Rating.findOne({
+                where: { furnitureId },
+                attributes: [
+                    [fn('COUNT', col('id')), 'count'],
+                    [fn('AVG',   col('rate')), 'avg']
+                ],
+                raw: true
+            });
+
+            const count = parseInt(stats.count || 0, 10);
+            const avg   = stats.avg ? parseFloat(stats.avg).toFixed(1) : 0;
+
+            await Furniture.update(
+                { reviewsCount: count, rating: avg },
+                { where: { id: furnitureId } }
+            );
+
+            return res.json({ message: 'Отзыв удалён' });
+        } catch (e) {
+            console.error('Delete Rating Error:', e);
+            return res.status(500).json({ message: 'Ошибка при удалении отзыва' });
         }
     }
 }

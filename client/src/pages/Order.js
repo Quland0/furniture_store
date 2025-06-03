@@ -99,7 +99,6 @@ const Order = () => {
                                 <label>Телефон *</label>
                                 <input
                                     type="tel"
-                                    placeholder="Телефон"
                                     value={phone}
                                     onChange={(e) => setPhone(e.target.value)}
                                     required
@@ -109,7 +108,6 @@ const Order = () => {
                                 <label>Почтовый индекс *</label>
                                 <input
                                     type="text"
-                                    placeholder="Почтовый индекс"
                                     value={postalCode}
                                     onChange={(e) => setPostalCode(e.target.value)}
                                     required
@@ -118,7 +116,6 @@ const Order = () => {
                             <div className="form-group">
                                 <label>Адрес доставки *</label>
                                 <textarea
-                                    placeholder="Адрес доставки"
                                     value={deliveryAddress}
                                     onChange={(e) => setDeliveryAddress(e.target.value)}
                                     required
@@ -134,7 +131,6 @@ const Order = () => {
                         <label>ФИО *</label>
                         <input
                             type="text"
-                            placeholder="ФИО"
                             value={fullName}
                             onChange={(e) => setFullName(e.target.value)}
                             required
@@ -144,7 +140,6 @@ const Order = () => {
                         <label>Email *</label>
                         <input
                             type="email"
-                            placeholder="Email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
@@ -154,7 +149,6 @@ const Order = () => {
                         <label>Телефон *</label>
                         <input
                             type="tel"
-                            placeholder="Телефон"
                             value={contactPhone}
                             onChange={(e) => setContactPhone(e.target.value)}
                             required
@@ -163,7 +157,6 @@ const Order = () => {
                     <div className="form-group">
                         <label>Дополнительная информация</label>
                         <textarea
-                            placeholder="Доп. информация"
                             value={additionalInfo}
                             onChange={(e) => setAdditionalInfo(e.target.value)}
                         />
@@ -175,7 +168,12 @@ const Order = () => {
                                 checked={agree}
                                 onChange={() => setAgree(!agree)}
                             />
-                            <span>Я соглашаюсь на обработку моих персональных данных</span>
+                            <span>
+            Я соглашаюсь на обработку моих{' '}
+                                <a href="/privacy-policy" target="_blank" rel="noopener noreferrer">
+                персональных данных
+            </a>
+        </span>
                         </label>
                     </div>
                 </div>

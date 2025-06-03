@@ -123,4 +123,8 @@ export const fetchAverageRating = async (furnitureId) => {
     const { data } = await $host.get(`rating/average/${furnitureId}`);
     return data;
 };
+export const fetchSearchResults = async (query) => {
+    const { data } = await $host.get(`/furniture/search?q=${query}`)
+    return data;
+};
 

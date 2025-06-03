@@ -15,14 +15,16 @@ const Auth = observer(() => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [showForgotMessage, setShowForgotMessage] = useState(false);
+    const [agree, setAgree] = useState(false);
     const [error, setError] = useState('');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
 
-        if (!email || !password || (!isLogin && !confirmPassword)) {
-            setError('Пожалуйста, заполните все поля.');
+        if (!email || !password || (!isLogin && (!confirmPassword || !agree))) {
+            setError('Пожалуйста, заполните все поля и примите условия.');
             return;
         }
         if (!isLogin && password !== confirmPassword) {
@@ -75,15 +77,51 @@ const Auth = observer(() => {
                         onChange={(e) => setPassword(e.target.value)}
                     />
                 </div>
+                <div className="forgot-password">
+                    <button
+                        type="button"
+                        className="forgot-button"
+                        onClick={() => setShowForgotMessage(true)}
+                    >
+                        Забыли пароль?
+                    </button>
+                    {showForgotMessage && (
+                        <div className="forgot-message">
+                            Пожалуйста, свяжитесь с администратором для восстановления доступа.
+                        </div>
+                    )}
+                </div>
                 {!isLogin && (
-                    <div className="form-group">
-                        <label>Подтвердите пароль</label>
-                        <input
-                            type="password"
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
-                        />
-                    </div>
+                    <>
+                        <div className="form-group">
+                            <label>Подтвердите пароль</label>
+                            <input
+                                type="password"
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
+                            />
+                        </div>
+                        <div className="form-group checkbox-container">
+                            <label className="checkbox-label">
+                                <input
+                                    type="checkbox"
+                                    checked={agree}
+                                    onChange={(e) => setAgree(e.target.checked)}
+                                />
+                                <span>
+            Я принимаю{' '}
+                                    <a href="/user-agreement" target="_blank" rel="noopener noreferrer">
+                пользовательское соглашение
+            </a>{' '}
+                                    и{' '}
+                                    <a href="/privacy-policy" target="_blank" rel="noopener noreferrer">
+                политику конфиденциальности
+            </a>
+        </span>
+                            </label>
+                        </div>
+
+                    </>
                 )}
                 <button type="submit" className="auth-submit">
                     {isLogin ? 'Войти' : 'Зарегистрироваться'}

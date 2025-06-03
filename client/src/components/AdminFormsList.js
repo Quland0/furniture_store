@@ -37,9 +37,9 @@ const AdminFormsList = () => {
 
     const fetchReviews = async () => {
         try {
-            const response = await fetch('/api/reviews');
+            const response = await fetch('/api/rating');
             const data = await response.json();
-            setReviews(data);
+            setReviews(Array.isArray(data) ? data : []);
         } catch (error) {
             console.error('Ошибка при загрузке отзывов:', error);
         }
@@ -60,7 +60,7 @@ const AdminFormsList = () => {
             } else if (modalType === 'measurer') {
                 url = `/api/forms/measurer-requests/${id}`;
             } else if (modalType === 'reviews') {
-                url = `/api/reviews/${id}`;
+                url = `/api/rating/${id}`;
             }
             await fetch(url, { method: 'DELETE' });
 
@@ -120,7 +120,7 @@ const AdminFormsList = () => {
                                     <div className="form-content">
                                         {modalType === 'reviews' && (
                                             <p className="review-product">
-                                                <strong>Товар:</strong> {form.productName}
+                                                <strong>Товар:</strong> {form.productName ?? 'Неизвестно'}
                                             </p>
                                         )}
                                         {modalType === 'questions' && (

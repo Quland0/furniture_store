@@ -28,10 +28,8 @@
     margin: 0;
 }
 
-.admin-categories li {
-    padding: 8px;
-    cursor: pointer;
-    transition: background 0.2s;
+.admin-categories > ul > li {
+    padding: 0;
 }
 
 .admin-categories li:hover,
@@ -277,6 +275,9 @@
     width: 180px;
     z-index: 9999;
 }
+.category-item {
+    padding: 0;
+}
 
 .context-menu-item {
     padding: 8px 12px;
@@ -303,4 +304,83 @@
 .item-name.hidden {
     color: red;
     font-weight: bold;
+}
+.subcategory-item:hover,
+.subcategory-item.active {
+    background-color: #f1f3f5;
+    color: #000;
+}
+.category-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+    padding: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.category-row:hover {
+    background-color: #f1f3f5;
+}
+.category-name.active {
+    color: #9e7f45;
+}
+.expand-btn {
+    background: none;
+    border: none;
+    font-size: 16px;
+    line-height: 1;
+    cursor: pointer;
+    color: #555;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.admin-categories .subcategory-list {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    list-style: none;
+    padding-left: 24px;
+}
+
+.admin-categories .subcategory-item {
+    display: block;
+    padding: 6px 0;
+    margin: 0;
+    color: #555;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+.admin-categories .category-row {
+    padding: 8px;
+}
+.admin-categories .subcategory-item:hover,
+.admin-categories .subcategory-item.active {
+    background-color: #f1f3f5;
+    color: #000;
+}
+
+/* ====== Override для подкатегорий ====== */
+.admin-categories .category-list > .category-item > ul.subcategory-list {
+    margin: 0 !important;
+    padding: 0 !important;
+    list-style: none !important;
+    padding-left: 30px !important;
+}
+
+.admin-categories .category-list > .category-item > ul.subcategory-list > .subcategory-item {
+    display: block !important;
+    margin: 0 !important;
+    padding: 4px 0 !important;
+    color: #555 !important;
+    border-radius: 4px !important;
+    transition: background 0.2s !important;
+}
+
+.admin-categories .category-list > .category-item > .category-row {
+    padding: 8px 12px !important;
 }

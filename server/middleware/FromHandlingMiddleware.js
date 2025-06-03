@@ -1,8 +1,12 @@
 const ApiError = require('../error/ApiError');
+const logger = require('../logger');
 
 module.exports = function (err, req, res, next) {
     if (err instanceof ApiError) {
-        return res.status(err.status).json({massage:err.massage})
+        logger.error(err.message, { stack: err.stack });
+        return res.status(err.status).json({ message: err.message });
     }
-    return res.status(500).json( {massage: "Непредивденная ошибка"})
-}
+
+    logger.error('Непредвиденная ошибка', { message: err.message, stack: err.stack });
+    return res.status(500).json({ message: "Непредвиденная ошибка" });
+};

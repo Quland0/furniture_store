@@ -7,6 +7,9 @@ import CategoryPage from '../pages/CategoryPage';
 import FurniturePage from "../pages/FurniturePage";
 import Favorites from "../pages/Favorites";
 import Basket from "../pages/Basket";
+import UserAgreement from '../pages/UserAgreement';
+import PrivacyPolicy from '../pages/PrivacyPolicy';
+import SearchResultsPage from "../pages/SearchResultsPage";
 
 const AppRouter = () => {
     const { user } = useContext(Context);
@@ -30,6 +33,10 @@ const AppRouter = () => {
             <Route path="/furniture/:id" element={<FurniturePage />} />
             <Route path="/favorites" element={<Favorites isAuth={user.isAuth} />} />
             <Route path="/basket" element={<Basket isAuth={user.isAuth} />} />
+            <Route path="/user-agreement" element={<UserAgreement />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/search" element={<SearchResultsPage />} />
+
 
             <Route path="*" element={<Navigate to={SHOP_ROUTE} replace />} />
         </Routes>

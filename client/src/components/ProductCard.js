@@ -4,6 +4,7 @@ import '../styles/ProductCard.css';
 import favoriteIcon from '../assets/icons/favorite.svg';
 import { FavoritesContext } from '../context/FavoritesContext';
 import { BasketContext } from '../context/BasketContext';
+import placeholderImage from '../assets/images/placeholder-product.jpg';
 
 const ProductCard = ({ product }) => {
     const { favorites, addToFavorites, removeFromFavorites } = useContext(FavoritesContext);
@@ -60,7 +61,7 @@ const ProductCard = ({ product }) => {
                         src={
                             sortedImages?.[0]
                                 ? `${process.env.REACT_APP_API_URL}/${sortedImages[0].img}`
-                                : '/placeholder-product.jpg'
+                                : placeholderImage
                         }
                         alt={product.name}
                         className="product-image"

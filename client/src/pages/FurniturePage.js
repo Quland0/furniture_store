@@ -116,7 +116,7 @@ const FurniturePage = () => {
 
                 setFurniture(data);
                 setImages(imagesWithUrls);
-                setSelectedImage(imagesWithUrls[0]?.url || null); // ← берём из imagesWithUrls
+                setSelectedImage(imagesWithUrls[0]?.url || null);
                 console.log('images state →', imagesWithUrls);
                 console.log('selectedImage →', imagesWithUrls[0]?.url);
             } catch (err) {

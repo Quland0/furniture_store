@@ -53,7 +53,9 @@ const CategoryPage = () => {
     const [isPriceDropdownOpen, setIsPriceDropdownOpen] = useState(false);
     const [categoryMinPrice, setCategoryMinPrice] = useState(0);
     const [categoryMaxPrice, setCategoryMaxPrice] = useState(1000);
-    const [rangeValues, setRangeValues] = useState([0, 1000]);
+    const [rangeValues, setRangeValues] = useState([0, 10000]);
+    const [inputMin, setInputMin] = useState(rangeValues[0]);
+    const [inputMax, setInputMax] = useState(rangeValues[1]);
     const [sortType, setSortType] = useState('default');
     const [types, setTypes] = useState([]);
 
@@ -141,21 +143,28 @@ const CategoryPage = () => {
     const [manufacturersInCategory, manufacturerCountMap] = useMemo(() => {
         const productsInCat = getProductsInCategory();
 
-        const manufacturers = [...new Set(productsInCat.map(p => p.manufacturer).filter(Boolean))];
-        const countMap = productsInCat.reduce((acc, item) => {
-            if (item.manufacturer) {
-                acc[item.manufacturer] = (acc[item.manufacturer] || 0) + 1;
+        const manufacturers = [];
+        const countMap = {};
+
+        for (const product of productsInCat) {
+            const m = product.manufacturer;
+            if (m && !manufacturers.find(existing => existing.id === m.id)) {
+                manufacturers.push(m);
             }
-            return acc;
-        }, {});
+            if (m) {
+                countMap[m.id] = (countMap[m.id] || 0) + 1;
+            }
+        }
+
         return [manufacturers, countMap];
     }, [getProductsInCategory]);
+
 
     useEffect(() => {
         let finalProducts = getProductsInCategory();
 
         if (selectedManufacturer) {
-            finalProducts = finalProducts.filter(p => p.manufacturer === selectedManufacturer);
+            finalProducts = finalProducts.filter(p => p.manufacturer?.id === selectedManufacturer.id);
         }
 
         finalProducts = finalProducts.filter(p =>
@@ -203,21 +212,17 @@ const CategoryPage = () => {
         return `/category/${categoryName}/page/${page}`;
     };
 
-    const handleSliderChange = (values) => setRangeValues(values);
-
-    const handleMinInputChange = (e) => {
-        let val = parseInt(e.target.value, 10) || 0;
-        if (val < categoryMinPrice) val = categoryMinPrice;
-        if (val > rangeValues[1] - 1) val = rangeValues[1] - 1;
-        setRangeValues([val, rangeValues[1]]);
+    const handleSliderChange = (newValues) => {
+        setRangeValues(newValues);
+        setInputMin(newValues[0]);
+        setInputMax(newValues[1]);
     };
 
-    const handleMaxInputChange = (e) => {
-        let val = parseInt(e.target.value, 10) || 0;
-        if (val > categoryMaxPrice) val = categoryMaxPrice;
-        if (val < rangeValues[0] + 1) val = rangeValues[0] + 1;
-        setRangeValues([rangeValues[0], val]);
-    };
+    useEffect(() => {
+        setInputMin(rangeValues[0]);
+        setInputMax(rangeValues[1]);
+    }, [rangeValues]);
+
     console.log('Текущий categoryName:', categoryName);
     console.log('Типы продуктов:', furniture.furnitures.map(p => p.typeId));
     const SortButton = ({ type, label }) => (
@@ -264,7 +269,7 @@ const CategoryPage = () => {
                                     max={categoryMaxPrice}
                                     values={rangeValues}
                                     onChange={handleSliderChange}
-                                    renderTrack={({ props, children }) => (
+                                    renderTrack={({props, children}) => (
                                         <div
                                             {...props}
                                             style={{
@@ -283,7 +288,7 @@ const CategoryPage = () => {
                                             {children}
                                         </div>
                                     )}
-                                    renderThumb={({ props }) => (
+                                    renderThumb={({props}) => (
                                         <div
                                             {...props}
                                             style={{
@@ -306,8 +311,11 @@ const CategoryPage = () => {
                                 <span className="price-input-label">от</span>
                                 <input
                                     type="number"
-                                    value={rangeValues[0]}
-                                    onChange={handleMinInputChange}
+                                    value={inputMin === 0 ? "" : inputMin}
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        setInputMin(value === "" ? 0 : Number(value));
+                                    }}
                                 />
                             </div>
                             <span className="price-input-separator">—</span>
@@ -315,11 +323,24 @@ const CategoryPage = () => {
                                 <span className="price-input-label">до</span>
                                 <input
                                     type="number"
-                                    value={rangeValues[1]}
-                                    onChange={handleMaxInputChange}
+                                    value={inputMax === 0 ? "" : inputMax}
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        setInputMax(value === "" ? 0 : Number(value));
+                                    }}
                                 />
                             </div>
                         </div>
+                        <button
+                            className="apply-price-button"
+                            onClick={() => {
+                                const validMin = Math.min(inputMin, inputMax - 1);
+                                const validMax = Math.max(inputMax, inputMin + 1);
+                                setRangeValues([validMin, validMax]);
+                            }}
+                        >
+                            Применить
+                        </button>
                     </div>
                 )}
             </div>
@@ -332,22 +353,23 @@ const CategoryPage = () => {
                     }}
                     aria-expanded={isManufacturerDropdownOpen}
                 >
-                    {selectedManufacturer ? `Производитель: ${selectedManufacturer}` : 'Производитель'}
+                    {selectedManufacturer?.name ? `Производитель: ${selectedManufacturer.name}` : 'Производитель'}
                 </button>
                 {isManufacturerDropdownOpen && (
                     <div className="filter-dropdown">
                         {manufacturersInCategory.map((m) => (
                             <div
-                                key={m}
-                                className={selectedManufacturer === m ? 'active' : ''}
+                                key={m.id}
+                                className={selectedManufacturer?.id === m.id ? 'active' : ''}
                                 onClick={() => {
                                     setSelectedManufacturer(m);
                                     setIsManufacturerDropdownOpen(false);
                                 }}
                             >
-                                {m} ({manufacturerCountMap[m] || 0})
+                                {m.name} ({manufacturerCountMap[m.id] || 0})
                             </div>
                         ))}
+
                         <div
                             onClick={() => {
                                 setSelectedManufacturer(null);

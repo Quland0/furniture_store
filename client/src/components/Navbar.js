@@ -1,4 +1,3 @@
-// src/components/Navbar.js
 import React, { useContext, useEffect, useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {observer} from "mobx-react-lite";
@@ -7,7 +6,7 @@ import logo from "../assets/images/logos/logo.png";
 import userIcon from "../assets/icons/user.svg";
 import searchIcon from "../assets/icons/search.svg";
 import basketIcon from "../assets/icons/basket.svg";
-import favoriteIcon from "../assets/icons/favorite.svg";
+import favoriteIcon from "../assets/icons/favorite1.svg";
 import locationIcon from "../assets/icons/location.svg";
 
 import {
@@ -75,6 +74,15 @@ const Navbar = observer( () => {
             navigate(LOGIN_ROUTE);
         }
     };
+    const [searchQuery, setSearchQuery] = useState("");
+
+    const handleSearch = (e) => {
+        e.preventDefault();
+        if (searchQuery.trim()) {
+            navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+            setSearchQuery("");
+        }
+    };
 
     return (
         <header>
@@ -117,12 +125,17 @@ const Navbar = observer( () => {
                             >
                                 <span className="catalog-icon">&#9776;</span> Каталог
                             </button>
-                            <div className="search-bar">
-                                <input type="text" placeholder="Поиск по сайту..." />
-                                <button className="search-button">
-                                    <img src={searchIcon} alt="Search" />
+                            <form className="search-bar" onSubmit={handleSearch}>
+                                <input
+                                    type="text"
+                                    placeholder="Поиск по сайту..."
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                />
+                                <button type="submit" className="search-button">
+                                    <img src={searchIcon} alt="Search"/>
                                 </button>
-                            </div>
+                            </form>
                             <div className="navbar-icons">
                                 {!user.isAuth ? (
                                     <Link to={LOGIN_ROUTE} className="navbar-icon login">
@@ -137,7 +150,7 @@ const Navbar = observer( () => {
                                     <div
                                         className="navbar-icon login"
                                         onClick={handleLogout}
-                                        style={{ cursor: "pointer" }}
+                                        style={{cursor: "pointer"}}
                                     >
                                         <img
                                             src={userIcon}

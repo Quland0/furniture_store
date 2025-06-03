@@ -10,6 +10,7 @@ const {
     Rating,
 } = require('../models/models');
 const ApiError = require('../error/ApiError');
+const { Op } = require('sequelize');
 
 class FurnitureController {
     async create(req, res, next) {
@@ -266,11 +267,53 @@ class FurnitureController {
         return res.json(furniture);
     }
 
-
     async delete(req, res) {
         const { id } = req.params;
         const deleted = await Furniture.destroy({ where: { id } });
         return deleted ? res.status(204).send() : res.status(404).json({ message: "Мебель не найдена" });
+    }
+
+    async search(req, res) {
+        const query = req.query.q || '';
+        try {
+            const results = await Furniture.findAll({
+                where: {
+                    name: {
+                        [Op.iLike]: `%${query}%`
+                    },
+                    hidden: false
+                },
+                include: [
+                    {
+                        model: FurnitureImg,
+                        as: 'images',
+                        separate: true,
+                        order: [['order', 'ASC']]
+                    },
+                    {
+                        model: Type,
+                        through: {},
+                        attributes: ['id', 'name']
+                    },
+                    {
+                        model: SubType,
+                        as: 'subtype'
+                    },
+                    {
+                        model: Manufacturer
+                    }
+                ],
+                attributes: [
+                    'id', 'name', 'price', 'rating', 'reviewsCount',
+                    'new', 'manufacturerId', 'hidden', 'createdAt', 'updatedAt'
+                ]
+            });
+
+            res.json(results);
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: 'Ошибка при поиске мебели' });
+        }
     }
 }
 
