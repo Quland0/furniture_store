@@ -9,8 +9,10 @@ const PrintOrderPage = () => {
         return <p>Заказ не найден. Вернитесь на страницу оформления заказа.</p>;
     }
 
-    const dateString = orderData.orderDate.toLocaleDateString();
-    const timeString = orderData.orderDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    // Если в orderData нет orderDate, подставляем текущую дату
+    const date = orderData.orderDate ? new Date(orderData.orderDate) : new Date();
+    const dateString = date.toLocaleDateString();
+    const timeString = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
     const handlePrint = () => {
         window.print();
@@ -23,25 +25,24 @@ const PrintOrderPage = () => {
                 Распечатать бланк заказа
             </button>
 
-            {/* Блок 1: Информация о клиенте и заказе */}
             <div className="order-block" id="order-block-1">
                 <table className="info-table">
                     <tbody>
                     <tr>
                         <td><strong>ФИО:</strong></td>
-                        <td>{orderData.order.fullName}</td>
+                        <td>{orderData.fullName}</td>
                     </tr>
                     <tr>
                         <td><strong>Email:</strong></td>
-                        <td>{orderData.order.email}</td>
+                        <td>{orderData.email}</td>
                     </tr>
                     <tr>
                         <td><strong>Телефон:</strong></td>
-                        <td>{orderData.order.contactPhone}</td>
+                        <td>{orderData.contactPhone}</td>
                     </tr>
                     <tr>
                         <td><strong>Доп. информация:</strong></td>
-                        <td>{orderData.order.additionalInfo || '—'}</td>
+                        <td>{orderData.additionalInfo || '—'}</td>
                     </tr>
                     </tbody>
                 </table>
@@ -52,7 +53,7 @@ const PrintOrderPage = () => {
                     <tbody>
                     <tr>
                         <td><strong>Номер заказа:</strong></td>
-                        <td>{orderData.orderId}</td>
+                        <td>{orderData.orderId || '—'}</td>
                     </tr>
                     <tr>
                         <td><strong>Статус заказа:</strong></td>
@@ -74,19 +75,19 @@ const PrintOrderPage = () => {
                                 : 'Самовывоз'}
                         </td>
                     </tr>
-                    {orderData.deliveryMethod === 'transport' && orderData.delivery && (
+                    {orderData.deliveryMethod === 'transport' && orderData.deliveryPhone && (
                         <>
                             <tr>
                                 <td><strong>Телефон для доставки:</strong></td>
-                                <td>{orderData.delivery.phone}</td>
+                                <td>{orderData.deliveryPhone}</td>
                             </tr>
                             <tr>
                                 <td><strong>Почтовый индекс:</strong></td>
-                                <td>{orderData.delivery.postalCode}</td>
+                                <td>{orderData.deliveryPostalCode || '—'}</td>
                             </tr>
                             <tr>
                                 <td><strong>Адрес доставки:</strong></td>
-                                <td>{orderData.delivery.deliveryAddress}</td>
+                                <td>{orderData.deliveryAddress || '—'}</td>
                             </tr>
                         </>
                     )}
@@ -106,10 +107,10 @@ const PrintOrderPage = () => {
                     </tr>
                     </thead>
                     <tbody>
-                    {orderData.orderItems && orderData.orderItems.map((item) => (
+                    {orderData.items && orderData.items.map((item) => (
                         <tr key={item.id}>
                             <td>{item.name}</td>
-                            <td>{typeof item.manufacturer === 'object' ? item.manufacturer.name : item.manufacturer}</td>
+                            <td>{typeof item.manufacturer === 'object' ? item.manufacturer.name : (item.manufacturer || '—')}</td>
                             <td>{item.price.toLocaleString()}</td>
                             <td>{item.quantity}</td>
                             <td>{(item.price * item.quantity).toLocaleString()}</td>

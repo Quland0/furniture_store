@@ -9,6 +9,7 @@ const basketRouter = require('./basketRouter');
 const favoritesRouter = require('./favoritesRouter');
 const ratingRouter = require('./ratingRouter');
 const formRouter = require('./formRouter');
+const orderRouter = require('./orderRouter');
 
 
 router.use('/user', userRouter)
@@ -20,6 +21,7 @@ router.use('/basket', basketRouter);
 router.use('/favorites', favoritesRouter);
 router.use('/rating', ratingRouter);
 router.use('/forms', formRouter)
+router.use('/order', orderRouter)
 
 
 module.exports = router

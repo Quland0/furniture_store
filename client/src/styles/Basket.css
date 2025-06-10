@@ -1,8 +1,15 @@
+/* Basket.css */
+
+/* =========================
+   БАЗОВЫЕ СТИЛИ (десктоп)
+   ========================= */
+
 .basket-page {
     max-width: 1615px;
     margin: 0 auto;
     padding: 20px;
     font-family: "PT Sans", sans-serif;
+    box-sizing: border-box;
 }
 
 .basket-page h1 {
@@ -212,4 +219,240 @@
 
 .checkout-button:hover {
     background-color: #b5936e;
+}
+
+
+/* ======================================
+   ПЛАНШЕТЫ И ГОРИЗОНТАЛЬНЫЕ ТЕЛЕФОНЫ (≤768px)
+   ====================================== */
+
+@media (max-width: 768px) {
+    .basket-page {
+        padding: 15px;
+    }
+
+    .basket-page h1 {
+        font-size: 28px;
+        margin-bottom: 10px;
+    }
+
+    .basket-page > p {
+        font-size: 14px;
+        margin-bottom: 30px;
+    }
+
+    .delete-selected-button {
+        margin-bottom: 15px;
+    }
+
+    /* Перестраиваем в одну колонку: список поверх итога */
+    .basket-content {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    /* Убираем position: sticky, делаем плавающим */
+    .basket-summary {
+        position: relative;
+        top: auto;
+        width: 100%;
+        padding: 15px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        margin-top: 20px;
+    }
+
+    .basket-summary h2 {
+        font-size: 22px;
+        margin-bottom: 16px;
+    }
+
+    .checkout-button {
+        font-size: 15px;
+        padding: 10px;
+    }
+
+    /* Уменьшаем карточку товара */
+    .basket-item {
+        flex-wrap: wrap;
+        padding: 15px 0;
+        gap: 10px;
+    }
+    .basket-item-image {
+        width: 140px;
+        height: 100px;
+        margin-right: 10px;
+    }
+    .basket-item-info {
+        flex: 1 1 100%;
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+    .basket-item-info h3 {
+        font-size: 15px;
+        margin-bottom: 6px;
+    }
+    .basket-item-info p {
+        font-size: 13px;
+    }
+    .basket-item-quantity {
+        margin-right: 10px;
+    }
+    .basket-item-quantity button {
+        width: 28px;
+        height: 28px;
+        font-size: 14px;
+    }
+    .basket-item-quantity span {
+        padding: 0 10px;
+        font-size: 13px;
+    }
+    .basket-item-price {
+        font-size: 15px;
+        margin-right: 10px;
+        min-width: 80px;
+    }
+    .item-price-per-unit {
+        font-size: 11px;
+    }
+    .basket-item-actions {
+        flex-direction: row;
+        margin-left: 0;
+    }
+    .basket-item-actions button img {
+        width: 20px;
+        height: 20px;
+    }
+}
+
+/* ====================
+   СМАРТФОНЫ (≤480px)
+   ==================== */
+
+@media (max-width: 480px) {
+    /* Убрали лишние левые/правые отступы у всей страницы */
+    .basket-page {
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+
+    /* Заголовок и параграф поближе к тексту */
+    .basket-page h1 {
+        font-size: 22px;      /* чуть меньше */
+        margin-bottom: 6px;   /* сократили */
+    }
+
+    .basket-page > p {
+        font-size: 13px;
+        margin-bottom: 16px;  /* сократили */
+    }
+
+    /* Кнопка «Удалить выбранные» чуть поменьше */
+    .delete-selected-button {
+        font-size: 13px;
+        margin-bottom: 12px;
+    }
+
+    /* Каждая карточка товара — компактнее */
+    .basket-item {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 10px 0;      /* сократили вертикальные отступы */
+        gap: 6px;             /* уменьшили gap между элементами */
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    /* Убираем левый отступ у чекбокса, чтобы не “отплывал” вправо */
+    .basket-item-checkbox {
+        margin: 0 0 8px 0;    /* только снизу отступ, справа нет */
+        width: 18px;
+        height: 18px;
+    }
+
+    /* Изображение — на всю ширину карточки, сохраняя соотношение сторон */
+    .basket-item-image {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 4/3;    /* фиксируем «ширина/высота = 4:3» */
+        margin: 0 0 8px 0;    /* снизу отступ */
+        border-radius: 4px;
+    }
+
+    /* Название и производитель — чуть поменьше */
+    .basket-item-info {
+        margin: 0 0 8px 0;
+    }
+    .basket-item-info h3 {
+        font-size: 16px;
+        margin-bottom: 4px;
+    }
+    .basket-item-info p {
+        font-size: 13px;
+        color: #666;
+        margin: 0;
+    }
+
+    /* Блок с «количеством» и «ценой» располагаем в строке */
+    .basket-item-quantity {
+        display: flex;
+        align-items: center;
+        margin: 0 0 8px 0;
+    }
+    .basket-item-quantity button {
+        width: 26px;
+        height: 26px;
+        font-size: 14px;
+        border: 1px solid #ddd;
+    }
+    .basket-item-quantity span {
+        padding: 0 8px;
+        font-size: 13px;
+    }
+
+    /* Цена и цена за единицу под количеством */
+    .basket-item-price {
+        font-size: 15px;
+        margin: 0 0 8px 0;
+        min-width: auto; /* авто */
+        text-align: left;
+    }
+    .item-price-per-unit {
+        font-size: 11px;
+        color: #666;
+    }
+
+    /* Кнопки «в избранное»/«удалить» рядом в одну строку */
+    .basket-item-actions {
+        display: flex;
+        flex-direction: row;
+        gap: 8px;
+        margin: 0;
+    }
+    .basket-item-actions button img {
+        width: 20px;
+        height: 20px;
+    }
+
+    /* Итоговый блок — под карточками, максимально компактный */
+    .basket-summary {
+        position: relative;       /* не следует «липнуть» */
+        top: auto;
+        width: 100%;
+        padding: 12px;
+        margin-top: 16px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        border-radius: 6px;
+    }
+    .basket-summary h2 {
+        font-size: 18px;
+        margin-bottom: 10px;
+        display: flex;
+        justify-content: space-between;
+    }
+    .checkout-button {
+        width: 100%;
+        padding: 8px;
+        font-size: 14px;
+        border-radius: 40px;
+    }
 }

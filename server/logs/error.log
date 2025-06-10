@@ -15,3 +15,49 @@ Error
     at ApiError.badRequest (C:\Users\khach\WebstormProjects\furniture_store\server\error\ApiError.js:9:16)
     at create (C:\Users\khach\WebstormProjects\furniture_store\server\controllers\furnitureController.js:67:27)
     at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+[2025-06-10T08:05:01.787Z] ERROR: Ошибка при создании заказа notNull Violation: order.fullName cannot be null,
+notNull Violation: order.email cannot be null,
+notNull Violation: order.contactPhone cannot be null
+SequelizeValidationError: notNull Violation: order.fullName cannot be null,
+notNull Violation: order.email cannot be null,
+notNull Violation: order.contactPhone cannot be null
+    at InstanceValidator._validate (C:\Users\khach\WebstormProjects\furniture_store\server\node_modules\sequelize\lib\instance-validator.js:50:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async InstanceValidator._validateAndRunHooks (C:\Users\khach\WebstormProjects\furniture_store\server\node_modules\sequelize\lib\instance-validator.js:60:7)
+    at async InstanceValidator.validate (C:\Users\khach\WebstormProjects\furniture_store\server\node_modules\sequelize\lib\instance-validator.js:54:12)
+    at async model.save (C:\Users\khach\WebstormProjects\furniture_store\server\node_modules\sequelize\lib\model.js:2426:7)
+    at async order.create (C:\Users\khach\WebstormProjects\furniture_store\server\node_modules\sequelize\lib\model.js:1362:12)
+    at async create (C:\Users\khach\WebstormProjects\furniture_store\server\controllers\orderController.js:36:27)
+[2025-06-10T18:20:42.043Z] ERROR: Ошибка при создании заказа notNull Violation: order.userId cannot be null
+SequelizeValidationError: notNull Violation: order.userId cannot be null
+    at InstanceValidator._validate (C:\Users\khach\WebstormProjects\furniture_store\server\node_modules\sequelize\lib\instance-validator.js:50:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async InstanceValidator._validateAndRunHooks (C:\Users\khach\WebstormProjects\furniture_store\server\node_modules\sequelize\lib\instance-validator.js:60:7)
+    at async InstanceValidator.validate (C:\Users\khach\WebstormProjects\furniture_store\server\node_modules\sequelize\lib\instance-validator.js:54:12)
+    at async model.save (C:\Users\khach\WebstormProjects\furniture_store\server\node_modules\sequelize\lib\model.js:2426:7)
+    at async order.create (C:\Users\khach\WebstormProjects\furniture_store\server\node_modules\sequelize\lib\model.js:1362:12)
+    at async create (C:\Users\khach\WebstormProjects\furniture_store\server\controllers\orderController.js:42:27)
+[2025-06-10T18:23:39.105Z] ERROR: Ошибка при создании заказа Cannot read properties of undefined (reading 'id')
+TypeError: Cannot read properties of undefined (reading 'id')
+    at create (C:\Users\khach\WebstormProjects\furniture_store\server\controllers\orderController.js:42:37)
+    at Layer.handle [as handle_request] (C:\Users\khach\WebstormProjects\furniture_store\server\node_modules\express\lib\router\layer.js:95:5)
+    at next (C:\Users\khach\WebstormProjects\furniture_store\server\node_modules\express\lib\router\route.js:149:13)
+    at Route.dispatch (C:\Users\khach\WebstormProjects\furniture_store\server\node_modules\express\lib\router\route.js:119:3)
+    at Layer.handle [as handle_request] (C:\Users\khach\WebstormProjects\furniture_store\server\node_modules\express\lib\router\layer.js:95:5)
+    at C:\Users\khach\WebstormProjects\furniture_store\server\node_modules\express\lib\router\index.js:284:15
+    at Function.process_params (C:\Users\khach\WebstormProjects\furniture_store\server\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\khach\WebstormProjects\furniture_store\server\node_modules\express\lib\router\index.js:280:10)
+    at expressInit (C:\Users\khach\WebstormProjects\furniture_store\server\node_modules\express\lib\middleware\init.js:40:5)
+    at Layer.handle [as handle_request] (C:\Users\khach\WebstormProjects\furniture_store\server\node_modules\express\lib\router\layer.js:95:5)
+[2025-06-10T18:29:02.815Z] ERROR: Ошибка при создании заказа Cannot read properties of undefined (reading 'id')
+TypeError: Cannot read properties of undefined (reading 'id')
+    at create (C:\Users\khach\WebstormProjects\furniture_store\server\controllers\orderController.js:42:37)
+    at Layer.handle [as handle_request] (C:\Users\khach\WebstormProjects\furniture_store\server\node_modules\express\lib\router\layer.js:95:5)
+    at next (C:\Users\khach\WebstormProjects\furniture_store\server\node_modules\express\lib\router\route.js:149:13)
+    at Route.dispatch (C:\Users\khach\WebstormProjects\furniture_store\server\node_modules\express\lib\router\route.js:119:3)
+    at Layer.handle [as handle_request] (C:\Users\khach\WebstormProjects\furniture_store\server\node_modules\express\lib\router\layer.js:95:5)
+    at C:\Users\khach\WebstormProjects\furniture_store\server\node_modules\express\lib\router\index.js:284:15
+    at Function.process_params (C:\Users\khach\WebstormProjects\furniture_store\server\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\khach\WebstormProjects\furniture_store\server\node_modules\express\lib\router\index.js:280:10)
+    at expressInit (C:\Users\khach\WebstormProjects\furniture_store\server\node_modules\express\lib\middleware\init.js:40:5)
+    at Layer.handle [as handle_request] (C:\Users\khach\WebstormProjects\furniture_store\server\node_modules\express\lib\router\layer.js:95:5)

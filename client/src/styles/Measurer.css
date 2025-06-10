@@ -1,8 +1,13 @@
+/* Measurer.css */
+
+/* -------------- БАЗОВЫЕ СТИЛИ -------------- */
+
 .measurer-page {
     max-width: 1200px;
     margin: -30px auto;
     padding: 40px 20px;
     background-color: #fff;
+    box-sizing: border-box;
 }
 
 .measurer-container {
@@ -48,11 +53,14 @@
     border-radius: 4px;
     cursor: pointer;
     margin-bottom: 30px;
+    font-size: 16px;
 }
+
 .request-button:hover {
     background-color: #8c6843;
 }
 
+/* Оверлей формы */
 .form-overlay {
     position: fixed;
     top: 0;
@@ -66,6 +74,7 @@
     z-index: 3000;
 }
 
+/* Сама форма */
 .request-form {
     background-color: #f9f9f9;
     padding: 30px;
@@ -73,11 +82,14 @@
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     position: relative;
+    box-sizing: border-box;
 }
 
 .request-form h2 {
     margin-top: 0;
     margin-bottom: 20px;
+    font-size: 20px;
+    color: #2D2B2B;
 }
 
 .close-icon {
@@ -91,6 +103,7 @@
     cursor: pointer;
     transition: color 0.2s;
 }
+
 .close-icon:hover {
     color: #555;
 }
@@ -111,19 +124,19 @@
     border-radius: 4px;
     font-size: 14px;
     font-family: inherit;
+    box-sizing: border-box;
 }
 
 .request-form input:focus,
 .request-form textarea:focus {
     outline: none;
-    box-shadow: none;
     border-color: #ccc;
 }
 
 .request-form textarea {
     resize: none;
+    min-height: 80px;
 }
-
 
 .form-buttons {
     display: flex;
@@ -139,8 +152,153 @@
     border-radius: 4px;
     cursor: pointer;
     min-width: 90px;
+    font-size: 14px;
 }
 
 .form-buttons button:hover {
     background-color: #8c6843;
+}
+
+/* -------------- ПЛАНШЕТ (≤768px) -------------- */
+
+@media (max-width: 768px) {
+    .measurer-page {
+        padding: 30px 16px;
+        margin: -20px auto;
+    }
+
+    .measurer-title {
+        font-size: 24px;
+        margin-bottom: 18px;
+    }
+
+    .measurer-container h2 {
+        font-size: 18px;
+        margin-top: 20px;
+        margin-bottom: 10px;
+    }
+
+    .measurer-container p,
+    .measurer-container li {
+        font-size: 15px;
+        margin-bottom: 14px;
+    }
+
+    .measurer-container ul {
+        margin-left: 16px;
+        margin-bottom: 14px;
+    }
+
+    .request-button {
+        font-size: 15px;
+        padding: 8px 16px;
+        margin-bottom: 24px;
+    }
+
+    /* Форма в планшетном виде: делаем ширину чуть меньше */
+    .request-form {
+        width: 90%;
+        max-width: 380px;
+        padding: 24px;
+    }
+
+    .request-form h2 {
+        font-size: 18px;
+        margin-bottom: 18px;
+    }
+
+    .request-form label {
+        font-size: 13px;
+        margin-bottom: 12px;
+    }
+
+    .request-form input,
+    .request-form textarea {
+        padding: 6px;
+        font-size: 13px;
+    }
+
+    .form-buttons button {
+        font-size: 13px;
+        padding: 6px 14px;
+    }
+}
+
+/* -------------- МОБИЛЬНОЕ (≤480px) -------------- */
+
+@media (max-width: 480px) {
+    .measurer-page {
+        padding: 20px 12px;
+        margin: -10px auto;
+    }
+
+    .measurer-title {
+        font-size: 20px;
+        margin-bottom: 16px;
+    }
+
+    .measurer-container h2 {
+        font-size: 16px;
+        margin-top: 18px;
+        margin-bottom: 8px;
+    }
+
+    .measurer-container p,
+    .measurer-container li {
+        font-size: 14px;
+        margin-bottom: 12px;
+    }
+
+    .measurer-container ul {
+        margin-left: 14px;
+        margin-bottom: 12px;
+    }
+
+    .request-button {
+        font-size: 14px;
+        padding: 8px 14px;
+        margin-bottom: 20px;
+    }
+
+    /* Форма для мобильного: узкая, занимает почти весь экран */
+    .request-form {
+        width: 100%;
+        max-width: 320px;
+        padding: 20px;
+    }
+
+    .request-form h2 {
+        font-size: 16px;
+        margin-bottom: 16px;
+    }
+
+    .request-form label {
+        font-size: 12px;
+        margin-bottom: 10px;
+    }
+
+    .request-form input,
+    .request-form textarea {
+        padding: 6px;
+        font-size: 12px;
+    }
+
+    .request-form textarea {
+        min-height: 60px;
+    }
+
+    .form-buttons {
+        margin-top: 16px;
+    }
+
+    .form-buttons button {
+        font-size: 12px;
+        padding: 6px 12px;
+    }
+
+    .close-icon {
+        top: 8px;
+        right: 8px;
+        font-size: 20px;
+    }
 }

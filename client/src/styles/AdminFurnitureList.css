@@ -21,7 +21,17 @@
     width: 100%;
     cursor: pointer;
 }
-
+.special-tab {
+    background-color: #9e7f45;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 10px;
+    margin-bottom: 20px;
+    width: 200px;
+    height: 30px;
+    cursor: pointer;
+}
 .admin-categories ul {
     list-style: none;
     padding: 0;

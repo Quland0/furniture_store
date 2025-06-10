@@ -19,6 +19,7 @@ import {
 } from '../http/FurnitureAPI';
 import CreateSubcategory from "./modals/CreateSubcategory";
 import EditCategoryModal from "./modals/EditCategoryModal";
+import AdminOrders from "../components/OrdersAdminPanel";
 import { fetchOneFurniture, updateFurniture } from '../http/FurnitureAPI';
 
 const ITEMS_PER_PAGE = 28;
@@ -185,6 +186,9 @@ const AdminFurnitureList = ({ onAddCategory }) => {
 
     const filteredAndSortedFurnitures = useMemo(() => {
         let result = [...furnitures];
+        if (!['all', 'orders'].includes(selectedCategory)) {
+            return furnitures.filter(product => product.category === selectedCategory);
+        }
         if (selectedCategory !== 'all') {
             const cat = categories.find(c => c.id === selectedCategory);
             if (cat) {
@@ -267,6 +271,12 @@ const AdminFurnitureList = ({ onAddCategory }) => {
     return (
         <div className="admin-furniture-list">
             <aside className="admin-categories">
+                <button
+                    className={`category-item special-tab ${selectedCategory === 'orders' ? 'active' : ''}`}
+                    onClick={() => setSelectedCategory('orders')}
+                >
+                    Заказы
+                </button>
                 <button className="add-btn" onClick={onAddCategory}>Добавить категорию</button>
                 <ul className="category-list">
                     {categories.map(cat => (
@@ -278,16 +288,22 @@ const AdminFurnitureList = ({ onAddCategory }) => {
                                 {cat.subcategories.length > 0 && (
                                     <button
                                         className="expand-btn"
-                                        onClick={e => { e.stopPropagation(); setExpandedCategories(prev =>
-                                            prev.includes(cat.id) ? prev.filter(x=>x!==cat.id) : [...prev, cat.id]
-                                        ); }}
+                                        onClick={e => {
+                                            e.stopPropagation();
+                                            setExpandedCategories(prev =>
+                                                prev.includes(cat.id) ? prev.filter(x => x !== cat.id) : [...prev, cat.id]
+                                            );
+                                        }}
                                     >
                                         {expandedCategories.includes(cat.id) ? '–' : '+'}
                                     </button>
                                 )}
                                 <span
-                                    className={`category-name ${selectedCategory===cat.id?'active':''}`}
-                                    onClick={() => { setSelectedCategory(cat.id); setCurrentPage(1); }}
+                                    className={`category-name ${selectedCategory === cat.id ? 'active' : ''}`}
+                                    onClick={() => {
+                                        setSelectedCategory(cat.id);
+                                        setCurrentPage(1);
+                                    }}
                                 >
                   {cat.label}
                 </span>
@@ -297,9 +313,13 @@ const AdminFurnitureList = ({ onAddCategory }) => {
                                     {cat.subcategories.map(sub => (
                                         <li
                                             key={sub}
-                                            className={`subcategory-item ${selectedCategory===sub?'active':''}`}
+                                            className={`subcategory-item ${selectedCategory === sub ? 'active' : ''}`}
                                             onContextMenu={e => handleSubcategoryContextMenu(e, sub)}
-                                            onClick={e => { e.stopPropagation(); setSelectedCategory(sub); setCurrentPage(1); }}
+                                            onClick={e => {
+                                                e.stopPropagation();
+                                                setSelectedCategory(sub);
+                                                setCurrentPage(1);
+                                            }}
                                         >
                                             {sub}
                                         </li>
@@ -311,9 +331,12 @@ const AdminFurnitureList = ({ onAddCategory }) => {
                 </ul>
             </aside>
 
-            <div className="admin-list-panel">
-                <div className="top-panel">
-                    <div className="dropdown-container">
+            {selectedCategory === 'orders' ? (
+                <AdminOrders/>
+            ) : (
+                <div className="admin-list-panel">
+                    <div className="top-panel">
+                        <div className="dropdown-container">
                         <button className="dropdown-btn" onClick={()=>setIsSelectOpen(o=>!o)}>Выбрать</button>
                         {isSelectOpen && (
                             <div className="dropdown-menu select-menu">
@@ -401,7 +424,10 @@ const AdminFurnitureList = ({ onAddCategory }) => {
                         <button disabled={currentPage>=totalPages} onClick={()=>setCurrentPage(p=>p+1)} className="pagination-arrow">ВПЕРЁД →</button>
                     </div>
                 )}
+
             </div>
+            )}
+
 
             {contextMenu.visible && (
                 <div className="category-context-menu" style={{ top: contextMenu.y, left: contextMenu.x }}>

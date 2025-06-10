@@ -65,7 +65,7 @@ const FurniturePage = () => {
 
     const openLightbox = () => {
         setLightboxImage(selectedImage);
-        const index = images.findIndex(img => img === selectedImage);
+        const index = images.findIndex(img => img.url === selectedImage);
         setLightboxImageIndex(index !== -1 ? index : 0);
         setLightboxOpen(true);
         document.body.classList.add('lightbox-open');
@@ -80,7 +80,7 @@ const FurniturePage = () => {
         e.stopPropagation();
         setLightboxImageIndex((prevIndex) => {
             const newIndex = prevIndex === 0 ? images.length - 1 : prevIndex - 1;
-            setLightboxImage(images[newIndex]);
+            setLightboxImage(images[newIndex]?.url);
             return newIndex;
         });
     }, [images]);
@@ -89,7 +89,7 @@ const FurniturePage = () => {
         e.stopPropagation();
         setLightboxImageIndex((prevIndex) => {
             const newIndex = prevIndex === images.length - 1 ? 0 : prevIndex + 1;
-            setLightboxImage(images[newIndex]);
+            setLightboxImage(images[newIndex]?.url);
             return newIndex;
         });
     }, [images]);

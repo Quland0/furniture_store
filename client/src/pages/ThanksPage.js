@@ -8,11 +8,18 @@ const ThanksPage = () => {
     const { orderData } = useContext(OrderContext);
 
     if (!orderData) {
-        return <p>Заказ не найден. Вернитесь на <Link to="/order">форму заказа</Link>.</p>;
+        return (
+            <p>
+                Заказ не найден. Вернитесь на{' '}
+                <Link to="/order">форму заказа</Link>.
+            </p>
+        );
     }
 
-    const dateString = orderData.orderDate.toLocaleDateString();
-    const timeString = orderData.orderDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    // Если orderDate отсутствует, используем текущую дату
+    const orderDate = orderData.orderDate ? new Date(orderData.orderDate) : new Date();
+    const dateString = orderDate.toLocaleDateString();
+    const timeString = orderDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
     return (
         <div className="thanks-container">
@@ -21,10 +28,13 @@ const ThanksPage = () => {
                 Проверить статус заказа вы можете по{' '}
                 <Link to={ORDER_PRINT_ROUTE}>ссылке</Link>.
             </p>
-            <p>Номер вашего заказа: № {orderData.orderId}</p>
+            <p>Номер вашего заказа: № {orderData.orderId || '—'}</p>
             <p>Дата заказа: {dateString} {timeString}</p>
             <p>
-                Доставка: {orderData.deliveryMethod === 'transport' ? 'Транспортной компанией' : 'Самовывоз'}
+                Доставка:{' '}
+                {orderData.deliveryMethod === 'transport'
+                    ? 'Транспортной компанией'
+                    : 'Самовывоз'}
             </p>
             <p>Сумма к оплате: {orderData.totalPrice.toLocaleString()} руб.</p>
 

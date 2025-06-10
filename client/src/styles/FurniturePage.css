@@ -480,3 +480,124 @@ body.lightbox-open {
     outline: none;
     border-color: #9e7f45;
 }
+
+
+@media (max-width: 1280px) {
+    .furniture-page {
+        padding: 30px;
+    }
+
+    .add-to-cart-btn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .furniture-page-top {
+        flex-direction: column;
+    }
+
+    .add-to-cart-btn {
+        width: 100%;
+    }
+
+    .quantity-input {
+        width: 100%;
+    }
+
+    .furniture-info h1 {
+        font-size: 24px;
+    }
+
+    .furniture-price {
+        font-size: 28px;
+    }
+
+    .furniture-main-image img {
+        border-radius: 6px;
+    }
+
+    .furniture-tab-content {
+        padding: 15px;
+    }
+
+    .tab-btn {
+        font-size: 14px;
+        padding: 8px 12px;
+    }
+
+    .review-modal {
+        padding: 20px;
+    }
+
+    .review-modal h2 {
+        font-size: 20px;
+    }
+
+    .submit-review-button {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .furniture-page {
+        padding: 20px;
+    }
+
+    .furniture-thumbnails {
+        gap: 5px;
+        overflow-x: auto;
+    }
+
+    .furniture-thumbnails img {
+        width: 60px;
+        height: 60px;
+    }
+
+    .furniture-info {
+        gap: 16px;
+    }
+
+    .furniture-info h1 {
+        font-size: 20px;
+    }
+
+    .furniture-price {
+        font-size: 24px;
+    }
+
+    .manufacturer,
+    .furniture-rating,
+    .reviews-count {
+        font-size: 14px;
+    }
+
+    .review-button,
+    .submit-review-button,
+    .tab-btn {
+        font-size: 14px;
+        padding: 8px 12px;
+    }
+
+    .details-table td {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    .review-author,
+    .review-rating,
+    .review-text {
+        font-size: 14px;
+    }
+
+    .quantity-btn {
+        width: 28px;
+        height: 28px;
+        font-size: 14px;
+    }
+
+    .quantity-input {
+        height: 28px;
+        font-size: 14px;
+    }
+}

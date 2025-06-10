@@ -36,7 +36,7 @@ const Footer = () => {
                     <ul>
                         <li><Link to="/delivery-and-payment">Доставка и оплата</Link></li>
                         <li><Link to="/measurer">Замерщик</Link></li>
-                        <li><Link to="/contacts">О нас</Link></li>
+                        <li><Link to="/contacts">Контакты</Link></li>
                     </ul>
                 </div>
 

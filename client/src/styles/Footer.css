@@ -1,3 +1,7 @@
+/* Footer.css */
+
+/* --------------- Базовые стили --------------- */
+
 .footer {
     background-color: #c0956c;
     color: #fff;
@@ -13,6 +17,10 @@
     gap: 40px;
 }
 
+/*
+    Сделаем из .footer-left «колонку» ровно как остальные footer-column,
+    чтобы в мобильной версии её можно было обрабатывать единым правилом.
+*/
 .footer-left {
     flex: 1 1 250px;
     min-width: 250px;
@@ -21,46 +29,70 @@
     align-items: flex-start;
 }
 
+/* Логотип */
 .footer-logo {
     height: 55px;
     margin-bottom: 8px;
+    display: block;       /* сбрасываем inline-поведение */
+    line-height: 0;       /* убираем возможный подстрочный отступ */
 }
 
-.footer-subtitle {
-    margin-bottom: 16px;
-    font-size: 14px;
+/* Блок социальных иконок */
+.social-icons {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
-.social-icons a img {
+.social-icons a {
+    display: block;
+    line-height: 0;       /* чтобы не было «белой полоски» под иконкой */
+    margin: 0;
+    padding: 0;
+}
+
+.social-icons img {
     width: 40px;
     height: 40px;
-    margin-right: 10px;
+    display: block;
     transition: opacity 0.3s;
 }
 
-.social-icons a img:hover {
+.social-icons img:hover {
     opacity: 0.8;
 }
 
+/* Обычные колонки «Каталог / Покупателю / Контакты» */
 .footer-column {
     flex: 1 1 180px;
     min-width: 180px;
 }
 
 .footer-column h4 {
-    margin-bottom: 16px;
+    margin: 0 0 16px 0;
     font-size: 16px;
     font-weight: 600;
+    padding: 0;
+    line-height: 1.2;
 }
 
 .footer-column ul {
     list-style: none;
+    margin: 0;
     padding: 0;
 }
 
 .footer-column li {
-    margin-bottom: 8px;
+    margin: 0 0 8px 0;
+    padding: 0;
     font-size: 14px;
+    line-height: 1.3;
+}
+
+.footer-column li:last-child {
+    margin-bottom: 0;
 }
 
 .footer-column li a {
@@ -73,6 +105,7 @@
     opacity: 0.8;
 }
 
+/* Нижний текст */
 .footer-bottom {
     border-top: 1px solid rgba(255,255,255,0.3);
     margin-top: 20px;
@@ -81,4 +114,115 @@
     font-size: 14px;
 }
 
+/* --------------- Мобильная версия (≤ 480px) --------------- */
 
+@media (max-width: 480px) {
+
+    /* Убираем весь свободный «gap» между колонками */
+    .footer-container {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .footer {
+        padding: 20px 16px 10px;
+    }
+
+    /*
+        Превращаем каждый блок (footer-left и footer-column)
+        в «склеенные» друг к другу секции с минимальным разделителем.
+    */
+    .footer-left,
+    .footer-column {
+        flex: 1 1 100%;
+        min-width: auto;
+        padding: 0;
+        margin: 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    /* Убираем верхний бордер у самой первой секции */
+    .footer-left {
+        border-top: none;
+        padding-top: 0;
+        margin-top: 0;
+    }
+
+    /*
+        Центрируем логотип и иконку Instagram внутри footer-left
+        и сводим к минимуму отступы.
+    */
+    .footer-left {
+        align-items: center;
+        text-align: center;
+        padding: 10px 0 0;
+    }
+
+    .footer-logo {
+        height: 50px;
+        margin: 0 0 4px 0;
+    }
+
+    .social-icons {
+        justify-content: center; /* чтобы иконка Инсты была ровно под логотипом */
+        margin-bottom: 0;
+    }
+
+    /* Секция «Каталог» → чуть меньше межстрочных отступов */
+    .footer-column h4 {
+        font-size: 15px;
+        margin: 0 0 8px 0;
+    }
+
+    .footer-column ul {
+        margin: 0;
+        padding: 0;
+    }
+
+    .footer-column li {
+        margin: 0 0 4px 0;
+        padding: 0;
+        font-size: 13px;
+    }
+
+    .footer-column li:last-child {
+        margin-bottom: 0;
+    }
+
+    /* Нижний паттерн */
+    .footer-bottom {
+        margin-top: 12px;
+        padding-top: 12px;
+        font-size: 12px;
+        text-align: center;
+        border-top: 1px solid rgba(255, 255, 255, 0.15);
+    }
+}
+
+
+/* ===== Планшеты (от 481px до 1279px) ===== */
+@media (max-width: 1279px) and (min-width: 481px) {
+    .footer-container {
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 30px;
+    }
+
+    .footer-left {
+        flex: 1 1 100%;
+        margin-bottom: 20px;
+    }
+
+    .footer-column {
+        flex: 1 1 45%;
+    }
+
+    .footer-logo {
+        height: 50px;
+    }
+
+    .social-icons a img {
+        width: 36px;
+        height: 36px;
+    }
+}

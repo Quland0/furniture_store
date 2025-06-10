@@ -10,6 +10,7 @@ import Basket from "../pages/Basket";
 import UserAgreement from '../pages/UserAgreement';
 import PrivacyPolicy from '../pages/PrivacyPolicy';
 import SearchResultsPage from "../pages/SearchResultsPage";
+import UserOrders from "../pages/UserOrders";
 
 const AppRouter = () => {
     const { user } = useContext(Context);
@@ -36,7 +37,7 @@ const AppRouter = () => {
             <Route path="/user-agreement" element={<UserAgreement />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/search" element={<SearchResultsPage />} />
-
+            <Route path="/my-orders" element={<UserOrders />} />
 
             <Route path="*" element={<Navigate to={SHOP_ROUTE} replace />} />
         </Routes>

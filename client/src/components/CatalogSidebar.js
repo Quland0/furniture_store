@@ -58,12 +58,21 @@ const CatalogSidebar = ({ isOpen, onClose, catalogButtonRef }) => {
 
     const calculatePosition = useCallback(() => {
         if (isOpen && catalogButtonRef?.current) {
-            const btn = catalogButtonRef.current.getBoundingClientRect();
-            const offsetY = window.scrollY < 50 ? btn.bottom + 15 : btn.bottom + 5;
-            setSidebarPosition({
-                top: offsetY,
-                left: btn.right - 135,
-            });
+            const isMobile = window.innerWidth <= 768;
+
+            if (isMobile) {
+                setSidebarPosition({
+                    top: 0,
+                    left: 0
+                });
+            } else {
+                const btn = catalogButtonRef.current.getBoundingClientRect();
+                const offsetY = window.scrollY < 50 ? btn.bottom + 15 : btn.bottom + 5;
+                setSidebarPosition({
+                    top: offsetY,
+                    left: btn.right - 135,
+                });
+            }
         }
     }, [isOpen, catalogButtonRef]);
 
@@ -92,17 +101,32 @@ const CatalogSidebar = ({ isOpen, onClose, catalogButtonRef }) => {
         }
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [isOpen, onClose, catalogButtonRef]);
+    useEffect(() => {
+        if (isOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
 
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, [isOpen]);
     return (
         <div
             className={`catalog-sidebar ${isOpen ? 'open' : ''}`}
             ref={sidebarRef}
-            style={{
-                position: 'fixed',
-                top: `${sidebarPosition.top}px`,
-                left: `${sidebarPosition.left}px`,
-                transform: 'none',
-            }}
+            style={
+                window.innerWidth > 768
+                    ? {
+                        position: 'fixed',
+                        top: `${sidebarPosition.top}px`,
+                        left: `${sidebarPosition.left}px`,
+                        transform: 'none',
+                        width: '800px',
+                    }
+                    : undefined
+            }
         >
             <div className="catalog-sidebar-container">
                 <button className="close-btn" onClick={onClose}>×</button>
@@ -159,7 +183,7 @@ const CatalogSidebar = ({ isOpen, onClose, catalogButtonRef }) => {
                             )}
                         </>
                     ) : (
-                        <p className="prompt">Выберите тип слева</p>
+                        <p className="prompt">Выберите категорию</p>
                     )}
                 </div>
             </div>

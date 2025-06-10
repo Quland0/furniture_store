@@ -4,6 +4,7 @@ import '../styles/Order.css';
 import { OrderContext } from '../context/OrderContext';
 import { BasketContext } from '../context/BasketContext';
 import { ORDER_THANKS_ROUTE } from '../utils/consts';
+import { $authHost } from '../http';
 
 const Order = () => {
     const navigate = useNavigate();
@@ -22,7 +23,7 @@ const Order = () => {
     const [additionalInfo, setAdditionalInfo] = useState("");
     const [agree, setAgree] = useState(false);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         if (deliveryMethod === "transport") {
@@ -41,23 +42,29 @@ const Order = () => {
         }
 
         const newOrder = {
+            fullName,
+            email,
+            contactPhone,
+            additionalInfo,
             deliveryMethod,
-            delivery:
-                deliveryMethod === "transport"
-                    ? { phone, postalCode, deliveryAddress }
-                    : { pickup: true },
-            order: {
-                fullName,
-                email,
-                contactPhone,
-                additionalInfo,
-            },
-            orderItems: basket,
+            deliveryPhone: deliveryMethod === "transport" ? phone : null,
+            deliveryPostalCode: deliveryMethod === "transport" ? postalCode : null,
+            deliveryAddress: deliveryMethod === "transport" ? deliveryAddress : null,
             totalPrice,
-            orderId: Math.floor(Math.random() * 10000),
-            orderDate: new Date(),
+            items: basket.map(item => ({
+                furnitureId: item.id,
+                quantity: item.quantity,
+                price: item.price
+            }))
         };
-
+        try {
+            await $authHost.post('order', newOrder);
+            setOrderData(newOrder);
+            navigate(ORDER_THANKS_ROUTE);
+        } catch (error) {
+            console.error('Ошибка при отправке заказа:', error);
+            alert('Произошла ошибка при оформлении заказа. Попробуйте позже.');
+        }
         setOrderData(newOrder);
 
         navigate(ORDER_THANKS_ROUTE);

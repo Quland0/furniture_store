@@ -159,3 +159,61 @@
     padding: 8px;
     text-align: left;
 }
+
+
+@media (max-width: 768px) {
+    .order-page {
+        padding: 10px;
+        margin: 20px auto;
+    }
+
+    .order-section {
+        padding: 15px;
+    }
+
+    .submit-order-button {
+        width: 100%;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        font-size: 13px;
+    }
+}
+
+
+@media (max-width: 480px) {
+    .order-page h1 {
+        font-size: 22px;
+        text-align: center;
+    }
+
+    .order-section h2 {
+        font-size: 18px;
+    }
+
+    .form-group label {
+        font-size: 13px;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        font-size: 12px;
+    }
+
+    .submit-order-button {
+        font-size: 14px;
+        padding: 10px 20px;
+    }
+
+    .radio-group,
+    .checkbox-group {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .radio-group label,
+    .checkbox-group label {
+        font-size: 13px;
+    }
+}

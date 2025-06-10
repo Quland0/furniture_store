@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import {observer} from "mobx-react-lite";
 import "../styles/Navbar.css";
 import logo from "../assets/images/logos/logo.png";
@@ -26,6 +26,28 @@ const Navbar = observer( () => {
     const { user } = useContext(Context);
     const navigate = useNavigate();
 
+    const [showProfileMenu, setShowProfileMenu] = useState(false);
+    const profileRef = useRef(null);
+    useEffect(() => {
+        function handleClickOutside(event) {
+            if (profileRef.current && !profileRef.current.contains(event.target)) {
+                setShowProfileMenu(false);
+            }
+        }
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
+    const goToOrders = () => {
+        navigate("/my-orders");
+        setShowProfileMenu(false);
+    };
+
+    const handleLogoutClick = () => {
+        setShowProfileMenu(false);
+        handleLogout();
+    };
     useEffect(() => {
         const handleScroll = () => {
             const currentScroll = window.scrollY;
@@ -48,6 +70,7 @@ const Navbar = observer( () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const catalogButtonRef = useRef(null);
+    const [showMobileSearch, setShowMobileSearch] = useState(false);
 
     const handleToggleSidebar = () => {
         setSidebarOpen((prev) => !prev);
@@ -83,7 +106,23 @@ const Navbar = observer( () => {
             setSearchQuery("");
         }
     };
+    const location = useLocation();
+    useEffect(() => {
+        setMobileMenuOpen(false);
+        setShowMobileSearch(false);
+        setSidebarOpen(false);
+    }, [location.pathname]);
+    const [shortAddress, setShortAddress] = useState(false);
+    useEffect(() => {
+        const updateAddress = () => {
+            setShortAddress(window.innerWidth <= 992);
+        };
 
+        updateAddress();
+        window.addEventListener("resize", updateAddress);
+
+        return () => window.removeEventListener("resize", updateAddress);
+    }, []);
     return (
         <header>
             <div className="top-bar">
@@ -95,9 +134,14 @@ const Navbar = observer( () => {
                             className="location-logo"
                         />
                         <span>
-                            Ростовская обл., Мясниковский район,
-                            <br /> с. Крым, ул. Большесальская 45а
-                        </span>
+        {shortAddress
+            ? "Ростовская обл., с. Крым, ул. Большесальская 45а"
+            : <>
+                Ростовская обл., Мясниковский район,<br/>
+                с. Крым, ул. Большесальская 45а
+            </>
+        }
+    </span>
                     </div>
                     <div className="top-bar-info">
                         <Link to={CONTACTS_ROUTE}>Контакты</Link>
@@ -115,27 +159,39 @@ const Navbar = observer( () => {
                 <div className="navbar-container">
                     <div className="navbar-content">
                         <Link to={SHOP_ROUTE}>
-                            <img src={logo} alt="МебельРум161" className="navbar-logo" />
+                            <img src={logo} alt="МебельРум161" className="navbar-logo"/>
                         </Link>
-                        <div className="desktop-controls">
-                            <button
-                                className="catalog-button"
-                                onClick={handleToggleSidebar}
-                                ref={catalogButtonRef}
-                            >
-                                <span className="catalog-icon">&#9776;</span> Каталог
+                        <div className="mobile-controls">
+                            <button className="mobile-search-toggle"
+                                    onClick={() => setShowMobileSearch(!showMobileSearch)}>
+                                <img src={searchIcon} alt="Поиск"/>
                             </button>
-                            <form className="search-bar" onSubmit={handleSearch}>
-                                <input
-                                    type="text"
-                                    placeholder="Поиск по сайту..."
-                                    value={searchQuery}
-                                    onChange={(e) => setSearchQuery(e.target.value)}
-                                />
-                                <button type="submit" className="search-button">
-                                    <img src={searchIcon} alt="Search"/>
+                            <button className="mobile-menu-toggle" onClick={toggleMobileMenu}>
+                                <span className="burger-icon">&#9776;</span>
+                            </button>
+                        </div>
+                        <div className="desktop-controls">
+                            <div className="navbar-center">
+                                <button
+                                    className="catalog-button"
+                                    onClick={handleToggleSidebar}
+                                    ref={catalogButtonRef}
+                                >
+                                    <span className="catalog-icon">&#9776;</span> Каталог
                                 </button>
-                            </form>
+                                <form className="search-bar" onSubmit={handleSearch}>
+                                    <input
+                                        type="text"
+                                        placeholder="Поиск по сайту..."
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                    />
+                                    <button type="submit" className="search-button">
+                                        <img src={searchIcon} alt="Search"/>
+                                    </button>
+                                </form>
+                            </div>
+
                             <div className="navbar-icons">
                                 {!user.isAuth ? (
                                     <Link to={LOGIN_ROUTE} className="navbar-icon login">
@@ -147,17 +203,24 @@ const Navbar = observer( () => {
                                         <span className="icon-text login-icon">Войти</span>
                                     </Link>
                                 ) : (
-                                    <div
-                                        className="navbar-icon login"
-                                        onClick={handleLogout}
-                                        style={{cursor: "pointer"}}
-                                    >
-                                        <img
-                                            src={userIcon}
-                                            alt="Выйти"
-                                            title="Выйти"
-                                        />
-                                        <span className="icon-text login-icon">Выйти</span>
+                                    <div className="navbar-icon login" ref={profileRef}>
+                                        <div
+                                            onClick={() => setShowProfileMenu(!showProfileMenu)}
+                                            style={{cursor: "pointer"}}
+                                        >
+                                            <img
+                                                src={userIcon}
+                                                alt="Профиль"
+                                                title="Профиль"
+                                            />
+                                            <span className="icon-text login-icon">Профиль</span>
+                                        </div>
+                                        {showProfileMenu && (
+                                            <div className="profile-dropdown-menu">
+                                                <button onClick={goToOrders}>Мои заказы</button>
+                                                <button onClick={handleLogoutClick}>Выйти</button>
+                                            </div>
+                                        )}
                                     </div>
                                 )}
                                 <Link to={FAVORITES_ROUTE} className="navbar-icon favorite-icon">
@@ -183,41 +246,59 @@ const Navbar = observer( () => {
                                 )}
                             </div>
                         </div>
-
-                        <div className="mobile-menu-button" onClick={toggleMobileMenu}>
-                            <span>&#9776;</span>
-                        </div>
                     </div>
                 </div>
                 {mobileMenuOpen && (
-                    <div className="mobile-menu">
+                    <div className={`mobile-menu ${mobileMenuOpen ? "visible" : "hidden"}`}>
+                        <button onClick={handleToggleSidebar} className="mobile-menu-item">
+                            Каталог
+                        </button>
+
                         <Link to={SHOP_ROUTE} onClick={() => setMobileMenuOpen(false)}>
                             Главная
                         </Link>
+
                         {!user.isAuth ? (
                             <Link to={LOGIN_ROUTE} onClick={() => setMobileMenuOpen(false)}>
                                 Войти
                             </Link>
                         ) : (
-                            <div onClick={() => {
-                                toggleMobileMenu();
-                                handleLogout();
-                            }}>
+                            <button
+                                onClick={() => {
+                                    handleLogout();
+                                    setMobileMenuOpen(false);
+                                }}
+                                className="mobile-menu-item"
+                            >
                                 Выйти
-                            </div>
+                            </button>
                         )}
+
                         <Link to={FAVORITES_ROUTE} onClick={() => setMobileMenuOpen(false)}>
                             Избранное
                         </Link>
                         <Link to={BASKET_ROUTE} onClick={() => setMobileMenuOpen(false)}>
                             Корзина
                         </Link>
-                        {user.isAuth && user.user.role === "ADMIN" && (
-                            <Link to={ADMIN_ROUTE} onClick={() => setMobileMenuOpen(false)}>
-                                Админ
+                        {user.isAuth && (
+                            <Link to="/my-orders" onClick={() => setMobileMenuOpen(false)}>
+                                Мои заказы
                             </Link>
                         )}
                     </div>
+                )}
+                {showMobileSearch && (
+                    <form className="mobile-search-bar" onSubmit={handleSearch}>
+                        <input
+                            type="text"
+                            placeholder="Поиск..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                        />
+                        <button type="submit">
+                            <img src={searchIcon} alt="Поиск"/>
+                        </button>
+                    </form>
                 )}
             </nav>
 

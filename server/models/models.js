@@ -106,12 +106,15 @@ const Order = sequelize.define("order", {
     totalPrice: { type: DataTypes.INTEGER, allowNull: false },
     status: { type: DataTypes.STRING, defaultValue: "Новый" },
     orderDate: { type: DataTypes.DATE, defaultValue: DataTypes.NOW },
+    userId: { type: DataTypes.INTEGER, allowNull: true },
 });
 
 const OrderItem = sequelize.define("order_item", {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     quantity: { type: DataTypes.INTEGER, allowNull: false },
     price: { type: DataTypes.INTEGER, allowNull: false },
+    orderId: { type: DataTypes.INTEGER, allowNull: false },
+    furnitureId: { type: DataTypes.INTEGER, allowNull: false }
 });
 
 const FurnitureImg = sequelize.define('furniture_img', {
@@ -168,6 +171,9 @@ OrderItem.belongsTo(Order);
 
 Furniture.hasMany(OrderItem);
 OrderItem.belongsTo(Furniture);
+
+User.hasMany(Order);
+Order.belongsTo(User);
 
 module.exports = {
     User,

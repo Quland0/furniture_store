@@ -57,3 +57,69 @@
 .catalog-item:hover img {
     transform: scale(1.1);
 }
+@media (max-width: 1280px) {
+    .catalog {
+        width: 100%;
+        padding: 0 20px;
+    }
+
+    .catalog-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px 40px;
+    }
+
+    .catalog-item {
+        width: 100%;
+        height: 300px;
+    }
+
+    .catalog-item img {
+        height: 200px;
+    }
+}
+
+@media (max-width: 768px) {
+    .catalog-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px 20px;
+    }
+
+    .catalog-item {
+        height: 260px;
+        padding: 16px;
+    }
+
+    .catalog-item img {
+        height: 160px;
+    }
+
+    .catalog-item p {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .catalog {
+        padding: 0 10px;
+    }
+
+    .catalog-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .catalog-item {
+        height: auto;
+        padding: 12px;
+    }
+
+    .catalog-item img {
+        height: 140px;
+        object-fit: contain;
+    }
+
+    .catalog-item p {
+        font-size: 15px;
+        margin-top: 8px;
+    }
+}

@@ -1,13 +1,19 @@
+/* DeliveryAndPayment.css */
+
+/* -------------- БАЗОВЫЕ СТИЛИ -------------- */
+
 .delivery-payment-page {
     padding: 40px 0;
     background-color: #ffffff;
     min-height: 100vh;
+    box-sizing: border-box;
 }
 
 .container {
     max-width: 1615px;
     margin: 0 auto;
     padding: 0 20px;
+    box-sizing: border-box;
 }
 
 .delivery-section,
@@ -15,25 +21,23 @@
     margin-bottom: 30px;
 }
 
-h1 {
+/* Заголовки */
+.delivery-section h1,
+.payment-section h1 {
     font-size: 32px;
     color: #2D2B2B;
     margin-bottom: 30px;
     font-weight: 700;
 }
 
-h2 {
+.delivery-option h2 {
     font-size: 22px;
     color: #2D2B2B;
     margin-bottom: 15px;
     font-weight: 600;
 }
 
-.delivery-option,
-.payment-info {
-    margin-bottom: 30px;
-}
-
+/* Блок с текстом */
 .delivery-option p,
 .payment-info p {
     font-size: 16px;
@@ -53,3 +57,77 @@ h2 {
     text-decoration: underline;
 }
 
+/* -------------- ПЛАНШЕТ (≤768px) -------------- */
+
+@media (max-width: 768px) {
+    .delivery-payment-page {
+        padding: 30px 16px;
+    }
+
+    .container {
+        padding: 0 16px;
+    }
+
+    /* Уменьшаем отступы между секциями */
+    .delivery-section,
+    .payment-section {
+        margin-bottom: 24px;
+    }
+
+    /* Заголовки */
+    .delivery-section h1,
+    .payment-section h1 {
+        font-size: 28px;
+        margin-bottom: 24px;
+    }
+
+    .delivery-option h2 {
+        font-size: 20px;
+        margin-bottom: 12px;
+    }
+
+    /* Текст */
+    .delivery-option p,
+    .payment-info p {
+        font-size: 15px;
+        margin-bottom: 12px;
+        line-height: 1.5;
+    }
+}
+
+/* -------------- МОБИЛЬНОЕ (≤480px) -------------- */
+
+@media (max-width: 480px) {
+    .delivery-payment-page {
+        padding: 20px 12px;
+    }
+
+    .container {
+        padding: 0 12px;
+    }
+
+    .delivery-section,
+    .payment-section {
+        margin-bottom: 20px;
+    }
+
+    /* Заголовки */
+    .delivery-section h1,
+    .payment-section h1 {
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+
+    .delivery-option h2 {
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+
+    /* Текст */
+    .delivery-option p,
+    .payment-info p {
+        font-size: 14px;
+        margin-bottom: 10px;
+        line-height: 1.4;
+    }
+}

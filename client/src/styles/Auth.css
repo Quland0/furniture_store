@@ -139,3 +139,144 @@ input:focus {
     color: #555;
     text-align: left;
 }
+/* Мобильные устройства: до 480px */
+@media (max-width: 480px) {
+    .auth-page {
+        max-width: 100%;
+        margin: 30px 12px;
+        padding: 16px;
+        border-radius: 6px;
+    }
+
+    .auth-page h2 {
+        font-size: 20px;
+        margin-bottom: 16px;
+    }
+
+    .auth-form {
+        gap: 12px;
+    }
+
+    .form-group label {
+        font-size: 13px;
+    }
+
+    .form-group input {
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .auth-submit {
+        font-size: 15px;
+        padding: 10px;
+    }
+
+    .auth-switch,
+    .switch-button,
+    .forgot-button,
+    .forgot-message,
+    .checkbox-container {
+        font-size: 13px;
+    }
+
+    .checkbox-label {
+        gap: 6px;
+    }
+}
+
+/* Планшеты: от 481px до 768px */
+@media (min-width: 481px) and (max-width: 768px) {
+    .auth-page {
+        max-width: 90%;
+        margin: 40px auto;
+        padding: 20px;
+    }
+
+    .auth-page h2 {
+        font-size: 22px;
+    }
+
+    .form-group input {
+        padding: 10px;
+        font-size: 15px;
+    }
+
+    .auth-submit {
+        font-size: 16px;
+        padding: 11px;
+    }
+
+    .auth-switch,
+    .switch-button,
+    .forgot-button,
+    .forgot-message,
+    .checkbox-container {
+        font-size: 14px;
+    }
+
+    .checkbox-label {
+        gap: 8px;
+    }
+}
+
+/* Десктопы: от 769px до 1279px */
+@media (min-width: 769px) and (max-width: 1279px) {
+    .auth-page {
+        max-width: 500px;
+        margin: 60px auto;
+        padding: 24px;
+    }
+
+    .auth-page h2 {
+        font-size: 24px;
+    }
+
+    .form-group input {
+        padding: 12px;
+        font-size: 16px;
+    }
+
+    .auth-submit {
+        font-size: 17px;
+        padding: 12px;
+    }
+
+    .auth-switch,
+    .switch-button,
+    .forgot-button,
+    .forgot-message,
+    .checkbox-container {
+        font-size: 15px;
+    }
+}
+
+/* Большие экраны: от 1280px и выше */
+@media (min-width: 1280px) {
+    .auth-page {
+        max-width: 550px;
+        margin: 80px auto;
+        padding: 28px;
+    }
+
+    .auth-page h2 {
+        font-size: 26px;
+    }
+
+    .form-group input {
+        padding: 14px;
+        font-size: 16px;
+    }
+
+    .auth-submit {
+        font-size: 18px;
+        padding: 14px;
+    }
+
+    .auth-switch,
+    .switch-button,
+    .forgot-button,
+    .forgot-message,
+    .checkbox-container {
+        font-size: 15px;
+    }
+}

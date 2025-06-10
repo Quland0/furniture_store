@@ -77,20 +77,22 @@ const Auth = observer(() => {
                         onChange={(e) => setPassword(e.target.value)}
                     />
                 </div>
-                <div className="forgot-password">
-                    <button
-                        type="button"
-                        className="forgot-button"
-                        onClick={() => setShowForgotMessage(true)}
-                    >
-                        Забыли пароль?
-                    </button>
-                    {showForgotMessage && (
-                        <div className="forgot-message">
-                            Пожалуйста, свяжитесь с администратором для восстановления доступа.
-                        </div>
-                    )}
-                </div>
+                {isLogin && (
+                    <div className="forgot-password">
+                        <button
+                            type="button"
+                            className="forgot-button"
+                            onClick={() => setShowForgotMessage(true)}
+                        >
+                            Забыли пароль?
+                        </button>
+                        {showForgotMessage && (
+                            <div className="forgot-message">
+                                Пожалуйста, свяжитесь с администратором для восстановления доступа.
+                            </div>
+                        )}
+                    </div>
+                )}
                 {!isLogin && (
                     <>
                         <div className="form-group">

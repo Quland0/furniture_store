@@ -98,12 +98,10 @@ export const deleteFurniture = async (id) => {
     return data;
 };
 
-// для совместимости
 export const editType    = updateType;
 export const editSubType = updateSubType;
 export const CreateType  = createType;
 
-// Отзывы
 export const addRating = async ({ furnitureId, rate, name, review }) => {
     const { data } = await $authHost.post("rating/add", {
         furnitureId,
@@ -128,3 +126,16 @@ export const fetchSearchResults = async (query) => {
     return data;
 };
 
+export const fetchAllOrders = async () => {
+    const { data } = await $authHost.get('/order');
+    return data;
+};
+
+export const updateOrderStatus = async (id, status) => {
+    const { data } = await $host.put(`/order/${id}/status`, { status });
+    return data;
+};
+export const getUserOrders = async () => {
+    const response = await $authHost.get('order/user');
+    return response.data;
+};

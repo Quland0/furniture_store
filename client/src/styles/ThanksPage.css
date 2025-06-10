@@ -38,3 +38,52 @@
 .thanks-print-button:hover {
     background-color: #b5936e;
 }
+
+
+@media (max-width: 768px) {
+    .thanks-container {
+        margin: 40px auto;
+        padding: 20px;
+        max-width: 90%;
+    }
+
+    .thanks-container h2 {
+        font-size: 20px;
+    }
+
+    .thanks-container p {
+        font-size: 14px;
+    }
+
+    .thanks-print-button {
+        padding: 10px 24px;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .thanks-container {
+        margin: 30px 10px;
+        padding: 16px;
+        max-width: 100%;
+    }
+
+    .thanks-container h2 {
+        font-size: 18px;
+        text-align: center;
+    }
+
+    .thanks-container p {
+        font-size: 13px;
+        text-align: justify;
+    }
+
+    .thanks-print-button {
+        display: block;
+        width: 100%;
+        text-align: center;
+        font-size: 14px;
+        padding: 10px 0;
+        margin-top: 20px;
+    }
+}

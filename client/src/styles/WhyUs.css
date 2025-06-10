@@ -38,3 +38,41 @@
     color: #444;
     line-height: 1.4;
 }
+@media (max-width: 768px) {
+    .why-us-section {
+        padding: 24px;
+    }
+
+    .advantage-icon {
+        width: 80px;
+        height: 80px;
+    }
+
+    .advantage-text {
+        font-size: 16px;
+    }
+
+    .advantages-grid {
+        gap: 24px;
+    }
+}
+
+@media (max-width: 480px) {
+    .why-us-section {
+        padding: 16px;
+    }
+
+    .advantages-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+
+    .advantage-icon {
+        width: 64px;
+        height: 64px;
+    }
+
+    .advantage-text {
+        font-size: 14px;
+    }
+}
